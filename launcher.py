@@ -12,7 +12,7 @@ class Launcher(tb.Toplevel):
         self.minsize(size[0], size[1])
         self.iconbitmap("empty.ico")
 
-# Applying the custom window attribute for the border color
+        # Applying the custom window attribute for the border color
         HWND = windll.user32.GetParent(self.winfo_id())
         DWMWA_ATTRIBUTE = 35
         COLOR = 0x5e3d49  # Dark purple color

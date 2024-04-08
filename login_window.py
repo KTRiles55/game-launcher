@@ -2,7 +2,6 @@ import tkinter as tk
 import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
-#from RegisterWindow import *
 import gspread
 from ctypes import windll, byref, sizeof, c_int
 
