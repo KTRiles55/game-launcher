@@ -1,7 +1,4 @@
-from tkinter import Canvas
-
 import ttkbootstrap as tb
-from PIL.ImageTk import PhotoImage
 from ttkbootstrap.constants import *
 from ctypes import windll, byref, sizeof, c_int
 
@@ -38,7 +35,7 @@ class Menu(tb.Frame):
     def create_widget(self):
         style = tb.Style()
         style2 = tb.Style()
-        style2.configure("TNotebook.Tab", font=("Unispace", "16", "bold"))
+        style2.configure("TNotebook.Tab", font=("Unispace", "18", "bold"))
         style.configure("custom.TNotebook", padding=[0,0], tabmargins=[0,0,0,0], tabposition="nsew")
         notebook = tb.Notebook(self, style="custom.TNotebook")
 
