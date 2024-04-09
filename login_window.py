@@ -8,57 +8,68 @@ from ctypes import windll, byref, sizeof, c_int
 
 class login_window(tb.Toplevel):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
 
-    def verify(self,controller, account_wks):
-        self.destroy()
-        controller.login_pressed(account_wks)
-
-    def page(self, controller, account_wks):
         self.geometry("500x400")
-        self.config(bg="#493d5e")
+        #self.config(bg="#493d5e")
         self.minsize(500, 400)
         self.maxsize(500, 400)
-        self.iconbitmap("empty.ico")
+        self.iconbitmap("images/empty.ico")
         self.title("")
+
 
         HWND = windll.user32.GetParent(self.winfo_id())
         DWMWA_ATTRIBUTE = 35
         COLOR = 0x5e3d49
         windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
 
+    def verify(self, username, password, nameEn, passwordEn, warningLbl):
+        if(True):
+            self.destroy()
+            self.parent.run_launcher()
+        else:
+            #displays warning
+            warningLbl.pack()
+
+            #empties entries
+            nameEn.delete(0, 'end')
+            passwordEn.delete(0, 'end')
+
+    def page(self):
+
+        username=tb.StringVar()
+        password=tb.StringVar()
+
         loginTitle = tb.Label(self, text="Login")
         loginTitle.pack(pady=10)
-        loginTitle.config(font=("Courier", 20), background="#493d5e", foreground="white")
+        loginTitle.config(font=("Courier", 20))
 
-        entryFrame = tb.Frame(self, borderwidth=10, relief="groove")
+        entryFrame = tb.Frame(self, borderwidth=10)
         entryFrame.pack()
 
-        nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12))
+        warningFrame = tb.Frame(self)
+        warningFrame.pack()
+
+        nameLbl = tb.Label(entryFrame, text="Username")
         nameLbl.grid(row=0,  column=0, pady=15)
 
-        passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
+        passwordLbl = tb.Label(entryFrame, text="Password")
         passwordLbl.grid(row=1,  column=0, pady=15)
 
-        nameEn = tb.Entry(entryFrame)
+        warningLbl = tb.Label(warningFrame)
+        warningLbl.pack_forget()
+
+        nameEn = tb.Entry(entryFrame, textvariable = username)
         nameEn.grid(row=0,  column=1)
 
-        passwordEn = tb.Entry(entryFrame, show="*")
+        passwordEn = tb.Entry(entryFrame, show="*", textvariable = password)
         passwordEn.grid(row=1,  column=1)
 
-        loginBtn = tb.Button(entryFrame, text="Log In", command = lambda: [self.verify(controller, account_wks)])
+        loginBtn = tb.Button(entryFrame, text="Log In", command = lambda: [self.verify(username, password, nameEn, passwordEn, warningLbl)])
         loginBtn.grid(row=2, column=1, pady=15)
 
-        registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [controller.register_pressed(account_wks), self.destroy()])
+        registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [self.parent.run_register(), self.destroy()])
         registerBtn.grid(row=2, column=0)
-
-
-
-if __name__ == "__main__":
-    app = login_window()
-    app.mainloop()
-
-        
-
 

@@ -1,10 +1,9 @@
 import ttkbootstrap as tb
-from ttkbootstrap import Style
-from ttkbootstrap.constants import *
 import gspread
-from login_window import login_window
-from register_window import register_window
-from launcher import Launcher
+from login_window import *
+from register_window import *
+from launcher import *
+
 
 
 class Main(tb.Window):
@@ -12,30 +11,25 @@ class Main(tb.Window):
     def set_theme(self):
         Style.load_user_themes(Style(), "themes.json")
 
-    def register_pressed(self, account_wks):
-        register = register_window()
-        register.page(self, account_wks)
+    def run_register(self):
+        register = register_window(self)
+        register.page()
 
-    def return_to_login(self, account_wks):
-        login = login_window()
-        login.page(self, account_wks)
+    def run_login(self):
+        login = login_window(self)
+        login.page()
 
-    def login_pressed(self, account_wks):
-        Launcher((1400, 900))
+    def run_launcher(self):
+        self.launcher = Launcher(self)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
 
         Style.load_user_themes(Style(), "themes.json")
         Style().theme_use("techwiz_theme")
 
-        sa = gspread.service_account(filename="database_key.json")
-        account_sheet = sa.open("accountTest")
-
-        account_wks = account_sheet.worksheet("accountInfo")
-        login = login_window()
-
-        login.page(self, account_wks)
+        login = login_window(self)
+        login.page()
         self.withdraw()
 
 

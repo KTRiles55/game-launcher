@@ -1,8 +1,6 @@
 import gspread
 
 
-
-
 class account():
 
     def is_valid_username(username):
