@@ -1,0 +1,27 @@
+{
+    "themes": [
+        {
+            "techwiz": {
+                "type": "dark",
+                "colors": {
+                    "primary": "#8c8cc8",
+                    "secondary": "#b5b5db",
+                    "success": "#5cb85c",
+                    "info": "#5bc0de",
+                    "warning": "#f0ad4e",
+                    "danger": "#d9534f",
+                    "light": "#ABB6C2",
+                    "dark": "#20374C",
+                    "bg": "#493d5e",
+                    "fg": "#ffffff",
+                    "selectbg": "#8c8cc8",
+                    "selectfg": "#ffffff",
+                    "border": "#493d5e",
+                    "inputfg": "#8c8cc8",
+                    "inputbg": "#272132",
+                    "active": "#493d5e"
+                }
+            }
+        }
+    ]
+}
