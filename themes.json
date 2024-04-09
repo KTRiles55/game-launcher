@@ -1,7 +1,7 @@
 {
     "themes": [
         {
-            "techwiz": {
+            "techwiz_theme": {
                 "type": "dark",
                 "colors": {
                     "primary": "#8c8cc8",

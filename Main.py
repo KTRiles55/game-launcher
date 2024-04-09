@@ -2,13 +2,15 @@ import ttkbootstrap as tb
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
 import gspread
-# Assuming login_window, register_window, and launcher have been similarly updated to use ttkbootstrap
 from login_window import login_window
 from register_window import register_window
 from launcher import Launcher
 
 
 class Main(tb.Window):
+
+    def set_theme(self):
+        Style.load_user_themes(Style(), "themes.json")
 
     def register_pressed(self, account_wks):
         register = register_window()
@@ -24,8 +26,8 @@ class Main(tb.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        style = Style(theme="techwiz")
-        Style.load_user_themes(style, "themes.json")
+        Style.load_user_themes(Style(), "themes.json")
+        Style().theme_use("techwiz_theme")
 
         sa = gspread.service_account(filename="database_key.json")
         account_sheet = sa.open("accountTest")
@@ -36,8 +38,8 @@ class Main(tb.Window):
         login.page(self, account_wks)
         self.withdraw()
 
-if __name__ == "__main__":
-    app = Main()
-    app.mainloop()
+
+main = Main()
+main.mainloop()
 
 
