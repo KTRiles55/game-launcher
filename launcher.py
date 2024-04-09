@@ -1,6 +1,5 @@
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
-from store_page import *
 from menu import *
 from ctypes import windll, byref, sizeof, c_int
 
