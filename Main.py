@@ -4,8 +4,6 @@ from login_window import *
 from register_window import *
 from launcher import *
 
-
-
 class Main(tb.Window):
 
     def set_theme(self):
