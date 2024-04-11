@@ -1,7 +1,5 @@
 from tkinter import *
-from ttkbootstrap import Label
 import ttkbootstrap as tb
-from ttkbootstrap.constants import *
 from store import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
@@ -95,7 +93,7 @@ class StoreTab(tb.Frame):
 
     def setup_layout(self):
         # Search Frame at the top
-        scrollable_frame = ScrolledFrame(self, autohide=False, bootstyle="secondary")
+        scrollable_frame = ScrolledFrame(self, autohide=False)
         scrollable_frame.grid(sticky="nsew")
         search_frame = tb.Frame(self)
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
@@ -103,7 +101,7 @@ class StoreTab(tb.Frame):
 
 
         # Game Frame below the search frame
-        game_frame = tb.Frame(scrollable_frame, bootstyle="secondary")
+        game_frame = tb.Frame(scrollable_frame)
         scrollable_frame.grid(row=1, column=0, sticky="nsew")
         game_frame.grid(sticky="nsew")
         scrollable_frame.columnconfigure(0, weight=1)
@@ -142,7 +140,7 @@ class StoreTab(tb.Frame):
         game_frame2 = tb.Frame(parent, bootstyle="secondary")
 
         game_frame1.grid(row=0, column=0, sticky="nse", padx=5, pady=6)
-        game_frame2.grid(row=0, column=1, sticky="nsew", padx=5, pady=6)
+        game_frame2.grid(row=0, column=1, sticky="nsw", padx=5, pady=6)
 
         # Make both game frames expand equally
         parent.columnconfigure([0, 1], weight=1)

@@ -1,15 +1,8 @@
-from tkinter import *
-from ttkbootstrap import Label
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from ttkbootstrap import Style
-import launcher
-from ttkbootstrap.scrolled import ScrolledFrame
 from store_tab import *
 from FriendsTab import *
 from LibraryTab import *
 from SettingsTab import *
-from PIL import ImageTk, Image
+
 
 
 class Menu(tb.Frame):

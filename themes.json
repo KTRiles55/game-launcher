@@ -5,23 +5,24 @@
                 "type": "dark",
                 "colors": {
                     "primary": "#8c8cc8",
-                    "secondary": "#8f7eab",
+                    "secondary": "#45484b",
                     "success": "#5cb85c",
-                    "info": "#5bc0de",
-                    "warning": "#f0ad4e",
+                    "info": "#767c83",
+                    "warning": "#767c83",
                     "danger": "#d9534f",
                     "light": "#ABB6C2",
-                    "dark": "#20374C",
-                    "bg": "#493d5e",
+                    "dark": "#262728",
+                    "bg": "#1e1f20",
                     "fg": "#ffffff",
-                    "selectbg": "#8c8cc8",
+                    "selectbg": "#45484b",
                     "selectfg": "#ffffff",
                     "border": "#493d5e",
                     "inputfg": "#ffffff",
-                    "inputbg": "#272132",
-                    "active": "#493d5e"
+                    "inputbg": "#1a1b1c",
+                    "active": "#45484b"
                 }
             }
         }
     ]
 }
+
