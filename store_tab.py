@@ -117,7 +117,7 @@ class StoreTab(tb.Frame):
         genres = ["MMO", "RPG", "Survival", "Simulations"]
         selected_tag = StringVar()
         search_label = tb.Label(parent, text="Search:")
-        search_entry = tb.Entry(parent, bootstyle="secondary")
+        search_entry = tb.Entry(parent)
         category_lbl =  tb.Label(parent, text="Categories")
         category_drop = tb.OptionMenu(parent, selected_tag, *genres, command = lambda tags: [self.get_tags(selected_tag, game_frame)])
         cart_btn = tb.Button(parent, text="Cart", command = lambda: self.destroy_frames(game_frame))
