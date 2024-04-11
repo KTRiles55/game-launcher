@@ -1,7 +1,13 @@
-import gspread
+# class for user account
+import gspread 
 
 
 class account():
+
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
 
     def is_valid_username(username):
         pass
@@ -19,19 +25,50 @@ class account():
         else:
             return False
 
-    def is_authentic(username, password):
+    def is_authentic(self, wks):
         #verifies if login info is in database
-        pass
+        userCell = self.findUsername(wks)
+        passwCell = self.findPassword(wks)
+        
+        #if user information is unidentified
+        if ((userCell == None) or (passwCell == None)):
+            return False
+        
+        return True
+               
+
+    def find_sheet(self, wks):
+        #finds the accounts associated spreadsheet 
+        user = user.findUsername(self.username, wks)
+        acc_sheet = wks.row_values(user)
+        return acc_sheet
+    
+
+    def findUsername(self, wks):
+        return wks.find(self.username.get())
+    
+
+    def findPassword(self, wks):
+        return wks.find(self.password.get())
 
 
+    def findEmail(self, wks):
+        return wks.find(self.email.get())
+            
 
-    def find_sheet(username):
-        #finds the accounts associated spreadsheet
-        pass
-
-    def create_newuser(username, library=[]):
+    def create_newuser(self, wks):
         #creates instance of user 
-        #either pass the wks or all the account info
-        pass
+        wks.append_row([self.username.get(), self.password.get(), self.email.get()])
 
-
+    
+    def update_user(new_username, new_password, new_email, username, password, email, wks):
+        # updates account info
+        row_entries = wks.get_all_values()
+        for row in row_entries:
+            for key, value in enumerate(row):
+                if (value == username):
+                   row[key] = new_username
+                   row[key+1] = new_password
+                   row[key+2] = new_email 
+                   wks.update(row_entries)
+                   
