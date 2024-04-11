@@ -11,14 +11,22 @@ class Main(tb.Window):
 
     def run_register(self):
         register = register_window(self)
-        register.page()
+        register.page(self)
 
     def run_login(self):
         login = login_window(self)
-        login.page()
+        login.page(self)
 
     def run_launcher(self):
         self.launcher = Launcher(self)
+        
+     # opens google sheets database
+    def accessAccountData(self):
+        sa = gspread.service_account(filename="database_key.json")
+        account_sheet = sa.open("accountTest")
+        account_wks = account_sheet.worksheet("accountInfo")
+        return account_wks
+
 
     def __init__(self):
         super().__init__()
@@ -27,11 +35,9 @@ class Main(tb.Window):
         Style().theme_use("techwiz_theme")
 
         login = login_window(self)
-        login.page()
+        login.page(self)
         self.withdraw()
 
 
 main = Main()
 main.mainloop()
-
-
