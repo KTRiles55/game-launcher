@@ -56,12 +56,12 @@ class StoreTab(tb.Frame):
         decrement = self.max_widgets
         previous = self.pointer_start
         if((previous > 0) and (previous  < self.max_widgets)):
-            #Special case for when the game widgets are less than layout
+            # Special case for when the game widgets are less than layout
             self.current_page += 1
             self.pointer_end = self.pointer_start
             decrement = self.pointer_start 
         elif(self.pointer_start == 0):
-            #When reached end of page
+            # When reached end of page
             decrement =0
         else:
             self.pointer_end = self.pointer_start
