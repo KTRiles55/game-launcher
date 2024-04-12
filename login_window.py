@@ -3,10 +3,8 @@ import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
 import gspread
-try:
-    from ctypes import windll, byref, sizeof, c_int
-except:
-    pass
+from ctypes import windll, byref, sizeof, c_int
+
 
 class login_window(tb.Toplevel):
 
@@ -20,18 +18,18 @@ class login_window(tb.Toplevel):
         self.maxsize(500, 400)
         self.iconbitmap("images/empty.ico")
         self.title("")
-        try:
-            HWND = windll.user32.GetParent(self.winfo_id())
-            DWMWA_ATTRIBUTE = 35
-            COLOR = 0x201f1e
-            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
-        except:
-            pass
-    def verify(self, username, password, nameEn, passwordEn, controller):
+
+
+        HWND = windll.user32.GetParent(self.winfo_id())
+        DWMWA_ATTRIBUTE = 35
+        COLOR = 0x5e3d49
+        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+
+    def verify(self, username, password, nameEn, passwordEn):
         # checks if login information is registered in database
         existing_acc = account(username, password, None)
         warninglbl = ""
-        wks = controller.accessAccountData()
+        wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
             self.destroy()
             self.parent.run_launcher()
@@ -46,7 +44,7 @@ class login_window(tb.Toplevel):
             passwordEn.delete(0, 'end')
             
 
-    def page(self, controller):
+    def page(self):
 
         username=tb.StringVar()
         password=tb.StringVar()
@@ -76,7 +74,7 @@ class login_window(tb.Toplevel):
         passwordEn = tb.Entry(entryFrame, show="*", textvariable = password)
         passwordEn.grid(row=1,  column=1)
 
-        loginBtn = tb.Button(entryFrame, text="Log In", command = lambda: [self.verify(username, password, nameEn, passwordEn, controller)])
+        loginBtn = tb.Button(entryFrame, text="Log In", command = lambda: [self.verify(username, password, nameEn, passwordEn)])
         loginBtn.grid(row=2, column=1, pady=15)
 
         registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [self.parent.run_register(), self.destroy()])
