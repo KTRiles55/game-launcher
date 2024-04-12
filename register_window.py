@@ -1,13 +1,16 @@
 import tkinter as tk
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
-from ctypes import windll, byref, sizeof, c_int
 import gspread
 import re
 from account import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 
 
 class register_window(tb.Toplevel):
@@ -24,10 +27,13 @@ class register_window(tb.Toplevel):
         self.title("")
 
         # Window title color
-        HWND = windll.user32.GetParent(self.winfo_id())
-        DWMWA_ATTRIBUTE = 35
-        COLOR = 0x201f1e
-        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x201f1e
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
     def check(self, name, password, email, controller):
         #Logic for checking if info exist

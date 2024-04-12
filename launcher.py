@@ -1,6 +1,8 @@
 from menu import *
-from ctypes import windll, byref, sizeof, c_int
-
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 
 class Launcher(tb.Toplevel):
     def __init__(self, parent):
@@ -13,10 +15,13 @@ class Launcher(tb.Toplevel):
         self.iconbitmap("images/empty.ico")
 
         # Applying the custom window attribute for the border color
-        HWND = windll.user32.GetParent(self.winfo_id())
-        DWMWA_ATTRIBUTE = 35
-        COLOR = 0x201f1e
-        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x201f1e
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
         # Widgets
         self.menu = Menu(self)
