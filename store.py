@@ -1,512 +1,71 @@
 import gspread
+import re
 
-
+#ID	Title	Developer	Price	Tags	Image
 class store():
-    #When games % 6 = 4
-    test1=  [{
-            "title": "title1",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title2",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title3",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title4",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title5",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title6",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title7",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title8",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title9",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title10",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }    ]
 
-    #When games % 6 = 0
-    test2 = [{
-            "title": "title1",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title2",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title3",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title4",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title5",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title6",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title7",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title8",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title9",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title10",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title11",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        } 
-        
-        ]
+    def __init__(self):
+        sa = gspread.service_account(filename="database_key.json")
+        sh = sa.open("accountTest")
 
-        #when games < 6
-    test3 = [{
-            "title": "title1",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title2",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title3",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title4",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }]
+        self.wks = sh.worksheet("store")
 
-        #When pages > 2 
-    test4 = [{
-            "title": "title1",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title2",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title3",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title4",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title5",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title6",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title7",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title8",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title9",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title10",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title11",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }, {
-            "title": "title12",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title13",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title14",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }, {
-            "title": "title15",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title16",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title17",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title18",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title19",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title20",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title21",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title22",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title23",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }, {
-            "title": "title24",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title25",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        },
-        {
-            "title": "title26",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }, {
-            "title": "title27",
-            "dev": "dev1",
-            "price": 1,
-            "tag1": "tag",
-            "tag2": "",
-            "tag3":"tag",
-            "tag4":"tag"
-        }                
-        
-        ]
 
-    def __init__():
+    def sort_prices():
         pass
-
-    def sort_price():
-        pass
+    
+    def get_all_games(self):
+        all_games = self.wks.get_all_records()
+        return all_games
 
     def get_games_sharing_tag(self, selected):
         #return list of games with the same category 
-        pass
+        games = []
+        count = 0 
+        col_count = 31
+        for i in range(1, col_count):
+            tags = self.get_tags(i)
+            if(selected in tags):
+                games.append({})
+                games[count]["Title"] =  self.get_title(i)
+                games[count]["Developer"] =  self.get_dev(i)
+                games[count]["Price"] =  self.get_price(i)
+                count += 1
 
-    def get_game(input):
+
+        return games
+
+    
+
+    def get_game(self,input):
         #gets specific game based on searchbar
         pass
 
     def get_ID():
-        pass
+        pass 
 
-    def get_title():
-        pass
+    def get_title(self,row):
+        column = 2
+        title = self.wks.cell(row, column).value
+        return title
+        
 
-    def get_dev():
-        pass
+    def get_dev(self,row):
+        column = 3
+        dev = self.wks.cell(row, column).value
+        return dev
 
-    def get_price():
-        pass
+    def get_price(self,row):
+        column = 4
+        price = self.wks.cell(row, column).value
+        return price
 
-    def get_tags():
-        pass
+    def get_tags(self,row):
+        column = 5
+        tag = self.wks.cell(row, column).value
+        return tag
 
-    def generate_ID():
+    def generate_ID(self,row):
         pass
     
+

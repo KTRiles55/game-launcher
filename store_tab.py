@@ -1,8 +1,10 @@
 from tkinter import *
+from ttkbootstrap import Label
 import ttkbootstrap as tb
-from store import *
+from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
+from store import *
 import math
 from ttkbootstrap import Style
 
@@ -10,7 +12,10 @@ class StoreTab(tb.Frame):
     def __init__(self,parent):
         super().__init__(parent)
         self.parent = parent
-        self.shared_tag = store.test4
+        self.store = store()
+        self.shared_tag = self.store.get_all_games()
+
+        
         self.max_widgets = 10
         self.current_page = 1
         self.pointer_start = 0
@@ -51,18 +56,16 @@ class StoreTab(tb.Frame):
         previous = self.pointer_start
         if((previous > 0) and (previous  < self.max_widgets)):
             #Special case for when the game widgets are less than layout
-            print("special case")
             self.current_page += 1
             self.pointer_end = self.pointer_start
             decrement = self.pointer_start 
         elif(self.pointer_start == 0):
             #When reached end of page
-            print("End of page")
             decrement =0
         else:
             self.pointer_end = self.pointer_start
         self.pointer_start -= decrement
-        print("pointer_stary=" + str(self.pointer_start)+ "pointer_end=" + str(self.pointer_end)  + "increment=" + str(decrement))
+        
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame)
 
@@ -75,16 +78,16 @@ class StoreTab(tb.Frame):
         img_lbl.grid(row=r, column=c, padx=20)
 
     def get_tags(self, selected, game_frame):
+        
+        self.shared_tag = self.store.get_games_sharing_tag(selected.get())
+
         #Reset list pointers
+        self.pointer_start = 0
         if(len(self.shared_tag) >= self.max_widgets):
             self.pointer_end = self.max_widgets
         else: 
             self.pointer_end = len(self.shared_tag)
-        self.pointer_start = 0
-        #gets list of tags
-        tag = store.test4
-        #tag = get_games_sharing_tags(selected)
-        self.shared_tag = store.test4
+
         self.setup_game_frames(game_frame)
 
     def destroy_frames(self, frame):
@@ -93,7 +96,7 @@ class StoreTab(tb.Frame):
 
     def setup_layout(self):
         # Search Frame at the top
-        scrollable_frame = ScrolledFrame(self, autohide=False)
+        scrollable_frame = ScrolledFrame(self, autohide=False, bootstyle="secondary")
         scrollable_frame.grid(sticky="nsew")
         search_frame = tb.Frame(self)
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
@@ -101,7 +104,7 @@ class StoreTab(tb.Frame):
 
 
         # Game Frame below the search frame
-        game_frame = tb.Frame(scrollable_frame)
+        game_frame = tb.Frame(scrollable_frame, bootstyle="secondary")
         scrollable_frame.grid(row=1, column=0, sticky="nsew")
         game_frame.grid(sticky="nsew")
         scrollable_frame.columnconfigure(0, weight=1)
@@ -114,12 +117,12 @@ class StoreTab(tb.Frame):
 
     def setup_search_frame(self, parent, game_frame):
         # Here you can add widgets to the search_frame
-        genres = ["MMO", "RPG", "Survival", "Simulations"]
+        tags =  ["RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
         selected_tag = StringVar()
         search_label = tb.Label(parent, text="Search:")
-        search_entry = tb.Entry(parent)
+        search_entry = tb.Entry(parent, bootstyle="secondary")
         category_lbl =  tb.Label(parent, text="Categories")
-        category_drop = tb.OptionMenu(parent, selected_tag, *genres, command = lambda tags: [self.get_tags(selected_tag, game_frame)])
+        category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame)])
         cart_btn = tb.Button(parent, text="Cart", command = lambda: self.destroy_frames(game_frame))
         left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(game_frame))
         right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(game_frame))
@@ -140,7 +143,7 @@ class StoreTab(tb.Frame):
         game_frame2 = tb.Frame(parent, bootstyle="secondary")
 
         game_frame1.grid(row=0, column=0, sticky="nse", padx=5, pady=6)
-        game_frame2.grid(row=0, column=1, sticky="nsw", padx=5, pady=6)
+        game_frame2.grid(row=0, column=1, sticky="nsew", padx=5, pady=6)
 
         # Make both game frames expand equally
         parent.columnconfigure([0, 1], weight=1)
@@ -153,18 +156,19 @@ class StoreTab(tb.Frame):
     def generate_game_widgets(self, frames):
         # Game widget locations
         game_widgets = []
-        genres = ["MMO", "RPG", "Survival", "Simulations"]
+        genres =  ["RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
         images = ["green.png"]
 
         j=0 
         frame = frames[0]
+       
         for i in range(self.pointer_start, self.pointer_end):
             game_widget = tb.Frame(frame, bootstyle="bg")
             game_widget.grid(row=i+j, column=0, sticky="nsew", padx=5, pady=5)
             self.render_img(game_widget, images[0], 1, 0)
-            tb.Label(game_widget, text=self.shared_tag[i]["title"]).grid(row=0, column=0, padx=5, pady=5)
-            tb.Label(game_widget, text=self.shared_tag[i]["dev"]).grid(row=0, column=5, padx=5, pady=5)
-            tb.Label(game_widget, text="Price:" + str(self.shared_tag[i]["price"])).grid(row=1, column=1)
+            tb.Label(game_widget, text=self.shared_tag[i]["Title"]).grid(row=0, column=0, padx=5, pady=5)
+            tb.Label(game_widget, text=self.shared_tag[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
+            tb.Label(game_widget, text="Price: " + str(self.shared_tag[i]["Price"])).grid(row=1, column=1)
             tb.Label(game_widget, text="Tags:").grid(row=2, column=1, pady=(0, 10))
             # Generate tags
             for k, genre in enumerate(genres):
@@ -178,7 +182,5 @@ class StoreTab(tb.Frame):
                 frame = frames[1]
             else:
                 frame = frames[0]
-
-
 
 
