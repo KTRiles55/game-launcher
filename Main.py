@@ -4,7 +4,6 @@ from login_window import *
 from register_window import *
 from launcher import *
 
-
 class Main(tb.Window):
 
     def set_theme(self):
@@ -12,11 +11,11 @@ class Main(tb.Window):
 
     def run_register(self):
         register = register_window(self)
-        register.page(self)
+        register.page()
 
     def run_login(self):
         login = login_window(self)
-        login.page(self)
+        login.page()
 
     def run_launcher(self):
         self.launcher = Launcher(self)
@@ -36,7 +35,7 @@ class Main(tb.Window):
         Style().theme_use("techwiz_theme")
 
         login = login_window(self)
-        login.page(self)
+        login.page()
         self.withdraw()
 
 
