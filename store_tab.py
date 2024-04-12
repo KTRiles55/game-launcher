@@ -5,6 +5,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
 from store import *
+from store_off import *
 import math
 from ttkbootstrap import Style
 
@@ -12,7 +13,7 @@ class StoreTab(tb.Frame):
     def __init__(self,parent):
         super().__init__(parent)
         self.parent = parent
-        self.store = store()
+        self.store = store_off()
         self.shared_tag = self.store.get_all_games()
 
         
