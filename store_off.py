@@ -13,13 +13,12 @@ class store_off():
         games = []
         count = 0 
         col_count = 31
-        for i in range(0, col_count-1):
+        for i in range(1, col_count-1):
             games.append({})
-            games[i]["Title"] =  self.get_title(i+1)
-            games[i]["Developer"] =  self.get_dev(i+1)
-            games[i]["Price"] =  self.get_price(i+1)
-            games[i]["Tags"] =  self.get_parsed_tags(i+1)
-
+            games[i-1]["Title"] =  self.get_title(i+1)
+            games[i-1]["Developer"] =  self.get_dev(i+1)
+            games[i-1]["Price"] =  self.get_price(i+1)
+            games[i-1]["Tags"] =  self.get_parsed_tags(i+1)
 
         return games
 
@@ -28,9 +27,8 @@ class store_off():
         games = []
         count = 0 
         col_count = 31
-        for i in range(0, col_count-1):
+        for i in range(1, col_count-1):
             tags = self.get_tags(i+1)
-            print("tags=" + str(tags))
             if(selected in tags):
                 games.append({})
                 games[count]["Title"] =  self.get_title(i+1)
@@ -39,9 +37,7 @@ class store_off():
                 games[count]["Tags"] =  self.get_parsed_tags(i+1)
                 count += 1
 
-
         return games
-    
     def get_game(self,input):
         #gets specific game based on searchbar
         pass
