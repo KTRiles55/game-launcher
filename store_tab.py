@@ -15,6 +15,7 @@ class StoreTab(tb.Frame):
         self.parent = parent
         self.store = store_off()
         self.shared_tag = self.store.get_all_games()
+        self.cart = [] 
 
         
         self.max_widgets = 10
@@ -28,8 +29,12 @@ class StoreTab(tb.Frame):
 
 
         self.setup_layout()
+    def update_page_num(self,lbl):
+        #Change page number
+        page_num = str(math.ceil(self.pointer_end/self.max_widgets)) + "/" + (str(int(math.ceil(len(self.shared_tag))/self.max_widgets)))
+        lbl.config(text=page_num)
 
-    def increment_page(self, game_frame):
+    def increment_page(self,page_num_lbl,  game_frame):
         list_len = len(self.shared_tag)
         increment = self.max_widgets 
         remaining = (list_len - self.pointer_end)
@@ -46,27 +51,32 @@ class StoreTab(tb.Frame):
         else:
             self.pointer_start = self.pointer_end
         self.pointer_end += increment
-        #print("pointer_stary=" + str(self.pointer_start)+ "pointer_end=" + str(self.pointer_end) + "remaining=" + str(remaining) + "increment=" + str(increment))
+
+        self.update_page_num(page_num_lbl)
+
+
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame)
 
 
-    def decrement_page(self, game_frame):
+    def decrement_page(self, page_num_lbl, game_frame):
         list_len = len(self.shared_tag)
         decrement = self.max_widgets
         previous = self.pointer_start
         if((previous > 0) and (previous  < self.max_widgets)):
-            # Special case for when the game widgets are less than layout
+            #Special case for when the game widgets are less than layout
             self.current_page += 1
             self.pointer_end = self.pointer_start
             decrement = self.pointer_start 
         elif(self.pointer_start == 0):
-            # When reached end of page
+            #When reached end of page
             decrement =0
         else:
             self.pointer_end = self.pointer_start
         self.pointer_start -= decrement
-        
+
+        self.update_page_num(page_num_lbl)
+
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame)
 
@@ -78,7 +88,7 @@ class StoreTab(tb.Frame):
         img_lbl.image = img_obj
         img_lbl.grid(row=r, column=c, padx=20)
 
-    def get_tags(self, selected, game_frame):
+    def get_tags(self, selected, game_frame, page_num_lbl):
         
         self.shared_tag = self.store.get_games_sharing_tag(selected.get())
 
@@ -88,6 +98,8 @@ class StoreTab(tb.Frame):
             self.pointer_end = self.max_widgets
         else: 
             self.pointer_end = len(self.shared_tag)
+
+        self.update_page_num(page_num_lbl)
 
         self.setup_game_frames(game_frame)
 
@@ -116,25 +128,30 @@ class StoreTab(tb.Frame):
         self.setup_search_frame(search_frame, game_frame)
         self.setup_game_frames(game_frame)
 
+
     def setup_search_frame(self, parent, game_frame):
         # Here you can add widgets to the search_frame
         tags =  ["RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
+        page_num = str(math.ceil(self.pointer_end/self.max_widgets))
+
         selected_tag = StringVar()
         search_label = tb.Label(parent, text="Search:")
         search_entry = tb.Entry(parent, bootstyle="secondary")
         category_lbl =  tb.Label(parent, text="Categories")
-        category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame)])
+        category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame, page_num_lbl)])
+        page_num_lbl = tb.Label(parent, text=page_num + "/" + str(int(math.ceil(len(self.shared_tag))/self.max_widgets)))
         cart_btn = tb.Button(parent, text="Cart", command = lambda: self.destroy_frames(game_frame))
-        left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(game_frame))
-        right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(game_frame))
+        left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(page_num_lbl,game_frame))
+        right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(page_num_lbl,game_frame))
 
         search_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
         search_entry.grid(row=0, column=1, sticky="nw", padx=5, pady=5)
         category_lbl.grid(row=0, column=2, padx=5)
         category_drop.grid(row=0, column=3, padx=5)
         cart_btn.grid(row=0, column=4, padx=10)
-        left_arrow.grid(row=0, column=5)
-        right_arrow.grid(row=0, column=6)
+        page_num_lbl.grid(row=0, column=7, padx=10)
+        left_arrow.grid(row=0, column=6)
+        right_arrow.grid(row=0, column=8)
 
         parent.columnconfigure(1, weight=1)
 
@@ -169,11 +186,13 @@ class StoreTab(tb.Frame):
             self.render_img(game_widget, images[0], 1, 0)
             tb.Label(game_widget, text=self.shared_tag[i]["Title"]).grid(row=0, column=0, padx=5, pady=5)
             tb.Label(game_widget, text=self.shared_tag[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
-            tb.Label(game_widget, text="Price: " + str(self.shared_tag[i]["Price"])).grid(row=1, column=1)
+            tb.Label(game_widget, text="Price: $" + str(self.shared_tag[i]["Price"])).grid(row=1, column=1)
             tb.Label(game_widget, text="Tags:").grid(row=2, column=1, pady=(0, 10))
             # Generate tags
-            for k, genre in enumerate(genres):
-                tb.Label(game_widget, text=genre).grid(row=2, column=2+k, padx=5, pady=(0, 10))
+            k =0
+            for tag in (self.shared_tag[i]["Tags"]):
+                tb.Label(game_widget, text=tag).grid(row=2, column=2+k, padx=5, pady=(0, 10))
+                k += 1
             tb.Button(game_widget, text="View", bootstyle="primary").grid(row=1, column=5)
             tb.Button(game_widget, text="Add to Cart", bootstyle="primary").grid(row=1, column=4)
             game_widgets.append(game_widget)
@@ -183,5 +202,9 @@ class StoreTab(tb.Frame):
                 frame = frames[1]
             else:
                 frame = frames[0]
+
+
+
+
 
 

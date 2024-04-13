@@ -18,6 +18,7 @@ class store_off():
             games[i]["Title"] =  self.get_title(i+1)
             games[i]["Developer"] =  self.get_dev(i+1)
             games[i]["Price"] =  self.get_price(i+1)
+            games[i]["Tags"] =  self.get_parsed_tags(i+1)
 
 
         return games
@@ -35,6 +36,7 @@ class store_off():
                 games[count]["Title"] =  self.get_title(i+1)
                 games[count]["Developer"] =  self.get_dev(i+1)
                 games[count]["Price"] =  self.get_price(i+1)
+                games[count]["Tags"] =  self.get_parsed_tags(i+1)
                 count += 1
 
 
@@ -67,6 +69,13 @@ class store_off():
         column = 5
         tag = self.wks.cell(row, column).value
         return tag
+
+    
+    def get_parsed_tags(self,row):
+        column = 5
+        tag = self.wks.cell(row, column).value
+        parsed_tags = tag.split(",")
+        return parsed_tags
 
 
 
