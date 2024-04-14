@@ -32,22 +32,23 @@ class StoreTab(tb.Frame):
         self.setup_layout()
 
     def update_cart_button(self, parent, game_frame, scrollable):
-        total_items = 0
-        for i in range(0, len(self.cart)):
-            total_items += int(self.cart[i]["Count"]) 
+        total_items = len(self.cart)
         # If not empty cart than display
         if(len(self.cart) > 0):
             cart_btn = tb.Button(parent, text= str(total_items) + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
-            cart_btn.grid(row=0, column=5)
+            cart_btn.grid(row=0, column=5, padx= 10)
 
     def add_to_cart(self, game):
-        if(game.get("Count") == None):
-            game["Count"] = 1
+        in_cart = False
+        for i in range(len(self.cart)):
+            if(self.cart[i]["Title"]) == game["Title"]:
+                in_cart = True
+                break
+
+        if not (in_cart):
             self.cart.append(game)
         else:
-            game["Count"] = game.get("Count") + 1
-
-        print(self.cart)
+            print("Game already in cart")
 
     def run_checkout(self, search_frame, game_frame, scrollable):
         search_frame.destroy()
@@ -216,7 +217,6 @@ class StoreTab(tb.Frame):
             title_temp.grid(row=0, column=0, padx=5, pady=5)
             tb.Label(game_widget, text=self.shared_tag[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.shared_tag[i]["Price"])).grid(row=1, column=1)
-            #tb.Label(game_widget, text="Tags:").grid(row=2, column=1, pady=(0, 10))
             # Generate tags
             k =0
             for tag in (self.shared_tag[i]["Tags"]):
