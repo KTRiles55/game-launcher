@@ -10,19 +10,17 @@ from checkout_page import *
 import math
 from ttkbootstrap import Style
 
+
 class StoreTab(tb.Frame):
     def __init__(self,parent):
         super().__init__(parent)
         self.parent = parent
         self.grid(sticky="nsew")
-    
 
         self.store = store_off()
         self.shared_tag = self.store.get_all_games()
         self.cart = [] 
 
-
-        
         self.max_widgets = 10
         self.current_page = 1
         self.pointer_start = 0
@@ -33,16 +31,14 @@ class StoreTab(tb.Frame):
 
         self.setup_layout()
 
-
     def update_cart_button(self, parent, game_frame, scrollable):
         total_items = 0
         for i in range(0, len(self.cart)):
             total_items += int(self.cart[i]["Count"]) 
-        #If not empty cart than display
+        # If not empty cart than display
         if(len(self.cart) > 0):
             cart_btn = tb.Button(parent, text= str(total_items) + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
             cart_btn.grid(row=0, column=5)
-        
 
     def add_to_cart(self, game):
         if(game.get("Count") == None):
@@ -60,7 +56,6 @@ class StoreTab(tb.Frame):
         
         #scrollable.destroy()
         #self.destroy_frames(game_frame)
-        
 
     def update_page_num(self,lbl):
         #Change page number
@@ -87,10 +82,8 @@ class StoreTab(tb.Frame):
 
         self.update_page_num(page_num_lbl)
 
-
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame, search_frame, scrollable)
-
 
     def decrement_page(self, page_num_lbl, game_frame, search_frame, scrollable):
         list_len = len(self.shared_tag)
@@ -113,7 +106,6 @@ class StoreTab(tb.Frame):
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame, search_frame, scrollable)
 
-    
     def render_img(self, frame, path, r, c):
         #Must prevent garbarge collection
         img_obj =  ImageTk.PhotoImage(Image.open("images/" + path))
@@ -136,7 +128,6 @@ class StoreTab(tb.Frame):
 
         self.destroy_frames(game_frame)
         self.setup_game_frames(game_frame, search_frame, scrollable)
-        
 
     def destroy_frames(self, frame):
         for widget in frame.winfo_children():
@@ -150,8 +141,6 @@ class StoreTab(tb.Frame):
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
         scrollable_frame = ScrolledFrame(self, autohide=False, bootstyle="secondary")
         scrollable_frame.grid(row=1, column=0)
-        
-
 
         # Game Frame below the search frame
         game_frame = tb.Frame(scrollable_frame, bootstyle="secondary")
@@ -168,7 +157,6 @@ class StoreTab(tb.Frame):
 
         self.setup_search_frame(search_frame, game_frame, search_frame, scrollable_frame)
         self.setup_game_frames(game_frame, search_frame, scrollable_frame)
-
 
     def setup_search_frame(self, parent, game_frame, search_frame, scrollable):
         # Here you can add widgets to the search_frame
@@ -238,7 +226,7 @@ class StoreTab(tb.Frame):
             tb.Button(game_widget, text="Add to Cart", bootstyle="primary", command= lambda i=i: [self.add_to_cart(self.shared_tag[i]), self.update_cart_button(search_frame, parent, scrollable)]).grid(row=1, column=4)
             game_widgets.append(game_widget)
             j += 1
-            #alternating between frames 
+            # alternating between frames
             if((j%2) == 1):
                 frame = frames[1]
             else:

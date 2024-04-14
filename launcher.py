@@ -4,6 +4,7 @@ try:
 except:
     pass
 
+
 class Launcher(tb.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)

@@ -1,7 +1,10 @@
 import tkinter as tk
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
-from ctypes import windll, byref, sizeof, c_int
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 import gspread
 import re
 from account import *
@@ -24,10 +27,13 @@ class register_window(tb.Toplevel):
         self.title("")
 
         # Window title color
-        HWND = windll.user32.GetParent(self.winfo_id())
-        DWMWA_ATTRIBUTE = 35
-        COLOR = 0x5e3d49
-        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x5e3d49
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
     def check(self, name, password, email):  
         #Logic for checking if info exist

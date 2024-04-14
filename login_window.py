@@ -3,7 +3,10 @@ import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
 import gspread
-from ctypes import windll, byref, sizeof, c_int
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 
 
 class login_window(tb.Toplevel):
@@ -19,11 +22,14 @@ class login_window(tb.Toplevel):
         self.iconbitmap("images/empty.ico")
         self.title("")
 
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x5e3d49
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
-        HWND = windll.user32.GetParent(self.winfo_id())
-        DWMWA_ATTRIBUTE = 35
-        COLOR = 0x5e3d49
-        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
 
     def verify(self, username, password, nameEn, passwordEn):
         # checks if login information is registered in database
