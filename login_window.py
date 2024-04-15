@@ -25,7 +25,7 @@ class login_window(tb.Toplevel):
         try:
             HWND = windll.user32.GetParent(self.winfo_id())
             DWMWA_ATTRIBUTE = 35
-            COLOR = 0x5e3d49
+            COLOR = 0x201f1e
             windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
         except:
             pass
@@ -36,7 +36,9 @@ class login_window(tb.Toplevel):
         existing_acc = account(username, password, None)
         warninglbl = ""
         wks = self.parent.accessAccountData()
-        if (existing_acc.is_authentic(wks) == True):
+
+        if(True):
+        # if (existing_acc.is_authentic(wks) == True):
             self.destroy()
             self.parent.run_launcher()
             

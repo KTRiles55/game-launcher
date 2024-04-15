@@ -109,7 +109,7 @@ class StoreTab(tb.Frame):
 
     def render_img(self, frame, path, r, c):
         #Must prevent garbarge collection
-        img_obj =  ImageTk.PhotoImage(Image.open("images/" + path))
+        img_obj = ImageTk.PhotoImage(Image.open("images/" + path))
         img_lbl = tb.Label(frame, image=img_obj)
         img_lbl.image = img_obj
         img_lbl.grid(row=r, column=c, padx=20)
@@ -167,8 +167,8 @@ class StoreTab(tb.Frame):
 
         selected_tag = StringVar()
         search_label = tb.Label(parent, text="Search:")
-        search_entry = tb.Entry(parent, bootstyle="secondary")
-        category_lbl =  tb.Label(parent, text="Categories")
+        search_entry = tb.Entry(parent)
+        category_lbl = tb.Label(parent, text="Categories")
         category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame, page_num_lbl, scrollable, search_frame)])
         page_num_lbl = tb.Label(parent, text=page_num + "/" + str(int(math.ceil(len(self.shared_tag)+1)/self.max_widgets)))
         left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(page_num_lbl,game_frame, parent, scrollable))

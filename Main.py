@@ -4,6 +4,7 @@ from login_window import *
 from register_window import *
 from launcher import *
 
+
 class Main(tb.Window):
 
     def set_theme(self):
@@ -19,14 +20,13 @@ class Main(tb.Window):
 
     def run_launcher(self):
         self.launcher = Launcher(self)
-        
+
      # opens google sheets database
     def accessAccountData(self):
         sa = gspread.service_account(filename="database_key.json")
         account_sheet = sa.open("accountTest")
         account_wks = account_sheet.worksheet("accountInfo")
         return account_wks
-
 
     def __init__(self):
         super().__init__()

@@ -6,8 +6,6 @@ class store_off():
         wb_obj = openpyxl.load_workbook(path)
         self.wks = wb_obj["store"]
 
-
-
     def get_all_games(self):
         #return list of games with the same category 
         games = []
