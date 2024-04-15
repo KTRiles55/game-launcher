@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 class register_window(tb.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
-        self.parent = parent
+        self.parent = parent  
         self.warningLbl = ""
 
         # Window size and title
@@ -85,16 +85,22 @@ class register_window(tb.Toplevel):
         passwordLbl.grid(row=3, column=0, padx=5, pady=10)
 
         nameEn = tb.Entry(entryFrame)
-        nameEn.grid(row=1, column=1)
+        nameEn.grid(row=1, column=1, ipadx=20)
 
         email_entry = tb.Entry(entryFrame)  # Define email_entry
-        email_entry.grid(row=2, column=1)
+        email_entry.grid(row=2, column=1, ipadx=20)
 
         passwordEn = tb.Entry(entryFrame, show="*")
-        passwordEn.grid(row=3, column=1)
+        passwordEn.grid(row=3, column=1, ipadx=20)
+        
+        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting with ONLY alphabetical\ncharacters, but can also be followed by numerical characters.\n")
+        passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing at least one special\ncharacter(#, $, %, &, @,...etc..), at least one capital alphabetical\n character, and at least 1 numerical character.")
+       
+        userNameReqLbl.grid(row=6, column=1)
+        passWordReqLbl.grid(row=7, column=1) 
 
         backBtn = tb.Button(entryFrame, text="Back", command = lambda: [self.parent.run_login(), self.withdraw()])
-        backBtn.grid(row=4, column=0, pady=10)
+        backBtn.grid(row=10, column=0, pady=10)
 
         submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(nameEn, passwordEn, email_entry))
         submitBtn.grid(row=4, column=1, padx=5, pady=10)
