@@ -19,6 +19,32 @@ class checkout_page(tb.Frame):
 
         self.grid()
         self.setup_layout(scrollable_frame)
+        self.init_purchase_types()
+        #print(self.cart)
+
+    def change_copy_status(self, game, status):
+        #"Digital Copy", "Hard Copy"
+        if(status == "Digital Copy"):
+            game["Digital_Copy"] = True
+        else: 
+            game["Digital_Copy"] = False
+        #print(self.cart)
+
+    def change_recipient(self, game, status):
+        #"For myself", "As a gift"]
+        if(status == "For myself"):
+            game["For_Myself"] = True
+        else:
+            game["For_Myself"] = False
+        #print(self.cart)
+
+    def init_purchase_types(self):
+        #default initializes purchase type to digital and for myself
+        for i in range(len(self.cart)):
+            if (self.cart[i].get("Digital_Copy") == None):
+                self.cart[i]["Digital_Copy"] = True
+            if (self.cart[i].get("For_Myself") == None):
+                self.cart[i]["For_Myself"] = True
 
     def render_img(self, frame, path, r, c):
         #Must prevent garbarge collection
@@ -122,12 +148,17 @@ class checkout_page(tb.Frame):
         
 
     def generate_cart(self, frame, order_frame, title_frame):
+        type = ["Digital Copy","Digital Copy", "Hard Copy"]
+        recipient = ["For myself","For myself", "As a gift"]
         game_widgets = []
         images = ["green.png"]
         count = 0
 
         items_num = len(self.cart)
+    
         for i in range(items_num):
+            selected_recipient = StringVar()
+            selected_copy = StringVar()
             game_widget = tb.Frame(frame, bootstyle="bg")
             game_widget.grid(row=i, column=0, sticky="nsew", padx=5, pady=5)
             self.render_img(game_widget, images[0], 1, 0)
@@ -136,7 +167,13 @@ class checkout_page(tb.Frame):
             title_temp.grid(row=0, column=0, padx=5, pady=5)
             tb.Label(game_widget, text=self.cart[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.cart[i]["Price"])).grid(row=1, column=1)
-            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [print(self.cart), self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.generate_cart(frame, order_frame, title_frame)]).grid(row=2, column=2, padx=5, pady=5)
+            c = i
+            recipient_options = tb.OptionMenu(game_widget, selected_recipient, *recipient, bootstyle="outline", command=lambda i=i: self.change_recipient(self.cart[c], selected_recipient.get()))
+            copy_type_options = tb.OptionMenu(game_widget,selected_copy, *type, bootstyle="outline", command=lambda i=i: self.change_copy_status(self.cart[c], selected_copy.get()))
+            recipient_options.grid(row=2, column=2, sticky="nse", padx=10)
+            copy_type_options.grid(row=2, column=3, sticky="nse", padx=10)
+
+            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [print(self.cart), self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.generate_cart(frame, order_frame, title_frame)]).grid(row=1, column=2, padx=5, pady=5)
             game_widgets.append(game_widget)
             count += 1
         
@@ -145,6 +182,7 @@ class checkout_page(tb.Frame):
 
     
     def display_payment_entries(self, parent, title_frame):
+
         self.destroy_frames(parent)
         self.destroy_frames(title_frame)
         self.setup_title(title_frame, "Payment Method")
@@ -155,6 +193,7 @@ class checkout_page(tb.Frame):
         lname_lbl.configure(font=("Helvetica", 12))
         fname_en = tb.Entry(parent)
         lname_en = tb.Entry(parent)
+        
 
         fname_lbl.grid(row=0, column=0, padx=5, sticky="nsw")
         lname_lbl.grid(row=0, column=1, padx=5, sticky="nsw")

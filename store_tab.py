@@ -161,7 +161,7 @@ class StoreTab(tb.Frame):
 
     def setup_search_frame(self, parent, game_frame, search_frame, scrollable):
         # Here you can add widgets to the search_frame
-        tags =  ["RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
+        tags =  ["Category", "RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
         page_num = str(math.ceil(self.pointer_end/self.max_widgets))
         total_items = str(len(self.cart))
 
