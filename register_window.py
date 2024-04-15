@@ -93,8 +93,8 @@ class register_window(tb.Toplevel):
         passwordEn = tb.Entry(entryFrame, show="*")
         passwordEn.grid(row=3, column=1, ipadx=20)
         
-        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting with ONLY alphabetical\ncharacters, but can also be followed by numerical characters.\n")
-        passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing at least one special\ncharacter(#, $, %, &, @,...etc..), at least one capital alphabetical\n character, and at least 1 numerical character.")
+        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting\n with ONLY alphabetical characters, but can also\n be followed by numerical characters.\n")
+        passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing\n at least one special character(#, $, %, &, @,...etc..),\nat least one capital alphabetical character, and at\nleast 1 numerical character.")
        
         userNameReqLbl.grid(row=6, column=1)
         passWordReqLbl.grid(row=7, column=1) 
