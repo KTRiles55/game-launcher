@@ -27,6 +27,9 @@ class Main(tb.Window):
         account_wks = account_sheet.worksheet("accountInfo")
         return account_wks
 
+    # closes app
+    def quitApp(self):
+        self.quit()    
 
     def __init__(self):
         super().__init__()
