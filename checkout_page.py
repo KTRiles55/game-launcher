@@ -86,7 +86,7 @@ class checkout_page(tb.Frame):
         #splits preview into to two
         preview_frame = tb.Frame( scrollable, bootstyle="secondary")
         game_frame = tb.Frame(preview_frame, bootstyle="secondary")
-        order_frame = tb.Frame(preview_frame, bootstyle="bg")
+        order_frame = tb.LabelFrame(preview_frame)
         preview_frame.columnconfigure(0, weight=1)
         preview_frame.columnconfigure(1, weight=1)
         preview_frame.rowconfigure(0, weight=1)
@@ -120,7 +120,7 @@ class checkout_page(tb.Frame):
         back_btn.grid(sticky="w") 
     
     def setup_preview(self,parent, game_frame, order_frame, title_frame):
-        self.generate_cart(game_frame, order_frame, title_frame)
+        self.preview_cart(game_frame, order_frame, title_frame)
         self.generate_total(order_frame)
 
     def calculate_subtotal(self):
@@ -147,7 +147,7 @@ class checkout_page(tb.Frame):
 
         
 
-    def generate_cart(self, frame, order_frame, title_frame):
+    def preview_cart(self, frame, order_frame, title_frame):
         type = ["Digital Copy","Digital Copy", "Hard Copy"]
         recipient = ["For myself","For myself", "As a gift"]
         game_widgets = []
@@ -173,30 +173,103 @@ class checkout_page(tb.Frame):
             recipient_options.grid(row=2, column=2, sticky="nse", padx=10)
             copy_type_options.grid(row=2, column=3, sticky="nse", padx=10)
 
-            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [print(self.cart), self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.generate_cart(frame, order_frame, title_frame)]).grid(row=1, column=2, padx=5, pady=5)
+            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [print(self.cart), self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.preview_cart(frame, order_frame, title_frame)]).grid(row=1, column=2, padx=5, pady=5)
             game_widgets.append(game_widget)
             count += 1
         
-        next_btn = tb.Button(frame, text="Next",  command= lambda: self.display_payment_entries(frame, title_frame), bootstyle="success")
-        next_btn.grid(row=count, column=1, sticky="nsew", padx=5, pady=5)
+        next_btn = tb.Button(frame, text="Continue",  command= lambda: self.display_payment_entries(frame, title_frame), bootstyle="success")
+        next_btn.grid(row=count, column=0, sticky="nsew", padx=5, pady=5)
 
     
     def display_payment_entries(self, parent, title_frame):
-
+        
+        months = ["--","01", "02","03","04","05","06","07","08","09","10","11","12"]
+        years = ["----"]
+        countries = ["United States", "Canada"]
+        states = ["California"]
+        for i in range (2024, 2050):
+            years.append(i)
+        selected_month = StringVar()
+        selected_year = StringVar()
+        selected_countries = StringVar()
+        selected_state = StringVar()
         self.destroy_frames(parent)
         self.destroy_frames(title_frame)
         self.setup_title(title_frame, "Payment Method")
         parent.config(bootstyle="bg")
-        fname_lbl = tb.Label(parent, text="First Name", bootstyle="bg")
-        fname_lbl.configure(font=("Helvetica", 12))
-        lname_lbl = tb.Label(parent, text="Last Name", bootstyle="bg")
-        lname_lbl.configure(font=("Helvetica", 12))
-        fname_en = tb.Entry(parent)
-        lname_en = tb.Entry(parent)
-        
 
-        fname_lbl.grid(row=0, column=0, padx=5, sticky="nsw")
-        lname_lbl.grid(row=0, column=1, padx=5, sticky="nsw")
-        fname_en.grid(row=1, column=0, padx=5,sticky="nsw")
-        lname_en.grid(row=1, column=1, padx=5, sticky="nsw")
+        #Setup frame entry
+        bill_frame = tb.LabelFrame(parent, text="Billing Information")
+        pay_frame = tb.LabelFrame(parent, text="Payment Information")
+        parent.rowconfigure(0, weight=1)
+        parent.rowconfigure(1, weight=1)
+        parent.columnconfigure(0, weight=1)
+
+        #Customize payment frame
+        card_lbl = tb.Label(pay_frame, text="Card number")
+        card_lbl.configure(font=("Helvetica", 10))
+        card_en = tb.Entry(pay_frame)
+        expire_lbl = tb.Label(pay_frame, text="Expiration date")
+        expire_lbl.configure(font=("Helvetica", 10))
+        expire_month_en = tb.OptionMenu(pay_frame, selected_month, *months, bootstyle="outline")
+        expire_year_en = tb.OptionMenu(pay_frame, selected_year, *years, bootstyle="outline")
+        secure_num_lbl = tb.Label(pay_frame, text="Security Code")
+        secure_num_en = tb.Entry(pay_frame)
+
+
+        #Customize billing frame
+        fname_lbl = tb.Label(bill_frame, text="First Name", bootstyle="bg")
+        fname_lbl.configure(font=("Helvetica", 10))
+        lname_lbl = tb.Label(bill_frame, text="Last Name", bootstyle="bg")
+        lname_lbl.configure(font=("Helvetica", 10))
+        fname_en = tb.Entry(bill_frame)
+        lname_en = tb.Entry(bill_frame)
+        city_lbl = tb.Label(bill_frame, text="City", bootstyle="bg")
+        city_lbl.configure(font=("Helvetica", 10))
+        address_lbl = tb.Label(bill_frame, text="Address", bootstyle="bg")
+        address_lbl.configure(font=("Helvetica", 10))
+        state_lbl = tb.Label(bill_frame, text="State", bootstyle="bg")
+        state_lbl.configure(font=("Helvetica", 10))
+        zip_lbl = tb.Label(bill_frame, text="Zip Code", bootstyle="bg")
+        zip_lbl.configure(font=("Helvetica", 10))
+        country_lbl = tb.Label(bill_frame, text="Country", bootstyle="bg")
+        country_lbl.configure(font=("Helvetica", 10))
+        city_en = tb.Entry(bill_frame)
+        address_en = tb.Entry(bill_frame)
+        zip_en = tb.Entry(bill_frame)
+        country_en = tb.OptionMenu(bill_frame, selected_countries, *countries, bootstyle="outline")
+        state_en = tb.OptionMenu(bill_frame, selected_state, *states, bootstyle="outline")
+        next_btn = tb.Button(bill_frame,text="Continue", bootstyle="success")
+
+        #Layout payment frame
+        pay_frame.grid(row=0, column=0,  pady=10, sticky="nsew")
+        card_lbl.grid(row=0, column=0, padx=5, sticky="nsw")
+        card_en.grid(row=1, column=0, padx=5, pady=(0,10),sticky="nsw")
+        expire_lbl.grid(row=0, column=1, padx=10, sticky="nsew")
+        expire_month_en.grid(row=1, column=1, padx=10,  sticky="nsew")
+        expire_year_en.grid(row=1, column=2, padx=10, sticky="nsw")
+        secure_num_lbl.grid(row=0, column=3, padx=10, sticky="nsw")
+        secure_num_en.grid(row=1, column=3, padx=10, sticky="nse")
+
+        #Layout billing frame
+        bill_frame.grid(row=1, column= 0, pady=10, sticky="nsew")
+        fname_lbl.grid(row=0, column=0, padx=20, sticky="nsw")
+        lname_lbl.grid(row=0, column=1, padx=20, sticky="nsw")
+        fname_en.grid(row=1, column=0, padx=20,sticky="nsew")
+        lname_en.grid(row=1, column=1, padx=20, sticky="nsew")
+
+        city_lbl.grid(row=2, column=0, padx=20,pady=(15,0), sticky="nsw")
+        address_lbl.grid(row=2, column=1, padx=20,pady=(15,0), sticky="nsw")
+        city_en.grid(row=3, column=0, padx=20,pady=(0,15), sticky="nsew")
+        address_en.grid(row=3, column=1, padx=20,pady=(0,15), sticky="nsew")
+
+        state_lbl.grid(row=4, column=0, padx=20,pady=(15,0), sticky="nsw")
+        zip_lbl.grid(row=4, column=1, padx=20,pady=(15,0), sticky="nsw")
+        state_en.grid(row=5, column=0, padx=20,pady=(0,15), sticky="nsew")
+        zip_en.grid(row=5, column=1, padx=20,pady=(0,15), sticky="nsew")
+
+        country_lbl.grid(row=6, column=0, padx=20,pady=(15,0), sticky="nsw")
+        country_en.grid(row=7, column=0, padx=20,pady=(0,15), sticky="nsew")
+
+        next_btn.grid(row=8, column=1, padx=20, pady=20, sticky="nse")
 
