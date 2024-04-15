@@ -3,10 +3,7 @@ import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
 import gspread
-try:
-    from ctypes import windll, byref, sizeof, c_int
-except:
-    pass
+from ctypes import windll, byref, sizeof, c_int
 
 
 class login_window(tb.Toplevel):
@@ -22,14 +19,11 @@ class login_window(tb.Toplevel):
         self.iconbitmap("images/empty.ico")
         self.title("")
 
-        try:
-            HWND = windll.user32.GetParent(self.winfo_id())
-            DWMWA_ATTRIBUTE = 35
-            COLOR = 0x5e3d49
-            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
-        except:
-            pass
 
+        HWND = windll.user32.GetParent(self.winfo_id())
+        DWMWA_ATTRIBUTE = 35
+        COLOR = 0x5e3d49
+        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
 
     def verify(self, username, password, nameEn, passwordEn):
         # checks if login information is registered in database
@@ -62,17 +56,11 @@ class login_window(tb.Toplevel):
         entryFrame = tb.Frame(self, borderwidth=10)
         entryFrame.pack()
 
-        warningFrame = tb.Frame(self)
-        warningFrame.pack()
-
         nameLbl = tb.Label(entryFrame, text="Username")
         nameLbl.grid(row=0,  column=0, pady=15)
 
         passwordLbl = tb.Label(entryFrame, text="Password")
         passwordLbl.grid(row=1,  column=0, pady=15)
-
-        warningLbl = tb.Label(warningFrame)
-        warningLbl.pack_forget()
 
         nameEn = tb.Entry(entryFrame, textvariable = username)
         nameEn.grid(row=0,  column=1)
@@ -85,3 +73,6 @@ class login_window(tb.Toplevel):
 
         registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [self.parent.run_register(), self.destroy()])
         registerBtn.grid(row=2, column=0)
+        
+        exitBtn = tb.Button(entryFrame, text="Exit app", command = lambda: self.parent.quitApp())
+        exitBtn.grid(row=3, column=6)
