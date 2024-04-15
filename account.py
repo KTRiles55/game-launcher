@@ -1,5 +1,6 @@
 # class for user account
 import gspread 
+import re
 
 
 class account():
@@ -9,18 +10,31 @@ class account():
         self.password = password
         self.email = email
 
-    def is_valid_username(username):
-        pass
+    def is_valid_username(self, username):
+        #checks if username is valid
+        name_pattern = re.compile(r'^([a-zA-Z_]+[0-9]*){5,20}$')
+        if (name_pattern.search(username.get()) == None):
+            return False 
+        return True
 
-    def is_valid_email(email):
-        pass
+    def is_valid_email(self, email):
+        #checks if email is valid
+        email_pattern = re.compile(r'[a-zA-Z\.-_\+]+@[a-zA-z-]+\.(com|org|net|gov)')
+        if (email_pattern.search(email.get()) == None):
+            return False
+        return True
 
-    def is_valid_password(password):
-        pass
+    def is_valid_password(self, password): 
+        #checks if password is valid
+        passw_pattern1 = re.compile(r'^(\S){10,25}$')
+        passw_pattern2 = re.compile(r'\w*\W+\w*[A-Z]+\w*[0-9]+\w*')
+        if ((passw_pattern1.search(password.get()) == None) or (passw_pattern2.search(password.get()) == None)):
+            return False 
+        return True
 
-    def is_valid(username, email, password):
+    def is_valid(self, username, email, password):
         #verifies if registration format
-        if(is_valid_username(username) and is_valid_email(email) and is_valid_password(password)):
+        if(self.is_valid_username(username) and self.is_valid_email(email) and self.is_valid_password(password)):
             return True
         else:
             return False
