@@ -156,8 +156,8 @@ class StoreTab(tb.Frame):
         #check if cart is empty when returning from checkout
         self.update_cart_button(search_frame, game_frame, scrollable_frame)
 
-        self.setup_search_frame(search_frame, game_frame, search_frame, scrollable_frame)
         self.setup_game_frames(game_frame, search_frame, scrollable_frame)
+        self.setup_search_frame(search_frame, game_frame, search_frame, scrollable_frame)
 
     def setup_search_frame(self, parent, game_frame, search_frame, scrollable):
         # Here you can add widgets to the search_frame
@@ -166,8 +166,9 @@ class StoreTab(tb.Frame):
         total_items = str(len(self.cart))
 
         selected_tag = StringVar()
+        searching = StringVar()
         search_label = tb.Label(parent, text="Search:")
-        search_entry = tb.Entry(parent)
+        search_entry = tb.Entry(parent, textvariable=searching)
         category_lbl = tb.Label(parent, text="Categories")
         category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame, page_num_lbl, scrollable, search_frame)])
         page_num_lbl = tb.Label(parent, text=page_num + "/" + str(int(math.ceil(len(self.shared_tag)+1)/self.max_widgets)))
@@ -183,6 +184,19 @@ class StoreTab(tb.Frame):
         right_arrow.grid(row=0, column=8)
 
         parent.columnconfigure(1, weight=1)
+
+         # Create a binding on the entry box
+        search_entry.bind("<Return>", lambda event: self.search(searching.get(), parent, game_frame, scrollable,))
+
+    
+    def search(self, entry, search_frame, parent, scrollable):
+        self.shared_tag=self.store.get_related_search(entry)
+        #Updates pointers but max related games in a page is set to 10
+        self.pointer_start = 0
+        self.pointer_end = len(self.shared_tag)
+        self.destroy_frames(parent)
+        self.setup_game_frames( parent, search_frame, scrollable)
+        print(self.shared_tag)
 
     def setup_game_frames(self, parent, search_frame, scrollable):
         # Split the game area into two frames
