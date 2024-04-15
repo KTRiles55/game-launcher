@@ -38,8 +38,7 @@ class login_window(tb.Toplevel):
         warninglbl = ""
         wks = self.parent.accessAccountData()
 
-        if(True):
-        # if (existing_acc.is_authentic(wks) == True):
+        if (existing_acc.is_authentic(wks) == True):
             self.destroy()
             self.parent.run_launcher()
             
@@ -83,5 +82,5 @@ class login_window(tb.Toplevel):
         registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [self.parent.run_register(), self.destroy()])
         registerBtn.grid(row=2, column=0)
         
-        exitBtn = tb.Button(entryFrame, text="Exit app", command = lambda: self.parent.quitApp())
+        exitBtn = tb.Button(entryFrame, text="Exit app", bootstyle="danger", command = lambda: self.parent.quitApp())
         exitBtn.grid(row=3, column=6)

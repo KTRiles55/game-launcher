@@ -41,7 +41,7 @@ class LibraryTab(tb.Frame):
         search_container.grid(row=0, column=0, sticky="ew", padx=3, pady=2)
         self.game_search = tb.Entry(search_container)
         self.game_search.pack(side="right")
-        self.game_search.bind("<KeyRelease>", self.key_release)
+        self.game_search.bind("<KeyRelease>", self.on_key_release)
 
         # Icon Img
         self.icon_img = PhotoImage(file="images/search.png")
@@ -108,7 +108,7 @@ class LibraryTab(tb.Frame):
     def create_context_menu(self, iid):
         self.context_menu = tb.Menu(self, tearoff=0)
         self.context_menu.add_command(label="Favorite", command=lambda : self.add_to_favorites(iid))
-        self.context_menu.add_command(label="Unfavorite", command=lambda : self.remove_favorite(iid))
+        self.context_menu.add_command(label="Remove from favorites", command=lambda : self.remove_favorite(iid))
 
     def add_to_favorites(self, iid):
         # Add a game to favorites
@@ -134,16 +134,16 @@ class LibraryTab(tb.Frame):
         self.game_list.item(self.favorite_games_id, text=f"Favorite Games [{len(self.favorite_games)}]")
         self.game_list.item(self.installed_games_id, text=f"Installed Games [{len(self.installed_games)}]")
 
-    def key_release(self, event):
+    def on_key_release(self, event):
         self.filter_games()
 
     def filter_games(self):
         # Update visible games depending on content of search entry
         search_query = self.game_search.get().lower()
         # matching_games = [game for game in self.games if search_query in game.lower()]
-        self.update_treeview(search_query)
+        self.update_game_list(search_query)
 
-    def update_treeview(self, search_query):
+    def update_game_list(self, search_query):
         # Clear and re-create categories while searching
         for title_id, games_list in [(self.installed_games_id, self.installed_games), (self.favorite_games_id, self.favorite_games)]:
             for game_id in self.game_list.get_children(title_id):
