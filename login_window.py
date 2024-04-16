@@ -3,8 +3,6 @@ import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
 import gspread
-from ctypes import windll, byref, sizeof, c_int
-
 try:
     from ctypes import windll, byref, sizeof, c_int
 except:

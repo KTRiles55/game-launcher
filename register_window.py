@@ -1,15 +1,12 @@
 import tkinter as tk
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
-from ctypes import windll, byref, sizeof, c_int
 import gspread
 import re
 from account import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-
 try:
     from ctypes import windll, byref, sizeof, c_int
 except:
