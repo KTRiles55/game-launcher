@@ -239,7 +239,7 @@ class checkout_page(tb.Frame):
         zip_en = tb.Entry(bill_frame)
         country_en = tb.OptionMenu(bill_frame, selected_countries, *countries, bootstyle="outline")
         state_en = tb.OptionMenu(bill_frame, selected_state, *states, bootstyle="outline")
-        next_btn = tb.Button(bill_frame,text="Continue", bootstyle="success")
+        next_btn = tb.Button(bill_frame,text="Continue", command=lambda: [self.destroy_frames(parent),self.setup_title(title_frame, "Purchase complete. Thank you!"), self.display_receipt(parent,title_frame)], bootstyle="success")
 
         #Layout payment frame
         pay_frame.grid(row=0, column=0,  pady=10, sticky="nsew")
@@ -273,3 +273,31 @@ class checkout_page(tb.Frame):
 
         next_btn.grid(row=8, column=1, padx=20, pady=20, sticky="nse")
 
+ 
+    def display_receipt(self, parent, title_frame):
+        game_widgets = []
+        images = ["green.png"]
+        code = "123-4567-890"
+        count = 0
+        title = tb.Label(parent, text="Your purchases.")
+        title.configure(font=("Helvetica", 16))
+        title.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        items_num = len(self.cart)
+        #Displays game and code if gift option
+        for i in range(0, items_num):
+            selected_recipient = StringVar()
+            selected_copy = StringVar()
+            game_widget = tb.Frame(parent, bootstyle="bg")
+            game_widget.grid(row=i+1, column=0, sticky="nsew", padx=5, pady=5)
+            self.render_img(game_widget, images[0], 1, 0)
+            title_temp = tb.Label(game_widget, text=self.cart[i]["Title"])
+            title_temp.config(font=("Helvetica", 12))
+            title_temp.grid(row=0, column=0, padx=5, pady=5)
+            if(self.cart[i]["For_Myself"] == False):
+                code_temp = tb.Label(game_widget, text="Code: " + code,bootstyle="light")
+                code_temp.config(font=("Helvetica", 12))
+                code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
+
+        #Empties cart
+        self.cart.clear()
