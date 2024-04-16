@@ -8,13 +8,14 @@ from ctypes import windll, byref, sizeof, c_int
 try:
     from ctypes import windll, byref, sizeof, c_int
 except:
-    pass
+    pass 
 
 class login_window(tb.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+        self.warningLbl = ""
 
         self.geometry("500x400")
         #self.config(bg="#493d5e")
@@ -27,7 +28,7 @@ class login_window(tb.Toplevel):
         try:
             HWND = windll.user32.GetParent(self.winfo_id())
             DWMWA_ATTRIBUTE = 35
-            COLOR = 0x201f1e
+            COLOR = 0x5e3d49
             windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
         except:
             pass
@@ -35,17 +36,19 @@ class login_window(tb.Toplevel):
     def verify(self, username, password, nameEn, passwordEn):
         # checks if login information is registered in database
         existing_acc = account(username, password, None)
-        warninglbl = ""
-        wks = self.parent.accessAccountData()
+        if (self.warningLbl != ""):
+            self.warningLbl.destroy()        
 
+        wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
             self.destroy()
             self.parent.run_launcher()
             
         else:
-            warninglbl = tk.Label(self, text="Incorrect username/password entered.\nPlease re-enter login credentials.")
+            self.warningLbl = tk.Label(self, text="Incorrect username/password entered.\nPlease re-enter login credentials.")
+            
             #displays warning
-            warninglbl.pack()
+            self.warningLbl.pack()
 
             #empties entries
             nameEn.delete(0, 'end')
@@ -60,7 +63,7 @@ class login_window(tb.Toplevel):
         loginTitle = tb.Label(self, text="Login")
         loginTitle.pack(pady=10)
         loginTitle.config(font=("Courier", 20))
-
+         
         entryFrame = tb.Frame(self, borderwidth=10)
         entryFrame.pack()
 
@@ -82,5 +85,5 @@ class login_window(tb.Toplevel):
         registerBtn = tb.Button(entryFrame, text="Register", command = lambda: [self.parent.run_register(), self.destroy()])
         registerBtn.grid(row=2, column=0)
         
-        exitBtn = tb.Button(entryFrame, text="Exit app", bootstyle="danger", command = lambda: self.parent.quitApp())
+        exitBtn = tb.Button(entryFrame, text="Exit app", command = lambda: self.parent.quitApp())
         exitBtn.grid(row=3, column=6)
