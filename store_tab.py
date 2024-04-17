@@ -36,7 +36,7 @@ class StoreTab(tb.Frame):
         # If not empty cart than display
         if(len(self.cart) > 0):
             cart_btn = tb.Button(parent, text= str(total_items) + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
-            cart_btn.grid(row=0, column=5, padx= 10)
+            cart_btn.grid(row=0, column=1, sticky="nse")
 
     def add_to_cart(self, game):
         in_cart = False
@@ -170,17 +170,19 @@ class StoreTab(tb.Frame):
         search_label = tb.Label(parent, text="Search:")
         search_entry = tb.Entry(parent, textvariable=searching)
         category_lbl = tb.Label(parent, text="Categories")
+        back_btn = tb.Button(parent, text="Back", bootstyle="outline")
         category_drop = tb.OptionMenu(parent, selected_tag, *tags, command = lambda tags: [self.get_tags(selected_tag, game_frame, page_num_lbl, scrollable, search_frame)])
         page_num_lbl = tb.Label(parent, text=page_num + "/" + str(int(math.ceil(len(self.shared_tag)+1)/self.max_widgets)))
         left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(page_num_lbl,game_frame, parent, scrollable))
         right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(page_num_lbl,game_frame, parent, scrollable))
 
-        search_label.grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        search_entry.grid(row=0, column=1, sticky="nw", padx=5, pady=5)
-        category_lbl.grid(row=0, column=2, padx=5)
-        category_drop.grid(row=0, column=3, padx=5)
-        page_num_lbl.grid(row=0, column=7, padx=10)
-        left_arrow.grid(row=0, column=6)
+        back_btn.grid(row=-0, column=0, sticky="nw")
+        search_label.grid(row=0, column=2, sticky="w")
+        search_entry.grid(row=0, column=3, sticky="nw")
+        category_lbl.grid(row=0, column=4, padx=5)
+        category_drop.grid(row=0, column=5, padx=5)
+        page_num_lbl.grid(row=0, column=6, padx=10)
+        left_arrow.grid(row=0, column=7)
         right_arrow.grid(row=0, column=8)
 
         parent.columnconfigure(1, weight=1)
@@ -236,7 +238,7 @@ class StoreTab(tb.Frame):
             for tag in (self.shared_tag[i]["Tags"]):
                 tb.Label(game_widget, text=tag).grid(row=2, column=2+k, padx=5, pady=(0, 10))
                 k += 1
-            tb.Button(game_widget, text="View", bootstyle="primary").grid(row=1, column=5)
+            tb.Button(game_widget, text="View", bootstyle="primary", command= lambda i=i: [print(self.shared_tag[i]["Title"]), self.preview_game(i, search_frame, parent, scrollable)]).grid(row=1, column=5)
             tb.Button(game_widget, text="Add to Cart", bootstyle="primary", command= lambda i=i: [self.add_to_cart(self.shared_tag[i]), self.update_cart_button(search_frame, parent, scrollable)]).grid(row=1, column=4)
             game_widgets.append(game_widget)
             j += 1
@@ -247,6 +249,57 @@ class StoreTab(tb.Frame):
                 frame = frames[0]
 
 
+    def preview_game(self, id, search_frame, game_frame, scrollable):
+        #render_img(self, frame, path, r, c)
+        fill = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cursus in hac habitasse platea dictumst quisque sagittis purus sit. Viverra justo nec ultrices dui. Fermentum odio eu feugiat pretium nibh ipsum. Scelerisque mauris pellentesque pulvinar pellentesque habitant. Commodo sed egestas egestas fringilla phasellus. Quis eleifend quam adipiscing vitae proin. Augue mauris augue neque gravida in fermentum et sollicitudin. Varius vel pharetra vel turpis nunc. Orci phasellus egestas tellus rutrum tellus pellentesque eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Nulla aliquet enim tortor at auctor urna nunc. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Sodales ut eu sem integer vitae justo. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Sit amet est placerat in egestas erat imperdiet sed. Sed arcu non odio euismod. Lorem ipsum dolor sit amet consectetur adipiscing elit. Donec ac odio tempor orci dapibus. Vulputate eu scelerisque felis imperdiet proin fermentum."
+        game_frame.destroy()
+        self.destroy_frames(search_frame)
+        back_btn = tb.Button(search_frame, text="Back", bootstyle="outline", command=lambda: self.setup_layout())
+        back_btn.grid(row=0, column=0, sticky="nsew")
+        
+        game_title = tb.Frame(scrollable, bootstyle="bg")
+        banner_frame = tb.Frame(scrollable, bootstyle="bg")
+        body_frame = tb.Frame(scrollable, bootstyle="bg")
+        scrollable.config(bootstyle="bg")
+        describe_frame = tb.Text(body_frame,width=100)
+        describe_frame.config(font=("Helvetica", 12))
+        support_frame = tb.Text(body_frame)
+        support_frame.config(font=("Helvetica", 12))
+
+    
+        
+        banner_frame.grid(row=0, column=0, sticky= "ns")
+        game_title.grid(row=1,column=0, sticky="ns")
+        body_frame.grid(row=2, column=0, sticky= "ns")
+        self.render_img(banner_frame, "games/pong/banner.png", 0, 0)
+        describe_frame.grid(row=0, column=0, sticky="nsew")
+        describe_frame.insert(END, fill)
+        support_frame.grid(row=0, column=1,sticky="nsew")
+
+        title = tb.Label(game_title, text = self.shared_tag[id]["Title"])
+        title.config(font=("Helvetica", 20))
+        title.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
+
+        #Support frame filler
+        tag_lbl = tb.Label(support_frame, text="Tags: ")
+        tag_lbl.config(font=("Helvetica", 10))
+        tag_lbl.grid(row=0, column=0, padx=5, pady=(0, 10))
+        i = 1
+        for tag in (self.shared_tag[id]["Tags"]):
+            temp_tag = tb.Label(support_frame, text=tag, bootstyle="light")
+            temp_tag.config(font=("Courier", 10))
+            temp_tag.grid(row=0, column=0+i, padx=5, pady=(0, 10))
+            i += 1
+        
+        release_lbl = tb.Label(support_frame, text="Release Date: " )
+        release_lbl.config(font=("Helvetica", 10))
+        release_lbl.grid(row=1, column=0, padx=5,  pady=(0, 10))
+        date_lbl = tb.Label(support_frame, text=str(self.shared_tag[id]["Release_Date"]))
+        date_lbl.config(font=("Courier", 10))
+        date_lbl.grid(row=1, column=1, padx=5,  pady=(0, 10))
+
+        cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.shared_tag[id]), self.setup_layout()])
+        cart_btn.grid(row=2, column=1, padx=5,  pady=(0, 10), columnspan = 2, sticky="ns")
 
 
 

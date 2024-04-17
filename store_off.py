@@ -6,6 +6,7 @@ class store_off():
         wb_obj = openpyxl.load_workbook(path)
         self.wks = wb_obj["store"]
         
+
     def get_all_games(self):
         #return list of games with the same category 
         games = []
@@ -19,6 +20,7 @@ class store_off():
             tag = self.wks.cell(i+1, 5).value
             parsed_tags = tag.split(",")
             games[i-1]["Tags"] =  parsed_tags
+            games[i-1]["Release_Date"] =  self.wks.cell(i+1, 6).value
 
         return games
 
@@ -36,6 +38,7 @@ class store_off():
                 games[count]["Price"] =  self.wks.cell(i+1, 4).value
                 parsed_tags = tags.split(",")
                 games[count]["Tags"] =  parsed_tags
+                games[count]["Release_Date"] = self.wks.cell(i+1, 6).value
                 count += 1
 
         return games
@@ -66,8 +69,8 @@ class store_off():
                 games[count]["Price"] =  self.wks.cell(i+1, 4).value
                 parsed_tags = tags.split(",")
                 games[count]["Tags"] =  parsed_tags
+                games[count]["Release_Date"] = self.wks.cell(i+1, 6).value
                 count += 1 
         return games
-
 
 
