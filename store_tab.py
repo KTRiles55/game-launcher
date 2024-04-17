@@ -187,10 +187,9 @@ class StoreTab(tb.Frame):
 
         parent.columnconfigure(1, weight=1)
 
-         # Create a binding on the entry box
+        # Create a binding on the entry box
         search_entry.bind("<Return>", lambda event: self.search(searching.get(), parent, game_frame, scrollable,))
 
-    
     def search(self, entry, search_frame, parent, scrollable):
         self.shared_tag=self.store.get_related_search(entry)
         #Updates pointers but max related games in a page is set to 10

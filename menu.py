@@ -21,7 +21,7 @@ class Menu(tb.Frame):
 
         # Tabs
         friends_tab = FriendsTab(notebook)
-        library_tab = LibraryTab(notebook)
+        library_tab = LibraryTab(notebook, notebook)
         store_tab = StoreTab(notebook)
         settings_tab = SettingsTab(notebook)
 

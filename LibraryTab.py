@@ -3,6 +3,7 @@ from tkinter import *
 from ttkbootstrap import Label
 import ttkbootstrap as tb
 from store_off import *
+from menu import *
 from store_tab import StoreTab
 from ttkbootstrap.constants import *
 from PIL import ImageTk, Image 
@@ -10,7 +11,7 @@ from ttkbootstrap import Style
 
 
 class LibraryTab(tb.Frame):
-    def __init__(self,parent):
+    def __init__(self,parent, notebook):
         super().__init__(parent)
         self.parent = parent
 
@@ -18,44 +19,66 @@ class LibraryTab(tb.Frame):
         owned_games = store_off()
         self.wks = owned_games.wks
 
+        self.notebook = notebook
+
         # Create list of games in sheet
         self.installed_games = [row[1] for row in self.wks.iter_rows(min_row=2, values_only=True) if row[1]]
         self.favorite_games = []
 
         self.setup_library()
 
+    def load_game_store(self):
+        self.notebook.select(1)
+        raise NotImplementedError("Will be implemented in future")
+
     def setup_library(self):
-        # Search Frame at the top
-        main_frame = tb.Frame(self)
-        self.setup_left_layout()
+        self.setup_game_list_layout()
 
-    def setup_left_layout(self):
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=7)
+    def setup_game_list_layout(self):
+
+        # Set the grid configuration for the main container
+        self.columnconfigure(0, weight=0, minsize=360)
+        self.columnconfigure(1, weight=0)
+        self.columnconfigure(2, weight=0)
+
+        # Header
         self.rowconfigure(0, weight=0)
-        self.rowconfigure(1, weight=0)
-        self.rowconfigure(2, weight=6)
+        # TreeView
+        self.rowconfigure(1, weight=1)
 
-        # Search box
-        search_container = tb.Frame(self)
-        search_container.grid(row=0, column=0, sticky="ew", padx=3, pady=2)
-        self.game_search = tb.Entry(search_container)
+        # Create a container for the header elements
+        header_container = tb.Frame(self)
+        header_container.grid(row=0, column=0, sticky="ew", pady=5)
+        header_container.columnconfigure(1, weight=1)
+
+        # Frame for the title
+        title_frame = tb.Frame(header_container)
+        title_frame.grid(row=0, column=0, sticky="w")
+        title_label = tb.Label(title_frame, text="My Games", font=("Unispace", "16"))
+        title_label.pack(side="left", padx=8)
+
+        # Frame for the search entry
+        search_frame = tb.Frame(header_container)
+        search_frame.grid(row=0, column=2, sticky="e")
+        self.game_search = tb.Entry(search_frame)
         self.game_search.pack(side="right")
         self.game_search.bind("<KeyRelease>", self.on_key_release)
 
-        # Icon Img
+        # Frame for the search icon
+        icon_frame = tb.Frame(header_container)
+        icon_frame.grid(row=0, column=1, sticky="e")
         self.icon_img = PhotoImage(file="images/search.png")
-        icon_label = tb.Label(search_container, image=self.icon_img)
-        icon_label.pack(side="right")
+        icon_label = tb.Label(icon_frame, image=self.icon_img)
+        icon_label.pack(side="right", padx=0)
 
-        # Title
-        title_frame = tb.Frame(self)
-        title_label = tb.Label(self, text=" My Games", font=("Unispace", "16"), borderwidth=20, border=True)
-        title_frame.grid(row=0, column=0)
-        title_label.grid(row=0, column=0, sticky="nw")
+        # Frame for game info (right side)
+        info_frame = tb.Frame(self)
+        info_frame.columnconfigure(0, weight=0)
+        info_frame.rowconfigure(1, weight=0)
+        info_frame.grid(row=1, column=2, stick="nsew", padx=3, pady=0)
 
-        # self.visible_items = {}
         self.setup_game_list()
+        self.setup_default_info_layout(info_frame)
         self.populate_games()
 
     def setup_game_list(self):
@@ -69,10 +92,62 @@ class LibraryTab(tb.Frame):
                   background=[("selected", "#45484b"), ("!selected", "#45484b")])
 
         self.game_list = tb.Treeview(self, show="tree", style="Custom.Treeview")
-        self.game_list.grid(row=2, column=0, sticky="nsew", padx=3, pady=3)
+        self.game_list.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=3)
 
         # Right click menu
         self.game_list.bind("<Button-3>", self.on_right_click)
+
+        # Action when game from TreeView is selected
+        self.game_list.bind("<<TreeviewSelect>>", self.on_game_select)
+
+    def setup_default_info_layout(self, info_frame):
+        # Clear contents of game info frame after selection is changed
+        self.info_frame = info_frame
+        for frame in self.info_frame.winfo_children():
+            frame.destroy()
+
+        tk.Label(self.info_frame, text="Welcome!",
+                 font=("Unispace", 20)).pack(padx=20, pady=20)
+
+    def on_game_select(self, event):
+        # Displays info for game depending on selection
+        selected_game = self.game_list.selection()
+        if selected_game:
+            # Exclude category titles i.e("Installed Games")
+            if "category" in self.game_list.item(selected_game[0], "tags"):
+                return
+
+            game = self.game_list.item(selected_game[0], "text")
+            self.update_info_frame(game)
+
+    def check_button_exist(self):
+
+        if not hasattr(self, "button_frame"):
+            # Create button frame if it doesn't exist
+            self.button_frame = tb.Frame(self)
+            self.button_frame.grid(row=0, column=2, sticky="nw", padx=5, pady=5)
+
+    def update_info_frame(self, game):
+
+        # Clear contents of game info frame after selection is changed
+        for frame in self.info_frame.winfo_children():
+            if not isinstance(frame, tb.Frame):
+                frame.destroy()
+
+        self.check_button_exist()
+
+        def back_command():
+            self.setup_default_info_layout(self.info_frame)
+            self.button_frame.destroy()
+            del self.button_frame
+
+        # Button creation to go back to info page
+        tb.Button(self.button_frame, text="Back", command=back_command).grid(row=0, column=0, sticky="nw", padx=3)
+
+        tb.Button(self.button_frame, text="Store Page", command=self.load_game_store).grid(row=0, column=1, sticky="nw", padx=3)
+
+        # Display game name
+        tb.Label(self.info_frame, text=f"{game}", font=("Helvetica", 30)).grid(row=1, column=0, sticky="w", padx=10, pady=10)
 
     def populate_games(self):
         # Create TreeView categories for games

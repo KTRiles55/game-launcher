@@ -1,14 +1,16 @@
 import tkinter as tk
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
-from ctypes import windll, byref, sizeof, c_int
 import gspread
 import re
 from account import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 
 class register_window(tb.Toplevel):
     def __init__(self, parent):
@@ -24,10 +26,13 @@ class register_window(tb.Toplevel):
         self.title("")
 
         # Window title color
-        HWND = windll.user32.GetParent(self.winfo_id())
-        DWMWA_ATTRIBUTE = 35
-        COLOR = 0x201f1e
-        windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x201f1e
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
     def check(self, name, password, email):  
         #Logic for checking if info exist
@@ -82,7 +87,7 @@ class register_window(tb.Toplevel):
         emailLbl.grid(row=2, column=0, padx=5, pady=10)
 
         passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
-        passwordLbl.grid(row=3, column=0, padx=5, pady=10)
+        passwordLbl.grid(row=3, column=0, padx=5, pady=10)  
 
         nameEn = tb.Entry(entryFrame)
         nameEn.grid(row=1, column=1, ipadx=20)

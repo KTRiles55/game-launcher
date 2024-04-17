@@ -12,8 +12,8 @@ class account():
 
     def is_valid_username(self, username):
         #checks if username is valid
-        name_pattern = re.compile(r'^([a-zA-Z_]+[0-9]*){5,20}$')
-        if (name_pattern.search(username.get()) == None):
+        name_pattern = re.compile(r'[a-zA-Z_]+[0-9]*') 
+        if (name_pattern.search(username.get()) == None) or (re.search(r'\w{5,20}', username.get()) == None):
             return False 
         return True
 
@@ -27,8 +27,7 @@ class account():
     def is_valid_password(self, password): 
         #checks if password is valid
         passw_pattern1 = re.compile(r'^(\S){10,25}$')
-        passw_pattern2 = re.compile(r'\w*\W+\w*[A-Z]+\w*[0-9]+\w*')
-        if ((passw_pattern1.search(password.get()) == None) or (passw_pattern2.search(password.get()) == None)):
+        if ((passw_pattern1.search(password.get()) == None) or ((re.search(r'\W+',password.get()) == None) or (re.search(r'[A-Z]+',password.get()) == None) or (re.search(r'\d+',password.get()) == None))):
             return False 
         return True
 
@@ -41,14 +40,15 @@ class account():
 
     def is_authentic(self, wks):
         #verifies if login info is in database
-        userCell = self.findUsername(wks)
-        passwCell = self.findPassword(wks)
+        if ((self.username.get() != "") and (self.password.get() != "")):
+            userCell = self.findUsername(wks)
+            passwCell = self.findPassword(wks)
         
-        #if user information is unidentified
-        if ((userCell == None) or (passwCell == None)):
-            return False
+            #if user information is unidentified
+            if ((userCell != None) and (passwCell != None)):
+                return True
         
-        return True
+        return False
                
 
     def find_sheet(self, wks):
