@@ -18,8 +18,8 @@ class Main(tb.Window):
         login = login_window(self)
         login.page()
 
-    def run_launcher(self):
-        self.launcher = Launcher(self)
+    def run_launcher(self, user):
+        self.launcher = Launcher(self, user)
         
      # opens google sheets database
     def accessAccountData(self):

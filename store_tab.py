@@ -12,10 +12,12 @@ from ttkbootstrap import Style
 
 
 class StoreTab(tb.Frame):
-    def __init__(self,parent):
+    def __init__(self,parent, user):
         super().__init__(parent)
         self.parent = parent
         self.grid(sticky="nsew")
+        self.user =user
+        print(self.user.get_game_details())
 
         self.store = store_off()
         self.shared_tag = self.store.get_all_games()

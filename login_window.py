@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
+from user import *
 import gspread
 try:
     from ctypes import windll, byref, sizeof, c_int
@@ -39,8 +40,9 @@ class login_window(tb.Toplevel):
 
         wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
+            self.user = user(username)
             self.destroy()
-            self.parent.run_launcher()
+            self.parent.run_launcher(self.user)
             
         else:
             self.warningLbl = tk.Label(self, text="Incorrect username/password entered.\nPlease re-enter login credentials.")

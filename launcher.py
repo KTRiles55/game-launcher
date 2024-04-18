@@ -6,10 +6,10 @@ except:
 
 
 class Launcher(tb.Toplevel):
-    def __init__(self, parent):
+    def __init__(self, parent, user):
         super().__init__(parent)
         self.parent = parent
-
+        
         self.title("")
         self.geometry('1400x844')
         self.minsize(1400, 844)
@@ -25,7 +25,7 @@ class Launcher(tb.Toplevel):
             pass
 
         # Widgets
-        self.menu = Menu(self)
+        self.menu = Menu(self, user)
 
         # Run program
         self.mainloop()
