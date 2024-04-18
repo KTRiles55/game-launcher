@@ -11,11 +11,11 @@ import math
 from ttkbootstrap import Style
 
 class checkout_page(tb.Frame):
-    def __init__(self, parent, scrollable_frame, cart):
+    def __init__(self, parent, scrollable_frame, cart, user):
         super().__init__(parent)
         self.parent = parent
         self.cart = cart
-
+        self.user = user
 
         self.grid()
         self.setup_layout(scrollable_frame)
@@ -300,4 +300,7 @@ class checkout_page(tb.Frame):
                 code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
 
         #Empties cart
-        self.cart.clear()
+        for i in range(len(self.cart)):
+            item = self.cart.pop()
+            title = item["Title"]
+            self.user.update_library(title)

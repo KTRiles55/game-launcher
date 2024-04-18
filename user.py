@@ -3,9 +3,9 @@ import openpyxl
 class user():
     def __init__(self, username):
         path = "database_offline.xlsx"
-        wb_obj = openpyxl.load_workbook(path)
-        self.wks_account = wb_obj["accountInfo"]
-        self.wks_store = wb_obj["store"]
+        self.wb_obj = openpyxl.load_workbook(path)
+        self.wks_account = self.wb_obj["accountInfo"]
+        self.wks_store = self.wb_obj["store"]
 
         self.username = username
  
@@ -32,6 +32,7 @@ class user():
 
     def get_parsed_library(self):
         #Library section of database format ex: Witcher 3/Civilization VI/Half-Life: Alyx
+        #Gets library only as titles
         library = self.wks_account.cell(self.find_row(),4).value
         if(library != None):
             parsed_library = library.split("/")
@@ -40,10 +41,14 @@ class user():
 
     def update_library(self, new):
         library = self.wks_account.cell(self.find_row(),4).value
-        if library != NONE:
-            library +=  new + "/" 
-            return library
-        return []
+        if(library != None):
+            self.wks_account.cell(self.find_row(),4).value +=  "/" + new 
+        else:
+            self.wks_account.cell(self.find_row(),4).value = new
+        self.wb_obj.save("database_offline.xlsx")
+        print(self.wks_account.cell(self.find_row(),4).value)
+
+
     
     def get_game_details(self):
         titles = self.get_parsed_library()

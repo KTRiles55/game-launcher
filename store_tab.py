@@ -17,7 +17,7 @@ class StoreTab(tb.Frame):
         self.parent = parent
         self.grid(sticky="nsew")
         self.user =user
-        print(self.user.get_game_details())
+        #print(self.user.get_game_details())
 
         self.store = store_off()
         self.shared_tag = self.store.get_all_games()
@@ -42,20 +42,25 @@ class StoreTab(tb.Frame):
 
     def add_to_cart(self, game):
         in_cart = False
+        library = self.user.get_parsed_library()
+        #Checks if in cart
         for i in range(len(self.cart)):
             if(self.cart[i]["Title"]) == game["Title"]:
                 in_cart = True
                 break
+        #Checks if in library
+        if game["Title"] in library:
+            in_cart = True
 
         if not (in_cart):
             self.cart.append(game)
         else:
-            print("Game already in cart")
+            print("Game already in cart or in library")
 
     def run_checkout(self, search_frame, game_frame, scrollable):
         search_frame.destroy()
         game_frame.destroy()
-        checkout_page(self, scrollable, self.cart)
+        checkout_page(self, scrollable, self.cart, self.user)
         
         #scrollable.destroy()
         #self.destroy_frames(game_frame)
