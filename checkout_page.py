@@ -7,6 +7,8 @@ from PIL import ImageTk, Image
 from store import *
 from store_off import *
 from store_tab import *
+import string
+import random
 import math
 from ttkbootstrap import Style
 
@@ -16,27 +18,33 @@ class checkout_page(tb.Frame):
         self.parent = parent
         self.cart = cart
         self.user = user
+        self.store = store_off()
 
         self.grid()
         self.setup_layout(scrollable_frame)
         self.init_purchase_types()
         #print(self.cart)
 
-    def change_copy_status(self, game, status):
-        #"Digital Copy", "Hard Copy"
-        if(status == "Digital Copy"):
-            game["Digital_Copy"] = True
-        else: 
-            game["Digital_Copy"] = False
-        #print(self.cart)
+    def change_copy_status(self, status):
+        #type = ["Digital Copies","Digital Copies", "Hard Copies"]
+        #recipient = ["For myself","For myself", "As gifts"]
+        for i in range(len(self.cart)):
+            game = self.cart[i]
+            if(status == "Digital Copies"):
+                game["Digital_Copy"] = True
+            else: 
+                game["Digital_Copy"] = False
+        
 
-    def change_recipient(self, game, status):
-        #"For myself", "As a gift"]
-        if(status == "For myself"):
-            game["For_Myself"] = True
-        else:
-            game["For_Myself"] = False
-        #print(self.cart)
+    def change_recipient(self, status):
+        for i in range(len(self.cart)):
+            game = self.cart[i]
+            if(status == "For myself"):
+                game["For_Myself"] = True
+            else:
+                game["For_Myself"] = False
+        
+        print("status=" + str(status) + ", " + game["Title"])
 
     def init_purchase_types(self):
         #default initializes purchase type to digital and for myself
@@ -148,51 +156,63 @@ class checkout_page(tb.Frame):
         
 
     def preview_cart(self, frame, order_frame, title_frame):
-        type = ["Digital Copy","Digital Copy", "Hard Copy"]
-        recipient = ["For myself","For myself", "As a gift"]
+        type = ["Digital Copies","Digital Copies", "Hard Copies"]
+        recipient = ["For myself","For myself", "As gifts"]
         game_widgets = []
+        recipient_status = []
         images = ["green.png"]
-        count = 0
+        #Counter for number of widgets, to place continue
+        count = 2
 
         items_num = len(self.cart)
-    
+        selected_recipient = IntVar(value=0)
+        selected_copy = IntVar(value=0)
+        recipient_options = tb.OptionMenu(frame, selected_recipient, *recipient, bootstyle="outline", command=lambda recipient: self.change_recipient(selected_recipient.get()))
+        copy_type_options = tb.OptionMenu(frame,selected_copy, *type, bootstyle="outline", command=lambda type: self.change_copy_status(selected_copy.get()))
+        recipient_options.grid(row=0, column=1, sticky="nse", padx=10)
+        copy_type_options.grid(row=0, column=2, sticky="nse", padx=10)
+
         for i in range(items_num):
-            selected_recipient = StringVar()
-            selected_copy = StringVar()
+            selected_recipient = IntVar(value=0)
+            selected_copy = IntVar(value=0)
             game_widget = tb.Frame(frame, bootstyle="bg")
-            game_widget.grid(row=i, column=0, sticky="nsew", padx=5, pady=5)
+            game_widget.grid(row=i+2, column=0, sticky="nsew", padx=5, pady=5)
             self.render_img(game_widget, images[0], 1, 0)
             title_temp = tb.Label(game_widget, text=self.cart[i]["Title"])
             title_temp.config(font=("Helvetica", 12))
             title_temp.grid(row=0, column=0, padx=5, pady=5)
             tb.Label(game_widget, text=self.cart[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.cart[i]["Price"])).grid(row=1, column=1)
-            c = i
-            recipient_options = tb.OptionMenu(game_widget, selected_recipient, *recipient, bootstyle="outline", command=lambda i=i: self.change_recipient(self.cart[c], selected_recipient.get()))
-            copy_type_options = tb.OptionMenu(game_widget,selected_copy, *type, bootstyle="outline", command=lambda i=i: self.change_copy_status(self.cart[c], selected_copy.get()))
-            recipient_options.grid(row=2, column=2, sticky="nse", padx=10)
-            copy_type_options.grid(row=2, column=3, sticky="nse", padx=10)
+            recipient_status.append(selected_recipient.get())
 
-            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [print(self.cart), self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.preview_cart(frame, order_frame, title_frame)]).grid(row=1, column=2, padx=5, pady=5)
+            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [ self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.preview_cart(frame, order_frame, title_frame)]).grid(row=2, column=2, padx=5, pady=5)
             game_widgets.append(game_widget)
             count += 1
         
-        next_btn = tb.Button(frame, text="Continue",  command= lambda: self.display_payment_entries(frame, title_frame), bootstyle="success")
-        next_btn.grid(row=count, column=0, sticky="nsew", padx=5, pady=5)
-
+        
+        next_btn = tb.Button(frame, text="Continue",  command= lambda: [print(self.cart), self.display_payment_entries(frame, title_frame)], bootstyle="success")
+        next_btn.grid(row=count, column=0, sticky="nsew", padx=5, pady=10)
+    
     
     def display_payment_entries(self, parent, title_frame):
         
         months = ["--","01", "02","03","04","05","06","07","08","09","10","11","12"]
         years = ["----"]
-        countries = ["United States", "Canada"]
-        states = ["California"]
+        countries = ["United States", "United States","Canada"]
+        states = ["California", "California",]
         for i in range (2024, 2050):
             years.append(i)
-        selected_month = StringVar()
-        selected_year = StringVar()
-        selected_countries = StringVar()
-        selected_state = StringVar()
+        card_num = StringVar()
+        expire_month = StringVar()
+        expire_year = StringVar()
+        country = StringVar()
+        state = StringVar()
+        fname = StringVar()
+        lname = StringVar()
+        address = StringVar()
+        zip = StringVar()
+        city = StringVar()
+        secure_num = StringVar()
         self.destroy_frames(parent)
         self.destroy_frames(title_frame)
         self.setup_title(title_frame, "Payment Method")
@@ -208,12 +228,12 @@ class checkout_page(tb.Frame):
         #Customize payment frame
         card_lbl = tb.Label(pay_frame, text="Card number")
         card_lbl.configure(font=("Helvetica", 10))
-        card_en = tb.Entry(pay_frame)
+        card_en = tb.Entry(pay_frame, textvariable=card_num)
         expire_lbl = tb.Label(pay_frame, text="Expiration date")
         expire_lbl.configure(font=("Helvetica", 10))
-        expire_month_en = tb.OptionMenu(pay_frame, selected_month, *months, bootstyle="outline")
-        expire_year_en = tb.OptionMenu(pay_frame, selected_year, *years, bootstyle="outline")
-        secure_num_lbl = tb.Label(pay_frame, text="Security Code")
+        expire_month_en = tb.OptionMenu(pay_frame, expire_month, *months, bootstyle="outline")
+        expire_year_en = tb.OptionMenu(pay_frame, expire_year, *years, bootstyle="outline")
+        secure_num_lbl = tb.Label(pay_frame, textvariable=secure_num, text="Security Number")
         secure_num_en = tb.Entry(pay_frame)
 
 
@@ -222,8 +242,8 @@ class checkout_page(tb.Frame):
         fname_lbl.configure(font=("Helvetica", 10))
         lname_lbl = tb.Label(bill_frame, text="Last Name", bootstyle="bg")
         lname_lbl.configure(font=("Helvetica", 10))
-        fname_en = tb.Entry(bill_frame)
-        lname_en = tb.Entry(bill_frame)
+        fname_en = tb.Entry(bill_frame, textvariable=fname)
+        lname_en = tb.Entry(bill_frame, textvariable=lname)
         city_lbl = tb.Label(bill_frame, text="City", bootstyle="bg")
         city_lbl.configure(font=("Helvetica", 10))
         address_lbl = tb.Label(bill_frame, text="Address", bootstyle="bg")
@@ -234,12 +254,14 @@ class checkout_page(tb.Frame):
         zip_lbl.configure(font=("Helvetica", 10))
         country_lbl = tb.Label(bill_frame, text="Country", bootstyle="bg")
         country_lbl.configure(font=("Helvetica", 10))
-        city_en = tb.Entry(bill_frame)
-        address_en = tb.Entry(bill_frame)
-        zip_en = tb.Entry(bill_frame)
-        country_en = tb.OptionMenu(bill_frame, selected_countries, *countries, bootstyle="outline")
-        state_en = tb.OptionMenu(bill_frame, selected_state, *states, bootstyle="outline")
-        next_btn = tb.Button(bill_frame,text="Continue", command=lambda: [self.destroy_frames(parent),self.setup_title(title_frame, "Purchase complete. Thank you!"), self.display_receipt(parent,title_frame)], bootstyle="success")
+        city_en = tb.Entry(bill_frame, textvariable=city)
+        address_en = tb.Entry(bill_frame, textvariable=address)
+        zip_en = tb.Entry(bill_frame, textvariable=zip)
+        country_en = tb.OptionMenu(bill_frame, country, *countries, bootstyle="outline")
+        state_en = tb.OptionMenu(bill_frame, state, *states, bootstyle="outline")
+        warning_lbl = tb.Label(bill_frame, text="An entry is missing", bootstyle="danger")
+        warning_lbl.config(font=("Courier", 10))
+        next_btn = tb.Button(bill_frame, text="Continue",  command= lambda: self.check_entries( parent, title_frame, entries, warning_lbl), bootstyle="success")
 
         #Layout payment frame
         pay_frame.grid(row=0, column=0,  pady=10, sticky="nsew")
@@ -248,7 +270,7 @@ class checkout_page(tb.Frame):
         expire_lbl.grid(row=0, column=1, padx=10, sticky="nsew")
         expire_month_en.grid(row=1, column=1, padx=10,  sticky="nsew")
         expire_year_en.grid(row=1, column=2, padx=10, sticky="nsw")
-        secure_num_lbl.grid(row=0, column=3, padx=10, sticky="nsw")
+        secure_num_lbl.grid(row=0, column=2, padx=10, sticky="nsw")
         secure_num_en.grid(row=1, column=3, padx=10, sticky="nse")
 
         #Layout billing frame
@@ -270,18 +292,49 @@ class checkout_page(tb.Frame):
 
         country_lbl.grid(row=6, column=0, padx=20,pady=(15,0), sticky="nsw")
         country_en.grid(row=7, column=0, padx=20,pady=(0,15), sticky="nsew")
+        next_btn.grid(row=9, column=1, padx=20, pady=20, sticky="nse")
 
-        next_btn.grid(row=8, column=1, padx=20, pady=20, sticky="nse")
+        entries = [card_num,
+        expire_month,
+        expire_year,
+        country,
+        state,
+        fname,
+        lname,
+        address,
+        zip,
+        city]
+        
 
+
+
+    def check_entries(self, parent, title_frame, entries, warning_lbl):
+        #Only checks if empty
+        for entry in enumerate(entries):
+            #entry is in tuple form
+            if len(entry[1].get()) == 0:
+                warning_lbl.grid(row=8, column=1, padx=20, pady=20, sticky="nse") 
+                return
+        self.destroy_frames(parent)
+        self.setup_title(title_frame, "Purchase complete. Thank you!")
+        self.display_receipt(parent,title_frame)
  
+    def generate_giftcodes(self):
+        for i in range(len(self.cart)):
+            #Length of code
+            N = 7
+            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
+            self.cart[i]["Code"] = code
+
     def display_receipt(self, parent, title_frame):
         game_widgets = []
         images = ["green.png"]
-        code = "123-4567-890"
         count = 0
         title = tb.Label(parent, text="Your purchases.")
         title.configure(font=("Helvetica", 16))
         title.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.generate_giftcodes()
+        
 
         items_num = len(self.cart)
         #Displays game and code if gift option
@@ -295,12 +348,22 @@ class checkout_page(tb.Frame):
             title_temp.config(font=("Helvetica", 12))
             title_temp.grid(row=0, column=0, padx=5, pady=5)
             if(self.cart[i]["For_Myself"] == False):
-                code_temp = tb.Label(game_widget, text="Code: " + code,bootstyle="light")
+                code_temp = tb.Label(game_widget, text="Gift Code: " + self.cart[i]["Code"],bootstyle="light")
                 code_temp.config(font=("Helvetica", 12))
                 code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
 
         #Empties cart
-        for i in range(len(self.cart)):
-            item = self.cart.pop()
-            title = item["Title"]
-            self.user.update_library(title)
+        #Checks only the recipient from first order because order is bundled
+        if(self.cart[i]["For_Myself"]):
+            for i in range(len(self.cart)):
+                item = self.cart.pop()
+                title = item["Title"]
+                self.user.update_library(title)
+
+        else:
+        #For gift option
+            for i in range(len(self.cart)):
+                item = self.cart.pop()
+                code = item["Code"]    
+                title = item["Title"]
+                self.store.append_codes(title, code)

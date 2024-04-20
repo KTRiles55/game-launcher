@@ -1,10 +1,12 @@
 import openpyxl 
+import string
+import random
 
 class store_off():
     def __init__(self):
         path = "database_offline.xlsx"
-        wb_obj = openpyxl.load_workbook(path)
-        self.wks = wb_obj["store"]
+        self.wb_obj = openpyxl.load_workbook(path)
+        self.wks = self.wb_obj["store"]
         
 
     def get_all_games(self):
@@ -29,6 +31,9 @@ class store_off():
         games = []
         count = 0 
         col_count = 31
+        if(selected == "All"):
+            return self.get_all_games()
+    
         for i in range(1, col_count-1):
             tags = self.wks.cell(i+1, 5).value
             if(selected in tags):
@@ -73,4 +78,51 @@ class store_off():
                 count += 1 
         return games
 
+    def get_game_inrow(self, row):
+        #Skips the title of a column
+        game = {}
+        game[count]["Title"] =  self.wks.cell(row+1, 2).value
+        game[count]["Developer"] =  self.wks.cell(row+1, 3).value
+        game[count]["Price"] =  self.wks.cell(row+1, 4).value
+        parsed_tags = tags.split(",")
+        game[count]["Tags"] =  parsed_tags
+        game[count]["Release_Date"] = self.wks.cell(row+1, 6).value
+        return game
+
+    def append_codes(self, title, code):
+        #Code format 0D5YE91/1245NMT
+        count = 0
+        col_count = 31
+        for i in range(1, col_count-1):
+            #Title cell location
+            title_cell = self.wks.cell(i+1, 2).value
+            if(title == title_cell):
+                code_cell = self.wks.cell(i+1, 7).value
+                if(code_cell != None):
+                    self.wks.cell(i+1, 7).value  += "/" + code 
+                else:
+                    self.wks.cell(i+1, 7).value =  code
+        self.wb_obj.save("database_offline.xlsx")
+
+    def validate_gift(self,input):
+        count = 0
+        col_count = 31
+        row_found = 0
+        valid = False
+        for i in range(1, col_count-1):
+            codes = self.wks.cell(i+1, 7).value
+            if(codes != None):
+                parsed_codes = codes.split("/")
+                for j in range(len(parsed_codes)):
+                    if(parsed_codes[i] == input):
+                        gift = self.get_game_inrow(self, i)
+                        parsed_codes.pop(j)
+                        row_found = 1
+                        break
+        if(valid == True):
+            self.wks.cell(i+1, 7).value = None
+            for i in range(len(parsed_codes)):
+                self.wks.cell(i+1, 7).value = parsed_codes[i]
+            return gift
+        return None
 

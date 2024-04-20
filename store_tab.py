@@ -37,8 +37,8 @@ class StoreTab(tb.Frame):
         total_items = len(self.cart)
         # If not empty cart than display
         if(len(self.cart) > 0):
-            cart_btn = tb.Button(parent, text= str(total_items) + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
-            cart_btn.grid(row=0, column=1, sticky="nse")
+            cart_btn = tb.Button(parent, text= "(" + str(total_items) + ") " + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
+            cart_btn.grid(row=0, column=1, padx=10, sticky="nse")
 
     def add_to_cart(self, game):
         in_cart = False
@@ -168,7 +168,7 @@ class StoreTab(tb.Frame):
 
     def setup_search_frame(self, parent, game_frame, search_frame, scrollable):
         # Here you can add widgets to the search_frame
-        tags =  ["Category", "RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
+        tags =  ["Category", "All", "RPG", "Simulation", "Strategy", "Multiplayer", "Sandbox", "Puzzle"]
         page_num = str(math.ceil(self.pointer_end/self.max_widgets))
         total_items = str(len(self.cart))
 
@@ -260,7 +260,7 @@ class StoreTab(tb.Frame):
         fill = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cursus in hac habitasse platea dictumst quisque sagittis purus sit. Viverra justo nec ultrices dui. Fermentum odio eu feugiat pretium nibh ipsum. Scelerisque mauris pellentesque pulvinar pellentesque habitant. Commodo sed egestas egestas fringilla phasellus. Quis eleifend quam adipiscing vitae proin. Augue mauris augue neque gravida in fermentum et sollicitudin. Varius vel pharetra vel turpis nunc. Orci phasellus egestas tellus rutrum tellus pellentesque eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Nulla aliquet enim tortor at auctor urna nunc. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Sodales ut eu sem integer vitae justo. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Sit amet est placerat in egestas erat imperdiet sed. Sed arcu non odio euismod. Lorem ipsum dolor sit amet consectetur adipiscing elit. Donec ac odio tempor orci dapibus. Vulputate eu scelerisque felis imperdiet proin fermentum."
         game_frame.destroy()
         self.destroy_frames(search_frame)
-        back_btn = tb.Button(search_frame, text="Back", bootstyle="outline", command=lambda: self.setup_layout())
+        back_btn = tb.Button(search_frame, text="Back", bootstyle="outline", command=lambda: [self.setup_layout(), self.destroy_frames(search_frame)])
         back_btn.grid(row=0, column=0, sticky="nsew")
         
         game_title = tb.Frame(scrollable, bootstyle="bg")

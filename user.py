@@ -1,5 +1,6 @@
 import openpyxl 
 
+
 class user():
     def __init__(self, username):
         path = "database_offline.xlsx"
@@ -31,7 +32,7 @@ class user():
         return get_email
 
     def get_parsed_library(self):
-        #Library section of database format ex: Witcher 3/Civilization VI/Half-Life: Alyx
+        #Library section of database format ex: The Witcher 3: Wild Hunt/Civilization VI/Half-Life: Alyx/Command & Conquer/Doom
         #Gets library only as titles
         library = self.wks_account.cell(self.find_row(),4).value
         if(library != None):
@@ -51,6 +52,7 @@ class user():
 
     
     def get_game_details(self):
+        #Get games in library in dictionary format
         titles = self.get_parsed_library()
         library = []
         count = 0 
