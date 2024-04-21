@@ -3,6 +3,7 @@ import gspread
 from login_window import *
 from register_window import *
 from launcher import *
+import pydoc
 
 
 class Main(tb.Window):
@@ -45,3 +46,4 @@ class Main(tb.Window):
 
 main = Main()
 main.mainloop()
+pydoc.writedoc('tech_wiz_launcher')
