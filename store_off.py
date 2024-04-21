@@ -10,7 +10,10 @@ class store_off():
         
 
     def get_all_games(self):
-        #return list of games with the same category 
+        """
+            returns:
+            all games in as a dictionary in a list
+        """
         games = []
         count = 0 
         col_count = 31
@@ -28,6 +31,12 @@ class store_off():
 
     def get_games_sharing_tag(self, selected):
         #return list of games with the same category 
+        """
+            args:
+            a category for a game (string)
+            returns:
+            all games that have the category in a list
+        """
         games = []
         count = 0 
         col_count = 31
@@ -47,12 +56,13 @@ class store_off():
                 count += 1
 
         return games
-    
-    def get_game(self,input):
-        #gets specific game based on searchbar
-        pass
+
 
     def get_all_titles(self):
+        """
+            returns:
+            a list of all game titles
+        """
         titles = []
         col_count = 31
         for i in range(1, col_count-1):
@@ -61,6 +71,12 @@ class store_off():
         return titles
 
     def get_related_search(self, entry):
+        """
+            args:
+            value from search bar (string)
+            returns:
+            a list of all games with similar title as a dictionary 
+        """
         games = []
         count = 0
         col_count = 31
@@ -80,6 +96,12 @@ class store_off():
 
     def get_game_inrow(self, row):
         #Skips the title of a column
+        """
+            args:
+            row number for a game (int)
+            returns:
+            a dictionary of game and related details
+        """
         game = {}
         game[count]["Title"] =  self.wks.cell(row+1, 2).value
         game[count]["Developer"] =  self.wks.cell(row+1, 3).value
@@ -91,6 +113,14 @@ class store_off():
 
     def append_codes(self, title, code):
         #Code format 0D5YE91/1245NMT
+         """
+            args:
+            title and gift code are both strings
+
+            updates the database with valid gift codes
+            
+        """
+
         count = 0
         col_count = 31
         for i in range(1, col_count-1):
@@ -105,6 +135,12 @@ class store_off():
         self.wb_obj.save("database_offline.xlsx")
 
     def validate_gift(self,input):
+        """
+            args:
+            gift code as string
+            returns:
+            a game if valid
+        """
         count = 0
         col_count = 31
         row_found = 0

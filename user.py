@@ -11,6 +11,10 @@ class user():
         self.username = username
  
     def find_row(self):
+        """
+            returns:
+            the row the username belongs to (int)
+        """
         name = ""
         row = 0
         row_count = 14
@@ -21,19 +25,35 @@ class user():
         return 1
 
     def get_username(self):
+        """
+            returns:
+            username (string)
+        """
         return self.username.get()
 
     def get_password(self):
+        """
+            returns:
+            user's password (string)
+        """
         password = self.wks_account.cell(self.find_row(), 2).value
         return password
 
     def get_email(self):
+         """
+            returns:
+            user's email (string)
+        """
         email = self.wks_account.cell(self.find_row(), 3).value
         return get_email
 
     def get_parsed_library(self):
         #Library section of database format ex: The Witcher 3: Wild Hunt/Civilization VI/Half-Life: Alyx/Command & Conquer/Doom
         #Gets library only as titles
+        """
+            returns:
+            titles of games belonging to the user
+        """
         library = self.wks_account.cell(self.find_row(),4).value
         if(library != None):
             parsed_library = library.split("/")
@@ -41,18 +61,27 @@ class user():
         return []
 
     def update_library(self, new):
+        """
+            args:
+            title of a game (string)
+            updates the users library by appending the string in the cell with the title a purchase
+        
+        """
         library = self.wks_account.cell(self.find_row(),4).value
         if(library != None):
             self.wks_account.cell(self.find_row(),4).value +=  "/" + new 
         else:
             self.wks_account.cell(self.find_row(),4).value = new
         self.wb_obj.save("database_offline.xlsx")
-        print(self.wks_account.cell(self.find_row(),4).value)
-
-
+ 
     
     def get_game_details(self):
         #Get games in library in dictionary format
+        """
+            returns:
+            user's library in a list with each game as a dictionary
+        """
+
         titles = self.get_parsed_library()
         library = []
         count = 0 
