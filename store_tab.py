@@ -12,11 +12,15 @@ from ttkbootstrap import Style
 
 
 class StoreTab(tb.Frame):
-    def __init__(self,parent, user):
+    def __init__(self, parent, user, default_game_title=None):
         super().__init__(parent)
         self.parent = parent
         self.grid(sticky="nsew")
-        self.user =user
+        self.user = user
+
+        self.default_game_title = default_game_title
+        if self.default_game_title:
+            self.preview_default_game()
         #print(self.user.get_game_details())
 
         self.store = store_off()
@@ -32,6 +36,12 @@ class StoreTab(tb.Frame):
             self.pointer_end = len(self.shared_tag)
 
         self.setup_layout()
+
+    def preview_game_by_title(self, title):
+        # Find the game in shared_tag using the title
+        game_data = next((game for game in self.shared_tag if game['Title'] == title), None)
+        if game_data:
+            self.preview_game(game_data, search_frame=self, game_frame=self, scrollable=True)
 
     def update_cart_button(self, parent, game_frame, scrollable):
         total_items = len(self.cart)
@@ -254,9 +264,12 @@ class StoreTab(tb.Frame):
             else:
                 frame = frames[0]
 
-
-    def preview_game(self, id, search_frame, game_frame, scrollable):
-        #render_img(self, frame, path, r, c)
+    def preview_game(self, game_date_or_id, search_frame, game_frame, scrollable):
+        if isinstance(game_date_or_id, int):
+            game_date = self.shared_tag[game_date_or_id]
+        else:
+            game_date = game_date_or_id
+        # render_img(self, frame, path, r, c)
         fill = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cursus in hac habitasse platea dictumst quisque sagittis purus sit. Viverra justo nec ultrices dui. Fermentum odio eu feugiat pretium nibh ipsum. Scelerisque mauris pellentesque pulvinar pellentesque habitant. Commodo sed egestas egestas fringilla phasellus. Quis eleifend quam adipiscing vitae proin. Augue mauris augue neque gravida in fermentum et sollicitudin. Varius vel pharetra vel turpis nunc. Orci phasellus egestas tellus rutrum tellus pellentesque eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Nulla aliquet enim tortor at auctor urna nunc. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Sodales ut eu sem integer vitae justo. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Sit amet est placerat in egestas erat imperdiet sed. Sed arcu non odio euismod. Lorem ipsum dolor sit amet consectetur adipiscing elit. Donec ac odio tempor orci dapibus. Vulputate eu scelerisque felis imperdiet proin fermentum."
         game_frame.destroy()
         self.destroy_frames(search_frame)
@@ -282,7 +295,7 @@ class StoreTab(tb.Frame):
         describe_frame.insert(END, fill)
         support_frame.grid(row=0, column=1,sticky="nsew")
 
-        title = tb.Label(game_title, text = self.shared_tag[id]["Title"])
+        title = tb.Label(game_title, text = self.shared_tag[game_date_or_id]["Title"])
         title.config(font=("Helvetica", 20))
         title.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
 
@@ -291,7 +304,7 @@ class StoreTab(tb.Frame):
         tag_lbl.config(font=("Helvetica", 10))
         tag_lbl.grid(row=0, column=0, padx=5, pady=(0, 10))
         i = 1
-        for tag in (self.shared_tag[id]["Tags"]):
+        for tag in (self.shared_tag[game_date_or_id]["Tags"]):
             temp_tag = tb.Label(support_frame, text=tag, bootstyle="light")
             temp_tag.config(font=("Courier", 10))
             temp_tag.grid(row=0, column=0+i, padx=5, pady=(0, 10))
@@ -300,15 +313,12 @@ class StoreTab(tb.Frame):
         release_lbl = tb.Label(support_frame, text="Release Date: " )
         release_lbl.config(font=("Helvetica", 10))
         release_lbl.grid(row=1, column=0, padx=5,  pady=(0, 10))
-        date_lbl = tb.Label(support_frame, text=str(self.shared_tag[id]["Release_Date"]))
+        date_lbl = tb.Label(support_frame, text=str(self.shared_tag[game_date_or_id]["Release_Date"]))
         date_lbl.config(font=("Courier", 10))
         date_lbl.grid(row=1, column=1, padx=5,  pady=(0, 10))
 
-        cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.shared_tag[id]), self.setup_layout()])
+        cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.shared_tag[game_date_or_id]), self.setup_layout()])
         cart_btn.grid(row=2, column=1, padx=5,  pady=(0, 10), columnspan = 2, sticky="ns")
-
-
-
 
 
 

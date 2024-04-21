@@ -18,21 +18,23 @@ class Menu(tb.Frame):
         tab_style = tb.Style()
         tab_style.configure("TNotebook.Tab", font=("Unispace", "18", "bold"))
         notebook_style.configure("custom.TNotebook", padding=[0,0], tabmargins=[0,0,0,0], tabposition="nsew")
-        notebook = tb.Notebook(self, style="custom.TNotebook")
+        self.notebook = tb.Notebook(self, style="custom.TNotebook")
 
         # Tabs
-        friends_tab = FriendsTab(notebook)
-        library_tab = LibraryTab(notebook, notebook)
-        store_tab = StoreTab(notebook, self.user)
-        settings_tab = SettingsTab(notebook)
+        self.friends_tab = FriendsTab(self.notebook)
+        self.library_tab = LibraryTab(self.notebook, self)  # Passing Menu instance to LibraryTab
+        self.store_tab = StoreTab(self.notebook, self.user)
+        self.settings_tab = SettingsTab(self.notebook)
 
         # Adding Tabs
-        notebook.add(library_tab, text="Library")
-        notebook.add(store_tab, text="Store")
-        notebook.add(friends_tab, text="Friends")
-        notebook.add(settings_tab, text="Settings")
+        self.notebook.add(self.library_tab, text="Library")
+        self.notebook.add(self.store_tab, text="Store")
+        self.notebook.add(self.friends_tab, text="Friends")
+        self.notebook.add(self.settings_tab, text="Settings")
 
-        notebook.pack(expand=True, fill=BOTH)
+        self.notebook.pack(expand=True, fill=BOTH)
+
+
 
 
 

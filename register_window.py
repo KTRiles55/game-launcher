@@ -1,273 +1,112 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, simpledialog
+import ttkbootstrap as tb
+from email_sender import send_confirmation_email
+from ttkbootstrap.constants import *
+import gspread
+import re
+from account import *
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+try:
+    from ctypes import windll, byref, sizeof, c_int
+except:
+    pass
 
-class SettingsTab(tk.Frame):
+
+class register_window(tb.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+
         self.parent = parent
+        self.warningLbl = ""
 
-        # Define the controller options and their default settings
-        self.controller_options = {
-            "Xbox 360": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button A": ["Jump", "Attack", "Interact"],
-                "Button B": ["Crouch", "Reload", "Dodge"],
-                "Button X": ["Inventory", "Special Ability", "Map"],
-                "Button Y": ["Use Item", "Melee", "Sprint"]
-            },
-            "Xbox One": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button A": ["Jump", "Attack", "Interact"],
-                "Button B": ["Crouch", "Reload", "Dodge"],
-                "Button X": ["Inventory", "Special Ability", "Map"],
-                "Button Y": ["Use Item", "Melee", "Sprint"]
-            },
-            "PlayStation 4": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button X": ["Jump", "Attack", "Interact"],
-                "Button Circle": ["Crouch", "Reload", "Dodge"],
-                "Button Square": ["Inventory", "Special Ability", "Map"],
-                "Button Triangle": ["Use Item", "Melee", "Sprint"]
-            },
-            "PlayStation 5": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button X": ["Jump", "Attack", "Interact"],
-                "Button Circle": ["Crouch", "Reload", "Dodge"],
-                "Button Square": ["Inventory", "Special Ability", "Map"],
-                "Button Triangle": ["Use Item", "Melee", "Sprint"]
-            },
-            "Nintendo Switch": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button A": ["Jump", "Attack", "Interact"],
-                "Button B": ["Crouch", "Reload", "Dodge"],
-                "Button X": ["Inventory", "Special Ability", "Map"],
-                "Button Y": ["Use Item", "Melee", "Sprint"]
-            },
-            "GameCube": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Vibration": ["Off", "On"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button A": ["Jump", "Attack", "Interact"],
-                "Button B": ["Crouch", "Reload", "Dodge"],
-                "Button X": ["Inventory", "Special Ability", "Map"],
-                "Button Y": ["Use Item", "Melee", "Sprint"]
-            },
-            "Mouse": {
-                "Sensitivity": ["Low", "Medium", "High"],
-                "Invert Y-axis": ["Off", "On"],
-                "Invert X-axis": ["Off", "On"],
-                "Button Left": ["Primary Weapon", "Fire", "Use"],
-                "Button Right": ["Secondary Weapon", "Zoom", "Grenade"],
-                "Button Middle": ["Reload", "Melee", "Special Ability"]
-            }
-        }
+        # Window size and title
+        self.geometry("500x600")
+        self.minsize(500, 600)
+        self.maxsize(500, 600)
+        self.iconbitmap("images/empty.ico")
+        self.title("")
 
-        # Define network settings options
-        self.network_settings_options = {
-            "Wi-Fi Settings": ["Connect", "Disconnect", "Forget Network"],
-            "Ethernet Settings": ["IP Address", "DNS Settings", "Proxy Configurations"],
-            "Network Status": ["Connection Status", "Network Type", "Signal Strength", "Data Usage"],
-            "Network Diagnostic Tools": ["Ping", "Traceroute", "Network Speed Test"],
-            "Firewall Settings": ["Allow Applications", "Block Applications", "Port Configurations"],
-            "Proxy Settings": ["Proxy Server Address", "Port", "Authentication Credentials"],
-            "VPN Settings": ["Add New VPN Profile", "Connect", "Disconnect", "Configure Protocols"],
-            "Network Sharing": ["Enable File Sharing", "Enable Printer Sharing", "Configure Shared Folders", "Set Permissions"],
-            "Network Preferences": ["Automatic Connection Settings", "Network Discovery Options", "Time Synchronization Settings"]
-        }
+        # Window title color
+        try:
+            HWND = windll.user32.GetParent(self.winfo_id())
+            DWMWA_ATTRIBUTE = 35
+            COLOR = 0x201f1e
+            windll.dwmapi.DwmSetWindowAttribute(HWND, DWMWA_ATTRIBUTE, byref(c_int(COLOR)), sizeof(c_int))
+        except:
+            pass
 
-        # Create the main frame for the sub tabs
-        self.main_frame = ttk.Frame(self)
-        self.main_frame.pack(expand=True, fill="both")
+    def check(self, name, password, email):
+        # Logic for checking if info exist
+        new_acc = account(name, password, email)
+        wks = self.parent.accessAccountData()
 
-        # Create the sub tabs
-        self.sub_tabs = ttk.Notebook(self.main_frame)
-        self.controller_tab = ttk.Frame(self.sub_tabs)
-        self.account_tab = ttk.Frame(self.sub_tabs)
-        self.network_tab = ttk.Frame(self.sub_tabs)  # Add a network tab
-        self.close_app_tab = ttk.Frame(self.sub_tabs)
-        self.sub_tabs.add(self.controller_tab, text="Select Controller")
-        self.sub_tabs.add(self.account_tab, text="Select Account Setting")
-        self.sub_tabs.add(self.network_tab, text="Network Settings")  # Add the network tab
-        self.sub_tabs.add(self.close_app_tab, text="Close App")
-        self.sub_tabs.pack(expand=True, fill="both")
+        if (self.warningLbl != ""):
+            self.warningLbl.destroy()
 
-        # Controller tab content
-        self.controller_label = ttk.Label(self.controller_tab, text="Select Controller:")
-        self.controller_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        # Determines valid account information
+        if (new_acc.is_valid(name, email, password) == False):
 
-        self.controller_var = tk.StringVar()
-        self.controller_var.set("Xbox One")  # Default controller selection
-        self.controller_dropdown = ttk.Combobox(self.controller_tab, textvariable=self.controller_var, values=list(self.controller_options.keys()))
-        self.controller_dropdown.grid(row=0, column=1, padx=10, pady=10)
+            self.warningLbl = tk.Label(self, text="* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
+            self.warningLbl.pack()
 
-        # Bind the controller dropdown selection to update the settings
-        self.controller_dropdown.bind("<<ComboboxSelected>>", self.update_controller_settings)
+        elif (new_acc.is_valid(name, email, password) == True):
+            # Create new account if it does not exist
+            if ((new_acc.findUsername(wks) == None) and (new_acc.findPassword(wks) == None) and (new_acc.findEmail(wks) == None)):
+                new_acc.create_newuser(wks)
+                confirmLbl = tk.Label(self, text="You have successfully created a new account!\nPlease immediately check your email inbox to verify this account.")
+                confirmLbl.pack()
+                returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
+                returntoLogBtn.pack()
+                self.send_confirmation_email(email.get())  # Send confirmation email
+                self.parent.run_login()
 
-        self.controller_settings_frame = ttk.LabelFrame(self.controller_tab, text="Controller Settings")
-        self.controller_settings_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+            elif (new_acc.findUsername(wks) != None):
+                self.warningLbl = tk.Label(self, text="* This username is already used! *")
+                self.warningLbl.pack()
 
-        self.apply_button = ttk.Button(self.controller_tab, text="Apply Controller Settings", command=self.apply_controller_settings)
-        self.apply_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+            elif (new_acc.findPassword(wks) != None):
+                self.warningLbl = tk.Label(self, text="* This password is already used! *")
+                self.warningLbl.pack()
 
-        self.update_controller_settings()
+            elif (new_acc.findEmail(wks) != None):
+                self.warningLbl = tk.Label(self, text="* This email is already used! *")
+                self.warningLbl.pack()
 
-        # Account tab content
-        self.account_label = ttk.Label(self.account_tab, text="Select Account Setting:")
-        self.account_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+    def page(self):
+        loginTitle = tb.Label(self, text="Register")
+        loginTitle.pack(pady=10)
+        loginTitle.config(font=("Courier", 20))
 
-        self.account_var = tk.StringVar()
-        self.account_var.set("Manage")  # Default account setting selection
-        self.account_dropdown = ttk.Combobox(self.account_tab, textvariable=self.account_var, values=["Manage", "Privacy", "Data Management"])
-        self.account_dropdown.grid(row=0, column=1, padx=10, pady=10)
 
-        # Bind the account dropdown selection to update the account settings
-        self.account_dropdown.bind("<<ComboboxSelected>>", self.update_account_settings)
+        entryFrame = tb.Frame(self, borderwidth=10, relief="groove")
+        entryFrame.pack(pady=20)
 
-        self.account_settings_frame = ttk.LabelFrame(self.account_tab, text="Account Settings")
-        self.account_settings_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
-        self.update_account_settings()
+        nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12))
+        nameLbl.grid(row=1, column=0, padx=5, pady=10)
 
-        # Network tab content
-        self.network_label = ttk.Label(self.network_tab, text="Network Settings:")
-        self.network_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
+        passwordLbl.grid(row=3, column=0, padx=5, pady=10)
 
-        self.network_settings_frame = ttk.LabelFrame(self.network_tab, text="Network Settings")
-        self.network_settings_frame.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        nameEn = tb.Entry(entryFrame)
+        nameEn.grid(row=1, column=1, ipadx=20)
 
-        self.network_listbox = tk.Listbox(self.network_settings_frame, selectmode=tk.SINGLE, height=15, width=40)
-        self.network_listbox.pack(side=tk.LEFT, fill=tk.Y)
+        email_entry = tb.Entry(entryFrame)  # Define email_entry
+        email_entry.grid(row=2, column=1, ipadx=20)
 
-        self.scrollbar = ttk.Scrollbar(self.network_settings_frame, orient="vertical", command=self.network_listbox.yview)
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        passwordEn = tb.Entry(entryFrame, show="*")
+        passwordEn.grid(row=3, column=1, ipadx=20)
 
-        self.network_listbox.config(yscrollcommand=self.scrollbar.set)
+        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting\n with ONLY alphabetical characters, but can also\n be followed by numerical characters.\n")
+        passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing\n at least one special character(#, $, %, &, @,...etc..),\nat least one capital alphabetical character, and at\nleast 1 numerical character.")
 
-        self.populate_network_settings()
+        userNameReqLbl.grid(row=6, column=1)
+        passWordReqLbl.grid(row=7, column=1)
 
-        self.apply_network_button = ttk.Button(self.network_tab, text="Apply Network Settings", command=self.apply_network_settings)
-        self.apply_network_button.grid(row=2, column=0, padx=10, pady=10)
+        backBtn = tb.Button(entryFrame, text="Back", command = lambda: [self.parent.run_login(), self.withdraw()])
+        backBtn.grid(row=10, column=0, pady=10)
 
-        # Close app button
-        self.close_app_button = ttk.Button(self.close_app_tab, text="Close Application", command=confirm_close_app)
-        self.close_app_button.pack(padx=10, pady=10)
-
-    def populate_network_settings(self):
-        for setting in self.network_settings_options.keys():
-            self.network_listbox.insert(tk.END, setting)
-
-        self.network_listbox.bind("<<ListboxSelect>>", self.handle_network_setting_selection)
-
-    def handle_network_setting_selection(self, event):
-        selection = self.network_listbox.curselection()
-        if selection:
-            selected_setting = self.network_listbox.get(selection[0])
-            self.prompt_network_setting_info(selected_setting)
-
-    def prompt_network_setting_info(self, setting):
-        # Ask the user to enter appropriate information for the selected network setting
-        info = simpledialog.askstring("Network Setting", f"Enter information for '{setting}':")
-        if info:
-            messagebox.showinfo("Information Entered", f"You entered: {info}")
-        else:
-            messagebox.showinfo("Information", "No information entered.")
-
-    def update_account_settings(self, event=None):
-        selected_setting = self.account_var.get()
-
-        # Clear existing account settings
-        for widget in self.account_settings_frame.winfo_children():
-            widget.destroy()
-
-        # Create buttons for selected account setting
-        if selected_setting == "Manage":
-            options = ["Change Username", "Change Password", "Delete Account"]
-        elif selected_setting == "Privacy":
-            options = ["Toggle Privacy Settings", "Manage Blocked Users", "Clear Browsing Data"]
-        elif selected_setting == "Data Management":
-            options = ["Download Data", "Manage Cloud Storage", "Clear Local Data"]
-
-        # Populate the account settings frame with options
-        for index, option in enumerate(options):
-            button = ttk.Button(self.account_settings_frame, text=option, command=lambda option=option: self.handle_account_option(option))
-            button.grid(row=index, column=0, padx=5, pady=5, sticky="w")
-
-    def handle_account_option(self, option):
-        messagebox.showinfo("Account Setting Selected", f"You clicked on: {option}")
-
-    def update_controller_settings(self, event=None):
-        selected_controller = self.controller_var.get()
-
-        # Clear existing settings
-        for widget in self.controller_settings_frame.winfo_children():
-            widget.destroy()
-
-        # Create labels and dropdowns for each setting
-        row = 0
-        for setting, options in self.controller_options[selected_controller].items():
-            label = ttk.Label(self.controller_settings_frame, text=setting + ":")
-            label.grid(row=row, column=0, padx=5, pady=5)
-            dropdown_var = tk.StringVar()
-            dropdown = ttk.Combobox(self.controller_settings_frame, textvariable=dropdown_var, state="readonly", values=options)
-            dropdown.grid(row=row, column=1, padx=5, pady=5)
-            dropdown_var.set(options[0])  # Default option
-            row += 1
-
-    def apply_controller_settings(self):
-        confirmation = messagebox.askokcancel("Confirmation", "Are you sure you want to apply controller settings?")
-        if confirmation:
-            selected_controller = self.controller_var.get()
-            messagebox.showinfo("Settings Applied", f"Controller settings for {selected_controller} applied successfully.")
-
-    def apply_network_settings(self):
-        confirmation = messagebox.askokcancel("Confirmation", "Are you sure you want to apply network settings?")
-        if confirmation:
-            messagebox.showinfo("Network Settings Applied", "Network settings applied successfully.")
-
-def create_settings_window():
-    settings_window = tk.Toplevel()
-    settings_window.title("Settings")
-    settings_tab = SettingsTab(settings_window)
-    settings_tab.pack(expand=True, fill="both")
-    
-    # Add close button to close the window
-    close_button = ttk.Button(settings_window, text="Close", command=settings_window.destroy)
-    close_button.pack()
-
-def confirm_close_app():
-    confirmation = messagebox.askokcancel("Confirmation", "Are you sure you want to close the application?")
-    if confirmation:
-        exit()  # Close the root window
-
-def main():
-    global root
-    root = tk.Tk()
-    root.title("Main Window")
-
-    settings_button = ttk.Button(root, text="Open Settings", command=create_settings_window)
-    settings_button.pack(pady=20)
-
-    # Add close button to close the main window
-    close_button = ttk.Button(root, text="Close", command=root.destroy)
-    close_button.pack()
-
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()
+        submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(nameEn, passwordEn, email_entry))
+        submitBtn.grid(row=4, column=1, padx=5, pady=10)

@@ -1,7 +1,8 @@
 import gspread
 import re
 
-#ID	Title	Developer	Price	Tags	Image
+
+# ID	Title	Developer	Price	Tags	Image
 class store():
 
     def __init__(self):
