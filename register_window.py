@@ -1,5 +1,6 @@
 import tkinter as tk
 import ttkbootstrap as tb
+from email_sender import send_confirmation_email
 from ttkbootstrap.constants import *
 import gspread
 import re
@@ -56,8 +57,8 @@ class register_window(tb.Toplevel):
                 confirmLbl.pack()
                 returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
                 returntoLogBtn.pack()
-                #self.send_confirmation_email(email.get())  # Send confirmation email 
-                #self.parent.run_login()
+                self.send_confirmation_email(email.get())  # Send confirmation email 
+                self.parent.run_login()
     
             elif (new_acc.findUsername(wks) != None):
                 self.warningLbl = tk.Label(self, text="* This username is already used! *")
