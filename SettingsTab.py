@@ -1,11 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from tkinter import *
-from ttkbootstrap import Label
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from PIL import ImageTk, Image 
-from ttkbootstrap import Style
+from tkinter import ttk, messagebox, simpledialog
 
 class SettingsTab(tk.Frame):
     def __init__(self, parent):
@@ -84,6 +78,19 @@ class SettingsTab(tk.Frame):
             }
         }
 
+        # Define network settings options
+        self.network_settings_options = {
+            "Wi-Fi Settings": ["Connect", "Disconnect", "Forget Network"],
+            "Ethernet Settings": ["IP Address", "DNS Settings", "Proxy Configurations"],
+            "Network Status": ["Connection Status", "Network Type", "Signal Strength", "Data Usage"],
+            "Network Diagnostic Tools": ["Ping", "Traceroute", "Network Speed Test"],
+            "Firewall Settings": ["Allow Applications", "Block Applications", "Port Configurations"],
+            "Proxy Settings": ["Proxy Server Address", "Port", "Authentication Credentials"],
+            "VPN Settings": ["Add New VPN Profile", "Connect", "Disconnect", "Configure Protocols"],
+            "Network Sharing": ["Enable File Sharing", "Enable Printer Sharing", "Configure Shared Folders", "Set Permissions"],
+            "Network Preferences": ["Automatic Connection Settings", "Network Discovery Options", "Time Synchronization Settings"]
+        }
+
         # Create the main frame for the sub tabs
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(expand=True, fill="both")
@@ -92,13 +99,15 @@ class SettingsTab(tk.Frame):
         self.sub_tabs = ttk.Notebook(self.main_frame)
         self.controller_tab = ttk.Frame(self.sub_tabs)
         self.account_tab = ttk.Frame(self.sub_tabs)
+        self.network_tab = ttk.Frame(self.sub_tabs)  # Add a network tab
         self.close_app_tab = ttk.Frame(self.sub_tabs)
         self.sub_tabs.add(self.controller_tab, text="Select Controller")
         self.sub_tabs.add(self.account_tab, text="Select Account Setting")
+        self.sub_tabs.add(self.network_tab, text="Network Settings")  # Add the network tab
         self.sub_tabs.add(self.close_app_tab, text="Close App")
         self.sub_tabs.pack(expand=True, fill="both")
 
-        # Create the controller dropdown
+        # Controller tab content
         self.controller_label = ttk.Label(self.controller_tab, text="Select Controller:")
         self.controller_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
@@ -110,18 +119,15 @@ class SettingsTab(tk.Frame):
         # Bind the controller dropdown selection to update the settings
         self.controller_dropdown.bind("<<ComboboxSelected>>", self.update_controller_settings)
 
-        # Create the settings frame for controller settings
         self.controller_settings_frame = ttk.LabelFrame(self.controller_tab, text="Controller Settings")
         self.controller_settings_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
-        # Create the apply button for controller settings
         self.apply_button = ttk.Button(self.controller_tab, text="Apply Controller Settings", command=self.apply_controller_settings)
         self.apply_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
-        # Update the controller settings
         self.update_controller_settings()
 
-        # Create the account dropdown
+        # Account tab content
         self.account_label = ttk.Label(self.account_tab, text="Select Account Setting:")
         self.account_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
@@ -133,16 +139,54 @@ class SettingsTab(tk.Frame):
         # Bind the account dropdown selection to update the account settings
         self.account_dropdown.bind("<<ComboboxSelected>>", self.update_account_settings)
 
-        # Create the account settings frame
         self.account_settings_frame = ttk.LabelFrame(self.account_tab, text="Account Settings")
         self.account_settings_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
-        # Update the account settings
         self.update_account_settings()
 
-        # Create the close app button
-        self.close_app_button = ttk.Button(self.close_app_tab, text="Close App", command=confirm_close_app)
+        # Network tab content
+        self.network_label = ttk.Label(self.network_tab, text="Network Settings:")
+        self.network_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        self.network_settings_frame = ttk.LabelFrame(self.network_tab, text="Network Settings")
+        self.network_settings_frame.grid(row=1, column=0, padx=10, pady=10, sticky="w")
+
+        self.network_listbox = tk.Listbox(self.network_settings_frame, selectmode=tk.SINGLE, height=15, width=40)
+        self.network_listbox.pack(side=tk.LEFT, fill=tk.Y)
+
+        self.scrollbar = ttk.Scrollbar(self.network_settings_frame, orient="vertical", command=self.network_listbox.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.network_listbox.config(yscrollcommand=self.scrollbar.set)
+
+        self.populate_network_settings()
+
+        self.apply_network_button = ttk.Button(self.network_tab, text="Apply Network Settings", command=self.apply_network_settings)
+        self.apply_network_button.grid(row=2, column=0, padx=10, pady=10)
+
+        # Close app button
+        self.close_app_button = ttk.Button(self.close_app_tab, text="Close Application", command=confirm_close_app)
         self.close_app_button.pack(padx=10, pady=10)
+
+    def populate_network_settings(self):
+        for setting in self.network_settings_options.keys():
+            self.network_listbox.insert(tk.END, setting)
+
+        self.network_listbox.bind("<<ListboxSelect>>", self.handle_network_setting_selection)
+
+    def handle_network_setting_selection(self, event):
+        selection = self.network_listbox.curselection()
+        if selection:
+            selected_setting = self.network_listbox.get(selection[0])
+            self.prompt_network_setting_info(selected_setting)
+
+    def prompt_network_setting_info(self, setting):
+        # Ask the user to enter appropriate information for the selected network setting
+        info = simpledialog.askstring("Network Setting", f"Enter information for '{setting}':")
+        if info:
+            messagebox.showinfo("Information Entered", f"You entered: {info}")
+        else:
+            messagebox.showinfo("Information", "No information entered.")
 
     def update_account_settings(self, event=None):
         selected_setting = self.account_var.get()
@@ -191,6 +235,11 @@ class SettingsTab(tk.Frame):
             selected_controller = self.controller_var.get()
             messagebox.showinfo("Settings Applied", f"Controller settings for {selected_controller} applied successfully.")
 
+    def apply_network_settings(self):
+        confirmation = messagebox.askokcancel("Confirmation", "Are you sure you want to apply network settings?")
+        if confirmation:
+            messagebox.showinfo("Network Settings Applied", "Network settings applied successfully.")
+
 def create_settings_window():
     settings_window = tk.Toplevel()
     settings_window.title("Settings")
@@ -204,7 +253,7 @@ def create_settings_window():
 def confirm_close_app():
     confirmation = messagebox.askokcancel("Confirmation", "Are you sure you want to close the application?")
     if confirmation:
-        exit()
+        exit()  # Close the root window
 
 def main():
     global root
@@ -213,6 +262,10 @@ def main():
 
     settings_button = ttk.Button(root, text="Open Settings", command=create_settings_window)
     settings_button.pack(pady=20)
+
+    # Add close button to close the main window
+    close_button = ttk.Button(root, text="Close", command=root.destroy)
+    close_button.pack()
 
     root.mainloop()
 

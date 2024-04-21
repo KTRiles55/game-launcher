@@ -13,10 +13,12 @@ try:
 except:
     pass
 
+
 class register_window(tb.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
-        self.parent = parent  
+
+        self.parent = parent
         self.warningLbl = ""
 
         # Window size and title
@@ -35,19 +37,19 @@ class register_window(tb.Toplevel):
         except:
             pass
 
-    def check(self, name, password, email):  
-        #Logic for checking if info exist
+    def check(self, name, password, email):
+        # Logic for checking if info exist
         new_acc = account(name, password, email)
-        wks = self.parent.accessAccountData()    
-        
+        wks = self.parent.accessAccountData()
+
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
 
         # Determines valid account information
         if (new_acc.is_valid(name, email, password) == False):
-            
+
             self.warningLbl = tk.Label(self, text="* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
-            self.warningLbl.pack()   
+            self.warningLbl.pack()
 
         elif (new_acc.is_valid(name, email, password) == True):
             # Create new account if it does not exist
@@ -57,38 +59,36 @@ class register_window(tb.Toplevel):
                 confirmLbl.pack()
                 returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
                 returntoLogBtn.pack()
-                self.send_confirmation_email(email.get())  # Send confirmation email 
+                self.send_confirmation_email(email.get())  # Send confirmation email
                 self.parent.run_login()
-    
+
             elif (new_acc.findUsername(wks) != None):
                 self.warningLbl = tk.Label(self, text="* This username is already used! *")
                 self.warningLbl.pack()
-       
+
             elif (new_acc.findPassword(wks) != None):
                 self.warningLbl = tk.Label(self, text="* This password is already used! *")
                 self.warningLbl.pack()
-    
+
             elif (new_acc.findEmail(wks) != None):
                 self.warningLbl = tk.Label(self, text="* This email is already used! *")
                 self.warningLbl.pack()
-            
 
     def page(self):
         loginTitle = tb.Label(self, text="Register")
-        loginTitle.pack(pady=10)  
+        loginTitle.pack(pady=10)
         loginTitle.config(font=("Courier", 20))
+
 
         entryFrame = tb.Frame(self, borderwidth=10, relief="groove")
         entryFrame.pack(pady=20)
 
+
         nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12))
         nameLbl.grid(row=1, column=0, padx=5, pady=10)
 
-        emailLbl = tb.Label(entryFrame, text="Email", font=("Courier", 12))
-        emailLbl.grid(row=2, column=0, padx=5, pady=10)
-
         passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
-        passwordLbl.grid(row=3, column=0, padx=5, pady=10)  
+        passwordLbl.grid(row=3, column=0, padx=5, pady=10)
 
         nameEn = tb.Entry(entryFrame)
         nameEn.grid(row=1, column=1, ipadx=20)
@@ -98,12 +98,12 @@ class register_window(tb.Toplevel):
 
         passwordEn = tb.Entry(entryFrame, show="*")
         passwordEn.grid(row=3, column=1, ipadx=20)
-        
+
         userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting\n with ONLY alphabetical characters, but can also\n be followed by numerical characters.\n")
         passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing\n at least one special character(#, $, %, &, @,...etc..),\nat least one capital alphabetical character, and at\nleast 1 numerical character.")
-       
+
         userNameReqLbl.grid(row=6, column=1)
-        passWordReqLbl.grid(row=7, column=1) 
+        passWordReqLbl.grid(row=7, column=1)
 
         backBtn = tb.Button(entryFrame, text="Back", command = lambda: [self.parent.run_login(), self.withdraw()])
         backBtn.grid(row=10, column=0, pady=10)
