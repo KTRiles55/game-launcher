@@ -1,4 +1,5 @@
 from menu import *
+from user import *
 try:
     from ctypes import windll, byref, sizeof, c_int
 except:
@@ -6,9 +7,10 @@ except:
 
 
 class Launcher(tb.Toplevel):
-    def __init__(self, parent, user):
+    def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent
+        self.user = username
         
         self.title("")
         self.geometry('1400x844')
@@ -25,7 +27,7 @@ class Launcher(tb.Toplevel):
             pass
 
         # Widgets
-        self.menu = Menu(self, user)
+        self.menu = Menu(self, self.user)
 
         # Run program
         self.mainloop()

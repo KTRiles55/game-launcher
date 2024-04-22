@@ -17,10 +17,10 @@ class user():
         """
         name = ""
         row = 0
-        row_count = 14
-        for i in range(1, row_count-1):
+        row_count = 16
+        for i in range(1, row_count):
             name = self.wks_account.cell(i, 1).value
-            if(name == self.username.get()):
+            if name == self.username.get():
                 return i
         return 1
 
@@ -40,16 +40,16 @@ class user():
         return password
 
     def get_email(self):
-         """
+        """
             returns:
             user's email (string)
         """
         email = self.wks_account.cell(self.find_row(), 3).value
-        return get_email
+        return self.get_email
 
     def get_parsed_library(self):
-        #Library section of database format ex: The Witcher 3: Wild Hunt/Civilization VI/Half-Life: Alyx/Command & Conquer/Doom
-        #Gets library only as titles
+        # Library section of database format ex: The Witcher 3: Wild Hunt/Civilization VI/Half-Life: Alyx/Command & Conquer/Doom
+        # Gets library only as titles
         """
             returns:
             titles of games belonging to the user
@@ -100,3 +100,4 @@ class user():
                     library[count]["Release_Date"] = self.wks_store.cell(i+1, 6).value
                     count += 1
         return library
+

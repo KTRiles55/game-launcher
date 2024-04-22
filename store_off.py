@@ -113,7 +113,7 @@ class store_off():
 
     def append_codes(self, title, code):
         #Code format 0D5YE91/1245NMT
-         """
+        """
             args:
             title and gift code are both strings
 

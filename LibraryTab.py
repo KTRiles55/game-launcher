@@ -5,29 +5,35 @@ from ttkbootstrap import *
 import ttkbootstrap as tb
 from store_off import *
 from menu import *
-from store_tab import StoreTab
-from store import *
-from ttkbootstrap.constants import *
+import openpyxl
+from user import *
 from PIL import ImageTk, Image
-from ttkbootstrap import Style
 
 
 class LibraryTab(tb.Frame):
-    def __init__(self, parent, menu):
+    def __init__(self, parent, menu, username):
         super().__init__(parent)
         self.parent = parent
+        self.username = username
 
-        # Use workbook imported from store_off.py
-        owned_games = store_off()
-        self.wks = owned_games.wks
+        # Retrieve entered username as string
+        self.current_user_string = self.username.get_username()
+        self.current_user_var = tb.StringVar(value=self.current_user_string)
+        print("Welcome " + self.current_user_string + "!")
+
+        # Retrieve user-specific library and create dictionary
+        owned_games = user(username=self.current_user_var)
+        self.wks_account = owned_games.wks_account
+        game_titles = owned_games.get_parsed_library()
+        self.all_games = [{"Title": title} for title in game_titles]
 
         # Instance of store_tab
         self.menu = menu
 
         # instance of store_off
-        owned_games = store_off()
-        self.wks = owned_games.wks
-        self.all_games = owned_games.get_all_games()
+        # owned_games = store_off()
+        # self.wks = owned_games.wks
+        # self.all_games = owned_games.get_parsed_library()
 
         self.favorite_games = []
         self.recent_games = []
@@ -53,6 +59,7 @@ class LibraryTab(tb.Frame):
         self.columnconfigure(0, weight=0, minsize=360)
         self.columnconfigure(1, weight=0)
         self.columnconfigure(2, weight=0)
+        self.columnconfigure(3, weight=3)
 
         # Header
         self.rowconfigure(0, weight=0)
@@ -90,6 +97,14 @@ class LibraryTab(tb.Frame):
         info_frame.rowconfigure(1, weight=0)
         info_frame.grid(row=1, column=2, stick="nsew", padx=3, pady=0)
 
+        # Welcome text label and frame
+        self.welcome_frame = tb.Frame(self)
+        self.welcome_frame.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
+        self.welcome_label = tb.Label(self.welcome_frame,
+                                 text=f"WELCOME BACK {self.current_user_string.upper()}!",
+                                 font=("Unispace", "18", "bold"))
+        self.welcome_label.pack()
+
         self.setup_game_list()
         self.setup_default_info_layout(info_frame)
         self.populate_games()
@@ -106,6 +121,13 @@ class LibraryTab(tb.Frame):
 
         self.game_list = tb.Treeview(self, show="tree", style="Custom.Treeview")
         self.game_list.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=3)
+
+        self.game_list_scroll = tb.Scrollbar(self, orient="vertical",
+                                             bootstyle="light-round", command=self.game_list.yview())
+        self.game_list_scroll.grid(row=1, column=0,
+                                   sticky="nse")
+
+        self.game_list.configure(yscrollcommand=self.game_list_scroll.set)
 
         # Right click menu
         self.game_list.bind("<Button-3>", self.on_right_click)
@@ -124,7 +146,7 @@ class LibraryTab(tb.Frame):
         recent_games_label.grid(row=0, column=0, padx=20, pady=20, sticky="new")
 
         # Scrollable container for games
-        self.games_scrollable_frame = ScrolledFrame(self.info_frame)
+        self.games_scrollable_frame = ScrolledFrame(self.info_frame, autohide=True)
         self.games_scrollable_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         self.games_scrollable_frame.grid_columnconfigure(0, weight=1)
         self.info_frame.grid_columnconfigure(0, weight=1)
@@ -211,6 +233,9 @@ class LibraryTab(tb.Frame):
 
         # Clear contents of game info frame after selection is changed
         for frame in self.info_frame.winfo_children():
+            frame.destroy()
+
+        for frame in self.welcome_frame.winfo_children():
             frame.destroy()
 
         self.check_button_exist()

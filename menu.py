@@ -5,10 +5,10 @@ from SettingsTab import *
 
 
 class Menu(tb.Frame):
-    def __init__(self, parent, user):
+    def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent
-        self.user = user
+        self.user = username
 
         self.place(x=0, y=0, relwidth=1, relheight=1)
         self.create_widget()
@@ -22,7 +22,7 @@ class Menu(tb.Frame):
 
         # Tabs
         self.friends_tab = FriendsTab(self.notebook)
-        self.library_tab = LibraryTab(self.notebook, self)  # Passing Menu instance to LibraryTab
+        self.library_tab = LibraryTab(self.notebook, self, self.user)
         self.store_tab = StoreTab(self.notebook, self.user)
         self.settings_tab = SettingsTab(self.notebook)
 

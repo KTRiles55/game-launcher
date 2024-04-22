@@ -9,6 +9,7 @@ try:
 except:
     pass 
 
+
 class login_window(tb.Toplevel):
 
     def __init__(self, parent):
@@ -36,24 +37,23 @@ class login_window(tb.Toplevel):
         # checks if login information is registered in database
         existing_acc = account(username, password, None)
         if (self.warningLbl != ""):
-            self.warningLbl.destroy()        
+            self.warningLbl.destroy()
 
         wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
             self.user = user(username)
             self.destroy()
             self.parent.run_launcher(self.user)
-            
+
         else:
             self.warningLbl = tk.Label(self, text="Incorrect username/password entered.\nPlease re-enter login credentials.")
-            
+
             #displays warning
             self.warningLbl.pack()
 
             #empties entries
             nameEn.delete(0, 'end')
             passwordEn.delete(0, 'end')
-            
 
     def page(self):
 
