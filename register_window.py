@@ -59,7 +59,7 @@ class register_window(tb.Toplevel):
                 confirmLbl.pack()
                 returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
                 returntoLogBtn.pack()
-                self.send_confirmation_email(email.get())  # Send confirmation email
+                send_confirmation_email(email.get())  # Send confirmation email
                 self.parent.run_login()
 
             elif (new_acc.findUsername(wks) != None):
