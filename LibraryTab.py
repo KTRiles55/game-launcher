@@ -4,7 +4,6 @@ from ttkbootstrap import Label
 from ttkbootstrap import *
 import ttkbootstrap as tb
 from ttkbootstrap.scrolled import ScrolledFrame
-from store_off import *
 from menu import *
 import openpyxl
 from user import *

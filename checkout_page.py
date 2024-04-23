@@ -5,7 +5,6 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
 from store import *
-from store_off import *
 from LibraryTab import *
 from store_tab import *
 import string
@@ -19,7 +18,7 @@ class checkout_page(tb.Frame):
         self.parent = parent
         self.cart = cart
         self.user = user
-        self.store = store_off()
+        self.store = store()
 
         self.grid()
         self.setup_layout(scrollable_frame)

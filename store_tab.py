@@ -5,7 +5,6 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
 from store import *
-from store_off import *
 from checkout_page import *
 import math
 import pydoc
@@ -22,7 +21,7 @@ class StoreTab(tb.Frame):
         if self.default_game_title:
             self.preview_default_game()
     
-        self.store = store_off()
+        self.store = store()
         self.games = self.store.get_all_games()
         self.cart = [] 
         self.filters = {"Category": "All", "lowest_price": 0, "highest_price": 100 }
@@ -42,6 +41,11 @@ class StoreTab(tb.Frame):
 
 
     def update_cart_button(self, parent, game_frame, scrollable):
+        """
+            Updates the count for items in cart
+            args:
+            parent, game_frame, scrollable are all tb.Frame
+        """
         total_items = len(self.cart)
         #If not empty cart than display
         if(len(self.cart) > 0):
@@ -50,6 +54,11 @@ class StoreTab(tb.Frame):
         
 
     def add_to_cart(self, game):
+        """
+            Updates cart if game not in cart
+            args:
+            game (dictionary)
+        """
         in_cart = False
         for i in range(len(self.cart)):
             if(self.cart[i]["Title"]) == game["Title"]:
@@ -64,6 +73,12 @@ class StoreTab(tb.Frame):
 
 
     def run_checkout(self, search_frame, game_frame, scrollable):
+        """
+            Updates the frames displayed
+            args:
+            search_frame (tb.Frame), game_frame(tb.Frame), scrollable(tb.ScrollableFrame)
+        """
+
         search_frame.destroy()
         game_frame.destroy()
         checkout_page(self, scrollable, self.cart, self.user)
@@ -74,6 +89,12 @@ class StoreTab(tb.Frame):
 
     def update_page_num(self,search_frame):
         #Change page number
+        """
+            Updates the page count based on the maximum widgets per page
+
+            args:
+            search_frame (tb.Frame)
+        """
         max_num = int(math.ceil(len(self.games)+1)/self.max_widgets)
         if(max_num == 0):
             max_num += 1
@@ -84,6 +105,12 @@ class StoreTab(tb.Frame):
 
 
     def increment_page(self, game_frame, search_frame, scrollable):
+        """
+            Ascends the games list to show games to be displayed next and changes widgets accordingly
+
+            args:
+            search_frame (tb.Frame), game_frame(tb.Frame), scrollable(tb.ScrollableFrame)
+        """
         list_len = len(self.games)
         increment = self.max_widgets 
         remaining = (list_len - self.pointer_end)
@@ -106,6 +133,12 @@ class StoreTab(tb.Frame):
 
 
     def decrement_page(self, game_frame, search_frame, scrollable):
+        """
+            Decesends the games list to show games to be displayed next and changes widgets accordingly
+
+            args:
+            search_frame (tb.Frame), game_frame(tb.Frame), scrollable(tb.ScrollableFrame)
+        """
         list_len = len(self.games)
         decrement = self.max_widgets
         previous = self.pointer_start
@@ -128,6 +161,12 @@ class StoreTab(tb.Frame):
 
     
     def render_img(self, frame, path, r, c):
+        """
+            Displays an image to a frame
+
+            args:
+            frame (tb.Frame), path(String), r (int), c(int)
+        """
         #Must prevent garbarge collection
         img_obj =  ImageTk.PhotoImage(Image.open("images/games/" + path))
         img_lbl = tb.Label(frame, image=img_obj)
@@ -135,6 +174,12 @@ class StoreTab(tb.Frame):
         img_lbl.grid(row=r, column=c, padx=20)
 
     def filterate(self, game_frame, scrollable, search_frame):
+        """
+            Reads the current filters inputted
+
+            args:
+            search_frame (tb.Frame), game_frame(tb.Frame), scrollable(tb.ScrollableFrame)
+        """
         self.games = []
         unfiltered = self.store.get_games_sharing_tag(self.filters["Category"])
         low_price = self.filters["lowest_price"]
@@ -162,6 +207,14 @@ class StoreTab(tb.Frame):
         
 
     def destroy_frames(self, frame):
+        """
+            Destroys all the children widgets
+
+            args:
+            frame(tb.Frame)
+        
+        """
+
         #Destroy children widgets
         for widget in frame.winfo_children():
             widget.destroy()
@@ -304,6 +357,14 @@ class StoreTab(tb.Frame):
 
     def generate_game_widgets(self, parent, frames, search_frame, scrollable):
         # Game widget locations
+        """
+            Generates the widgets for current pointers
+
+            args:
+            parent (tb.Frames), frames (tb.Frames), search_frame (tb.Frames), scrollable (tb.ScrollableFrames)
+        
+        """
+
         game_widgets = []
         images = ["green.png"]
 
@@ -340,6 +401,13 @@ class StoreTab(tb.Frame):
 
     
     def preview_game(self, game_date_or_id, search_frame, game_frame, scrollable):
+        """
+            Displays the frames to display game details
+
+            args:
+            game_date_or_id (String), search_frame (tb.Frame), game_frame (tb.Frame), scrollable (tb.ScrollableFrame)
+        """
+
         if isinstance(game_date_or_id, int):
             game_date = self.games[game_date_or_id]
         else:
@@ -398,12 +466,6 @@ class StoreTab(tb.Frame):
 
 
     def setup_landing_page(self, search_frame, game_frame, scrollable_frame):
-        """
-            Params:
-            x and b are numbers (int or float)
-            Returns: 
-            the sum of x and y.
-        """
         img_path = "green.png"
         #Splits game_frame into featured_frame and recent_frame
         game_frame.columnconfigure(0, weight=1)
