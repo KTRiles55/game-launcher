@@ -12,6 +12,15 @@ from PIL import ImageTk, Image
 
 
 class LibraryTab(tb.Frame):
+    """A class representing the library tab in TechWiz store application with ttkbootstrap.
+
+    Attributes:
+        parent (widget): The parent widget.
+        menu (object): An instance of the menu handling user interactions.
+        username (tk.StringVar): The username of the current user.
+        all_games (list): A list of dictionaries containing game titles.
+    """
+
     def __init__(self, parent, menu, username):
         super().__init__(parent)
         self.parent = parent
@@ -109,8 +118,8 @@ class LibraryTab(tb.Frame):
         self.welcome_frame = tb.Frame(self)
         self.welcome_frame.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
         self.welcome_label = tb.Label(self.welcome_frame,
-                                 text=f"WELCOME BACK {self.current_user_string.upper()}!",
-                                 font=("Unispace", "18", "bold"))
+                                      text=f"WELCOME BACK {self.current_user_string.upper()}!",
+                                      font=("Unispace", "18", "bold"))
         self.welcome_label.pack()
 
         self.setup_game_list()
@@ -204,6 +213,11 @@ class LibraryTab(tb.Frame):
         self.display_recent_games(games_scrollable_frame)
 
     def add_to_recent_games(self, game_title):
+        """Add a game to the list of recently played games.
+
+        Args:
+            game_title (str): The title of the game to add.
+        """
         # Ensure the game isn't already in the list, then add it
         if game_title not in self.recent_games:
             self.recent_games.insert(0, game_title)  # Add to the start of the list for "most recent" first
@@ -211,6 +225,11 @@ class LibraryTab(tb.Frame):
         # self.recent_games = self.recent_games[:5]
 
     def on_game_select(self, event):
+        """Handle selection of a game from the game list.
+
+        Args:
+            event (Event): The event that triggered this handler.
+        """
         # Displays info for game depending on selection
         selected_game = self.game_list.selection()
         if selected_game:
@@ -236,6 +255,11 @@ class LibraryTab(tb.Frame):
             self.button_frame.grid(row=0, column=2, sticky="nw", padx=5, pady=5)
 
     def update_info_frame(self, game):
+        """Update the information frame with details of the selected game.
+
+        Args:
+            game (dict): The game data to display.
+        """
         # Store game_id as title for store page
         self.selected_game_id = game["Title"]
 
@@ -269,9 +293,9 @@ class LibraryTab(tb.Frame):
         tb.Label(self.info_frame, text=game["Title"],
                  font=("Helvetica", 30)).grid(row=0, column=0, sticky="w", padx=10, pady=10)
         tb.Button(self.info_frame, text="Play", command=lambda: self.add_to_recent_games(game["Title"])).grid(row=1,
-                                                                                                    column=1,
-                                                                                                    sticky="nw",
-                                                                                                    padx=3)
+                                                                                                              column=1,
+                                                                                                              sticky="nw",
+                                                                                                              padx=3)
 
     def populate_games(self):
         # Create TreeView categories for games
@@ -324,6 +348,11 @@ class LibraryTab(tb.Frame):
         print("-FINISHED REFRESHING-")
 
     def on_right_click(self, event):
+        """Handle right-click events to provide a context menu for game options.
+
+        Args:
+            event (Event): Right-click event.
+        """
         # Open menu if click on entry in TreeView
         iid = self.game_list.identify_row(event.y)
         if iid:
@@ -332,11 +361,21 @@ class LibraryTab(tb.Frame):
             self.context_menu.tk_popup(event.x_root, event.y_root)
 
     def create_context_menu(self, iid):
+        """Create a context menu for game actions.
+
+        Args:
+            iid (str): The identifier of the selected TreeView item.
+        """
         self.context_menu = tb.Menu(self, tearoff=0)
-        self.context_menu.add_command(label="Favorite", command=lambda : self.add_to_favorites(iid))
-        self.context_menu.add_command(label="Remove from favorites", command=lambda : self.remove_favorite(iid))
+        self.context_menu.add_command(label="Favorite", command=lambda: self.add_to_favorites(iid))
+        self.context_menu.add_command(label="Remove from favorites", command=lambda: self.remove_favorite(iid))
 
     def add_to_favorites(self, iid):
+        """Add the selected game to favorites.
+
+        Args:
+            iid (str): The identifier of the selected TreeView item.
+        """
         # Add a game to favorites
         game_title = self.game_list.item(iid, "text")
 
@@ -349,6 +388,11 @@ class LibraryTab(tb.Frame):
             self.update_category_counts()
 
     def remove_favorite(self, iid):
+        """Remove the selected game from favorites.
+
+        Args:
+            iid (str): The identifier of the selected TreeView item.
+        """
         # Remove a game from favorites
         game_title = self.game_list.item(iid, "text")
 
@@ -378,13 +422,16 @@ class LibraryTab(tb.Frame):
         self.update_game_list(search_query)
 
     def update_game_list(self, search_query):
+        """Updates game list in order to simulate a search
+        Args:
+            search_query (str): Search query string entered into search entry field.
+        """
         # Clear and re-create categories while searching
-        for title_id, games_list in [(self.installed_games_id, self.all_games), (self.favorite_games_id, self.favorite_games)]:
+        for title_id, games_list in [(self.installed_games_id, self.all_games),
+                                     (self.favorite_games_id, self.favorite_games)]:
             for game_id in self.game_list.get_children(title_id):
                 self.game_list.delete(game_id)
             filtered_games = [game for game in games_list if search_query.lower() in game["Title"].lower()]
             for game in filtered_games:
                 self.game_list.insert(title_id, "end", text=game["Title"])
         self.update_category_counts()
-
-

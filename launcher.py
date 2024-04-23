@@ -7,6 +7,14 @@ except:
 
 
 class Launcher(tb.Toplevel):
+    """
+    A class that creates the main window for the program.
+    using a top level window with custom theme and layout.
+
+    Attributes:
+        parent (tkinter.tk): The parent widget, factory controller for program.
+        user (str): The username of the current logged-in user.
+    """
     def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent

@@ -5,6 +5,14 @@ from SettingsTab import *
 
 
 class Menu(tb.Frame):
+    """
+    A class representing the main menu of the application. This class manages multiple
+    tabs in a ttkbootstrap notebook; Library, Store, Friends, and Settings.
+
+    Attributes:
+        parent (tkinter widget): Parent widget for this frame.
+        user (str): Username of the current logged-in user.
+    """
     def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent
@@ -14,6 +22,10 @@ class Menu(tb.Frame):
         self.create_widget()
 
     def create_widget(self):
+        """
+        Creates and configures notebook widget and associated tabs.
+        Each tab is instantiated with its respective class
+        """
         notebook_style = tb.Style()
         tab_style = tb.Style()
         tab_style.configure("TNotebook.Tab", font=("Unispace", "18", "bold"))
