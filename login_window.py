@@ -11,7 +11,14 @@ except:
 
 
 class login_window(tb.Toplevel):
+    """
+    A class representing the login interface for the game launcher. 
+    Each user must enter their own exisiting account credentials, which are stored in the database. 
+    New users can choose to register a new account by clicking a widget on the page.
 
+    Attributes:
+        parent (tkinter widget): Parent widget for this frame.
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
@@ -34,7 +41,12 @@ class login_window(tb.Toplevel):
             pass
 
     def verify(self, username, password, nameEn, passwordEn):
-        # checks if login information is registered in database
+        """
+            Params:
+             input strings for username and password; entry objects for username and password.
+             
+            verifies if account information matches registered data in database
+        """
         existing_acc = account(username, password, None)
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
@@ -56,7 +68,9 @@ class login_window(tb.Toplevel):
             passwordEn.delete(0, 'end')
 
     def page(self):
-
+        """
+            loads up login gui
+        """
         username=tb.StringVar()
         password=tb.StringVar()
 
