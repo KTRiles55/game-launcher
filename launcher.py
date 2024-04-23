@@ -21,7 +21,7 @@ class Launcher(tb.Toplevel):
         self.user = username
         
         self.title("")
-        self.geometry('1400x844')
+        self.geometry('1590x844')
         self.minsize(1400, 844)
         self.iconbitmap("images/empty.ico")
 

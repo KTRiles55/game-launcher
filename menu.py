@@ -39,8 +39,8 @@ class Menu(tb.Frame):
         self.settings_tab = SettingsTab(self.notebook)
 
         # Adding Tabs
-        self.notebook.add(self.library_tab, text="Library")
-        self.notebook.add(self.store_tab, text="Store")
+        self.notebook.add(self.library_tab, text="Library ")
+        self.notebook.add(self.store_tab, text="Store   ")
         self.notebook.add(self.friends_tab, text="Friends")
         self.notebook.add(self.settings_tab, text="Settings")
 

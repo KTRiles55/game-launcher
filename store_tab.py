@@ -171,17 +171,17 @@ class StoreTab(tb.Frame):
         # Search Frame at the top
         search_frame = tb.Frame(self)
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
-        scrollable_frame = ScrolledFrame(self, autohide=False, bootstyle="secondary")
+        scrollable_frame = ScrolledFrame(self, autohide=False)
         scrollable_frame.grid(row=1, column=0)
         
 
 
         # Game Frame below the search frame
-        game_frame = tb.Frame(scrollable_frame, bootstyle="secondary")
+        game_frame = tb.Frame(scrollable_frame)
         game_frame.grid(sticky="nsew")
         scrollable_frame.grid(row=1, column=0, sticky="nsew")
-        scrollable_frame.columnconfigure(0, weight=1)
-        scrollable_frame.rowconfigure(1, weight=1)
+        scrollable_frame.columnconfigure(0, weight=0)
+        scrollable_frame.rowconfigure(1, weight=0)
         
         self.columnconfigure(0, weight=1)  # Make the search frame expand with the window
         self.rowconfigure(1, weight=1)  # Make the game frame expand with the window
@@ -317,7 +317,7 @@ class StoreTab(tb.Frame):
             title_temp = tb.Label(game_widget, text=self.games[i]["Title"])
             title_temp.config(font=("Helvetica", 12))
             title_temp.grid(row=0, column=0, padx=5, pady=5)
-            tb.Label(game_widget, text=self.games[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
+            tb.Label(game_widget, text=self.games[i]["Developer"]).grid(row=0, column=4, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.games[i]["Price"])).grid(row=1, column=1)
             tb.Label(game_widget, text= "Released: " + str(self.games[i]["Release_Date"])).grid(row=3, column=0)
             # Generate tags

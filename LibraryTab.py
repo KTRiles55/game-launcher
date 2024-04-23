@@ -40,11 +40,6 @@ class LibraryTab(tb.Frame):
         # Instance of store_tab
         self.menu = menu
 
-        # instance of store_off
-        # owned_games = store_off()
-        # self.wks = owned_games.wks
-        # self.all_games = owned_games.get_parsed_library()
-
         self.favorite_games = []
         self.recent_games = []
 
@@ -54,8 +49,7 @@ class LibraryTab(tb.Frame):
             self.parent.bind("<<NotebookTabChanged>>", self.on_tab_changed, add="+")
 
     def on_tab_changed(self, event):
-        if self.parent.select() == self.winfo_pathname(self.winfo_id()):
-            self.refresh_game_list()
+        self.refresh_game_list()
 
     def load_game_store(self, game_id):
         try:
@@ -76,7 +70,7 @@ class LibraryTab(tb.Frame):
         self.columnconfigure(0, weight=0, minsize=360)
         self.columnconfigure(1, weight=0)
         self.columnconfigure(2, weight=0)
-        self.columnconfigure(3, weight=3)
+        self.columnconfigure(3, weight=1)
 
         # Header
         self.rowconfigure(0, weight=0)
@@ -110,17 +104,18 @@ class LibraryTab(tb.Frame):
 
         # Frame for game info (right side)
         info_frame = tb.Frame(self)
-        info_frame.columnconfigure(0, weight=1, minsize=500)
+        info_frame.columnconfigure(0, weight=1, minsize=400)
         info_frame.rowconfigure(1, weight=0)
         info_frame.grid(row=1, column=2, stick="nsew", padx=3, pady=0)
 
         # Welcome text label and frame
         self.welcome_frame = tb.Frame(self)
-        self.welcome_frame.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
+        # self.welcome_frame.columnconfigure(2, weight=1)
+        self.welcome_frame.grid(row=0, column=3, sticky="ew", padx=5, pady=5)
         self.welcome_label = tb.Label(self.welcome_frame,
                                       text=f"WELCOME BACK {self.current_user_string.upper()}!",
                                       font=("Unispace", "18", "bold"))
-        self.welcome_label.pack()
+        self.welcome_label.pack(side="left")
 
         self.setup_game_list()
         self.setup_default_info_layout(info_frame)
@@ -220,7 +215,7 @@ class LibraryTab(tb.Frame):
         """
         # Ensure the game isn't already in the list, then add it
         if game_title not in self.recent_games:
-            self.recent_games.insert(0, game_title)  # Add to the start of the list for "most recent" first
+            self.recent_games.insert(0, game_title)
         # Optionally limit the number of recent games displayed
         # self.recent_games = self.recent_games[:5]
 
@@ -323,8 +318,6 @@ class LibraryTab(tb.Frame):
         self.favorite_games_id = favorite_games_title
 
     def refresh_game_list(self):
-        print("REFRESHING GAME LIST...")
-
         updated_game_titles = self.owned_games.get_parsed_library()
         updated_titles_dict = [{"Title": title} for title in updated_game_titles]
         updated_titles_set = {game["Title"] for game in updated_titles_dict}
@@ -344,8 +337,6 @@ class LibraryTab(tb.Frame):
 
         # Update game count
         self.update_category_counts()
-        print("Updated titles from library: ", updated_game_titles)
-        print("-FINISHED REFRESHING-")
 
     def on_right_click(self, event):
         """Handle right-click events to provide a context menu for game options.
