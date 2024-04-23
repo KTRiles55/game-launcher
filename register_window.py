@@ -15,9 +15,17 @@ except:
 
 
 class register_window(tb.Toplevel):
+    """
+    A class representing the registration interface for creating a new account, which is accessible via the login interface.
+    New users can enter new account credentials, while following a specific set of rules listed for each entry.
+    This class will alert the user if account information already exists in the database or is invalid.
+
+    Attributes:
+        parent (tkinter widget): Parent widget for this frame.
+    """
+    
     def __init__(self, parent):
         super().__init__(parent)
-
         self.parent = parent
         self.warningLbl = ""
 
@@ -37,8 +45,13 @@ class register_window(tb.Toplevel):
         except:
             pass
 
-    def check(self, name, password, email):
-        # Logic for checking if info exist
+    def check(self, name, password, email): 
+        """
+            Params:
+             input strings for name, password and email address
+            
+            verifies existing account info 
+        """
         new_acc = account(name, password, email)
         wks = self.parent.accessAccountData()
 
@@ -75,6 +88,9 @@ class register_window(tb.Toplevel):
                 self.warningLbl.pack()
 
     def page(self):
+        """
+            loads up register gui
+        """
         loginTitle = tb.Label(self, text="Register")
         loginTitle.pack(pady=10)
         loginTitle.config(font=("Courier", 20))
@@ -84,7 +100,7 @@ class register_window(tb.Toplevel):
         entryFrame.pack(pady=20)
 
 
-        nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12))
+        nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12)) 
         nameLbl.grid(row=1, column=0, padx=5, pady=10)
 
         passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
