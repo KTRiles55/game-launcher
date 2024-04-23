@@ -23,7 +23,7 @@ class Main(tb.Window):
         self.username = username
         self.launcher = Launcher(self, self.username)
         
-     # opens google sheets database
+    # opens google sheets database
     def accessAccountData(self):
         sa = gspread.service_account(filename="database_key.json")
         account_sheet = sa.open("accountTest")

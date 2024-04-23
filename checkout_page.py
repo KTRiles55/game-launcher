@@ -6,6 +6,7 @@ from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import ImageTk, Image 
 from store import *
 from store_off import *
+from LibraryTab import *
 from store_tab import *
 import string
 import random
@@ -359,6 +360,7 @@ class checkout_page(tb.Frame):
                 item = self.cart.pop()
                 title = item["Title"]
                 self.user.update_library(title)
+
 
         else:
         #For gift option

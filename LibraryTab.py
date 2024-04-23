@@ -3,6 +3,7 @@ from tkinter import *
 from ttkbootstrap import Label
 from ttkbootstrap import *
 import ttkbootstrap as tb
+from ttkbootstrap.scrolled import ScrolledFrame
 from store_off import *
 from menu import *
 import openpyxl
@@ -22,9 +23,9 @@ class LibraryTab(tb.Frame):
         print("Welcome " + self.current_user_string + "!")
 
         # Retrieve user-specific library and create dictionary
-        owned_games = user(username=self.current_user_var)
-        self.wks_account = owned_games.wks_account
-        game_titles = owned_games.get_parsed_library()
+        self.owned_games = user(username=self.current_user_var)
+        self.wks_account = self.owned_games.wks_account
+        game_titles = self.owned_games.get_parsed_library()
         self.all_games = [{"Title": title} for title in game_titles]
 
         # Instance of store_tab
@@ -39,6 +40,13 @@ class LibraryTab(tb.Frame):
         self.recent_games = []
 
         self.setup_library()
+
+        if isinstance(self.parent, tb.Notebook):  # Check if the parent is a Notebook
+            self.parent.bind("<<NotebookTabChanged>>", self.on_tab_changed, add="+")
+
+    def on_tab_changed(self, event):
+        if self.parent.select() == self.winfo_pathname(self.winfo_id()):
+            self.refresh_game_list()
 
     def load_game_store(self, game_id):
         try:
@@ -265,7 +273,6 @@ class LibraryTab(tb.Frame):
                                                                                                     sticky="nw",
                                                                                                     padx=3)
 
-
     def populate_games(self):
         # Create TreeView categories for games
         favorite_games_title = self.game_list.insert("",
@@ -290,6 +297,31 @@ class LibraryTab(tb.Frame):
         # Parent ID to update number of games installed
         self.installed_games_id = installed_games_title
         self.favorite_games_id = favorite_games_title
+
+    def refresh_game_list(self):
+        print("REFRESHING GAME LIST...")
+
+        updated_game_titles = self.owned_games.get_parsed_library()
+        updated_titles_dict = [{"Title": title} for title in updated_game_titles]
+        updated_titles_set = {game["Title"] for game in updated_titles_dict}
+
+        current_titles_set = {game['Title'] for game in self.all_games}
+
+        # New titles not currently displayed
+        new_titles = updated_titles_set - current_titles_set
+
+        # Filter out the new games added
+        new_games = [game for game in updated_titles_dict if game["Title"] in new_titles]
+        self.all_games.extend(new_games)
+
+        # Add new games to TreeView
+        for game in new_games:
+            self.game_list.insert(self.installed_games_id, "end", text=game["Title"])
+
+        # Update game count
+        self.update_category_counts()
+        print("Updated titles from library: ", updated_game_titles)
+        print("-FINISHED REFRESHING-")
 
     def on_right_click(self, event):
         # Open menu if click on entry in TreeView
