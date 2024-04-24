@@ -128,12 +128,12 @@ class SettingsTab(tk.Frame):
         self.update_controller_settings()
 
         # Account tab content
-        self.account_label = ttk.Label(self.account_tab, text="Select Account Setting:")
+        self.account_label = ttk.Label(self.account_tab, text="Account Setting:")
         self.account_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         self.account_var = tk.StringVar()
         self.account_var.set("Manage")  # Default account setting selection
-        self.account_dropdown = ttk.Combobox(self.account_tab, textvariable=self.account_var, values=["Manage", "Privacy", "Data Management"])
+        self.account_dropdown = ttk.Combobox(self.account_tab, textvariable=self.account_var, values=["Manage", "Privacy", "Data Management", "Change Username", "Change Password"])
         self.account_dropdown.grid(row=0, column=1, padx=10, pady=10)
 
         # Bind the account dropdown selection to update the account settings
@@ -209,7 +209,31 @@ class SettingsTab(tk.Frame):
             button.grid(row=index, column=0, padx=5, pady=5, sticky="w")
 
     def handle_account_option(self, option):
-        messagebox.showinfo("Account Setting Selected", f"You clicked on: {option}")
+        if option == "Change Username":
+            new_username = simpledialog.askstring("Change Username", "Enter new username:")
+            if new_username:
+                messagebox.showinfo("Username Changed", f"Username changed to: {new_username}")
+            else:
+                messagebox.showinfo("Information", "No username entered.")
+        elif option == "Change Password":
+            current_password = simpledialog.askstring("Change Password", "Enter current password:")
+            if current_password:
+                new_password = simpledialog.askstring("Change Password", "Enter new password:")
+                if new_password:
+                    confirm_new_password = simpledialog.askstring("Change Password", "Confirm new password:")
+                    if confirm_new_password:
+                        if new_password == confirm_new_password:
+                            messagebox.showinfo("Password Changed", "Password successfully changed.")
+                        else:
+                            messagebox.showerror("Error", "New passwords do not match.")
+                    else:
+                        messagebox.showinfo("Information", "No confirmation password entered.")
+                else:
+                    messagebox.showinfo("Information", "No new password entered.")
+            else:
+                messagebox.showinfo("Information", "No current password entered.")
+        else:
+            messagebox.showinfo("Account Setting Selected", f"You clicked on: {option}")
 
     def update_controller_settings(self, event=None):
         selected_controller = self.controller_var.get()
