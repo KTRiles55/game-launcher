@@ -92,7 +92,7 @@ class account():
             passwCell = self.findPassword(wks)
         
             #if user information is unidentified
-            if ((userCell != None) and (passwCell != None)):
+            if ((userCell != None) and (passwCell != None) and (userCell.row == passwCell.row)):
                 return True
         
         return False
