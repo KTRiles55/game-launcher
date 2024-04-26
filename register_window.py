@@ -3,7 +3,7 @@ import ttkbootstrap as tb
 from email_sender import send_confirmation_email
 from ttkbootstrap.constants import *
 import gspread
-import re
+import re 
 from account import *
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -45,7 +45,7 @@ class register_window(tb.Toplevel):
         except:
             pass
 
-    def check(self, name, password, email): 
+    def check(self, name, password, email, nameEn, passEn, emailEn): 
         """
             Params:
              input strings for name, password and email address
@@ -61,7 +61,7 @@ class register_window(tb.Toplevel):
         # Determines valid account information
         if (new_acc.is_valid(name, email, password) == False):
 
-            self.warningLbl = tk.Label(self, text="* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
+            self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
             self.warningLbl.pack()
 
         elif (new_acc.is_valid(name, email, password) == True):
@@ -76,16 +76,21 @@ class register_window(tb.Toplevel):
                 self.parent.run_login()
 
             elif (new_acc.findUsername(wks) != None):
-                self.warningLbl = tk.Label(self, text="* This username is already used! *")
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This username is already used! *")
                 self.warningLbl.pack()
 
             elif (new_acc.findPassword(wks) != None):
-                self.warningLbl = tk.Label(self, text="* This password is already used! *")
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This password is already used! *")
                 self.warningLbl.pack()
 
             elif (new_acc.findEmail(wks) != None):
-                self.warningLbl = tk.Label(self, text="* This email is already used! *")
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This email is already used! *")
                 self.warningLbl.pack()
+                
+        #empties entries
+        nameEn.delete(0, 'end')
+        passEn.delete(0, 'end')
+        emailEn.delete(0, 'end')
 
     def page(self):
         """
@@ -99,30 +104,35 @@ class register_window(tb.Toplevel):
         entryFrame = tb.Frame(self, borderwidth=10, relief="groove")
         entryFrame.pack(pady=20)
 
-
+        username=tb.StringVar()
+        password=tb.StringVar()
+        email=tb.StringVar()
+        
         nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12)) 
         nameLbl.grid(row=1, column=0, padx=5, pady=10)
 
+        emailLbl = tb.Label(entryFrame, text="Email", font=("Courier", 12)) 
+        emailLbl.grid(row=2, column=0, padx=5, pady=10)
+        
         passwordLbl = tb.Label(entryFrame, text="Password", font=("Courier", 12))
         passwordLbl.grid(row=3, column=0, padx=5, pady=10)
 
-        nameEn = tb.Entry(entryFrame)
+        nameEn = tb.Entry(entryFrame, textvariable=username)
         nameEn.grid(row=1, column=1, ipadx=20)
 
-        email_entry = tb.Entry(entryFrame)  # Define email_entry
+        email_entry = tb.Entry(entryFrame, textvariable=email)  # Define email_entry
         email_entry.grid(row=2, column=1, ipadx=20)
 
-        passwordEn = tb.Entry(entryFrame, show="*")
+        passwordEn = tb.Entry(entryFrame, textvariable=password)
         passwordEn.grid(row=3, column=1, ipadx=20)
 
-        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting\n with ONLY alphabetical characters, but can also\n be followed by numerical characters.\n")
+        userNameReqLbl = tb.Label(entryFrame, text="-Username requires 5-20 characters, starting\n with ONLY alphabetical characters, including\nunderscores, but can also be followed by numerical\ncharacters.\n")
         passWordReqLbl = tb.Label(entryFrame, text="-Password requires 10-25 characters, containing\n at least one special character(#, $, %, &, @,...etc..),\nat least one capital alphabetical character, and at\nleast 1 numerical character.")
-
         userNameReqLbl.grid(row=6, column=1)
         passWordReqLbl.grid(row=7, column=1)
 
         backBtn = tb.Button(entryFrame, text="Back", command = lambda: [self.parent.run_login(), self.withdraw()])
         backBtn.grid(row=10, column=0, pady=10)
 
-        submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(nameEn, passwordEn, email_entry))
+        submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(username, password, email, nameEn, passwordEn, email_entry))
         submitBtn.grid(row=4, column=1, padx=5, pady=10)
