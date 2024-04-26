@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
+from ttkbootstrap.icons import Icon
 from user import *
 import gspread
 try:
@@ -58,21 +59,21 @@ class login_window(tb.Toplevel):
             self.parent.run_launcher(self.user)
 
         else:
-            self.warningLbl = tk.Label(self, text="Incorrect username/password entered.\nPlease re-enter login credentials.")
-
-            #displays warning
+            #display error message for misinput
+            self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect username/password entered.\nPlease re-enter login credentials.")
             self.warningLbl.pack()
 
             #empties entries
             nameEn.delete(0, 'end')
             passwordEn.delete(0, 'end')
+            
 
     def page(self):
         """
             loads up login gui
         """
         username=tb.StringVar()
-        password=tb.StringVar()
+        password=tb.StringVar()  
 
         loginTitle = tb.Label(self, text="Login")
         loginTitle.pack(pady=10)
