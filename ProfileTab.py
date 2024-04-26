@@ -12,7 +12,7 @@ class ProfileTab(tb.Frame):
         self.profileFrame.pack(expand=True, fill="both")
         
         # converts image into profile sprite
-        with Image.open("cat.jpg").convert("RGBA") as profile:
+        with Image.open("images/cat.jpg").convert("RGBA") as profile:
              profile = profile.resize((240, 200)) 
              sprite = self.createSprite(profile)   
              sprite = sprite.resize((400, 340))
@@ -60,7 +60,7 @@ class ProfileTab(tb.Frame):
         friendSearchEn = tb.Entry(friendsWidget, width=35, foreground='#ffffff', style='search.TEntry')
         friendSearchEn.pack() 
         
-        searchIcon = ImageTk.PhotoImage(Image.open("search.png").convert("RGBA").resize((20, 20)))
+        searchIcon = ImageTk.PhotoImage(Image.open("images/search.png").convert("RGBA").resize((20, 20)))
         searchWidget = tb.Button(friendSearchEn, image=searchIcon, bootstyle='dark')
         searchWidget.image = searchIcon
         searchWidget.place(relx=0.83, rely=0)        
