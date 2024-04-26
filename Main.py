@@ -23,13 +23,20 @@ class Main(tb.Window):
         self.username = username
         self.launcher = Launcher(self, self.username)
         
-    # opens google sheets database
-    def accessAccountData(self):
+     # opens google sheets database
+    def accessAccountData(self): 
         sa = gspread.service_account(filename="database_key.json")
         account_sheet = sa.open("accountTest")
         account_wks = account_sheet.worksheet("accountInfo")
         return account_wks
 
+     # shows error symbol for every misinput entry
+    def displayErrorMessage(self, page, warningMessage, statement):
+        errorIcon = tk.PhotoImage(data=Icon.error)
+        warningMessage = tk.Label(page, text=statement, image=errorIcon, compound='left')
+        warningMessage.image = errorIcon       
+        return warningMessage
+    
     # closes app
     def quitApp(self):
         self.quit()    
