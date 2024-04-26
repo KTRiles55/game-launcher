@@ -416,7 +416,7 @@ class StoreTab(tb.Frame):
         fill = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cursus in hac habitasse platea dictumst quisque sagittis purus sit. Viverra justo nec ultrices dui. Fermentum odio eu feugiat pretium nibh ipsum. Scelerisque mauris pellentesque pulvinar pellentesque habitant. Commodo sed egestas egestas fringilla phasellus. Quis eleifend quam adipiscing vitae proin. Augue mauris augue neque gravida in fermentum et sollicitudin. Varius vel pharetra vel turpis nunc. Orci phasellus egestas tellus rutrum tellus pellentesque eu. Sollicitudin tempor game_date_or_id eu nisl nunc mi ipsum faucibus. Nulla aliquet enim tortor at auctor urna nunc. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Sodales ut eu sem integer vitae justo. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Sit amet est placerat in egestas erat imperdiet sed. Sed arcu non odio euismod. Lorem ipsum dolor sit amet consectetur adipiscing elit. Donec ac odio tempor orci dapibus. Vulputate eu scelerisque felis imperdiet proin fermentum."
         game_frame.destroy()
         self.destroy_frames(search_frame)
-        back_btn = tb.Button(search_frame, text="Back", bootstyle="outline", command=lambda: self.setup_layout())
+        back_btn = tb.Button(search_frame, text="Back", bootstyle="outline", command=lambda: [self.destroy_frames(search_frame), self.setup_layout()])
         back_btn.grid(row=0, column=0, sticky="nsew")
         
         game_title = tb.Frame(scrollable, bootstyle="bg")
