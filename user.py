@@ -110,3 +110,21 @@ class user():
                     count += 1
         return library
 
+
+    def check_inlibrary(self, game):
+        """
+        Using game title checks if title is in library
+        args:
+            game (string)
+        returns:
+            status (string)
+
+        """
+        status = False
+        titles = self.get_parsed_library()
+        for title in titles:
+            if(title == game):
+                status = True
+                break
+        return status
+            

@@ -7,6 +7,7 @@ from PIL import ImageTk, Image
 from store import *
 from LibraryTab import *
 from store_tab import *
+import user
 import string
 import random
 import math
@@ -25,26 +26,28 @@ class checkout_page(tb.Frame):
         self.init_purchase_types()
         #print(self.cart)
 
-    def change_copy_status(self, status):
+    def change_copy_status(self, game, status):
         #type = ["Digital Copies","Digital Copies", "Hard Copies"]
         #recipient = ["For myself","For myself", "As gifts"]
-        for i in range(len(self.cart)):
-            game = self.cart[i]
-            if(status == "Digital Copies"):
-                game["Digital_Copy"] = True
-            else: 
-                game["Digital_Copy"] = False
+        if(status == "Digital Copies"):
+            game["Digital_Copy"] = True
+        else: 
+            game["Digital_Copy"] = False
         
 
-    def change_recipient(self, status):
-        for i in range(len(self.cart)):
-            game = self.cart[i]
-            if(status == "For myself"):
+    def change_recipient(self, game, status):
+        title = game["Title"]
+        if(status == "For myself"):
+            if(self.user.check_inlibrary(title) == True):
                 game["For_Myself"] = True
             else:
                 game["For_Myself"] = False
+                print("A game is already your library")
+        else:
+            game["For_Myself"] = False
         
-        print("status=" + str(status) + ", " + game["Title"])
+        
+        
 
     def init_purchase_types(self):
         #default initializes purchase type to digital and for myself
@@ -159,40 +162,56 @@ class checkout_page(tb.Frame):
         type = ["Digital Copies","Digital Copies", "Hard Copies"]
         recipient = ["For myself","For myself", "As gifts"]
         game_widgets = []
-        recipient_status = []
         images = ["green.png"]
+        selection = []
+        for i in range(len(self.cart)):
+            selection.append("For myself")
         #Counter for number of widgets, to place continue
-        count = 2
+        row_count = 0
 
         items_num = len(self.cart)
-        selected_recipient = IntVar(value=0)
-        selected_copy = IntVar(value=0)
-        recipient_options = tb.OptionMenu(frame, selected_recipient, *recipient, bootstyle="outline", command=lambda recipient: self.change_recipient(selected_recipient.get()))
-        copy_type_options = tb.OptionMenu(frame,selected_copy, *type, bootstyle="outline", command=lambda type: self.change_copy_status(selected_copy.get()))
-        recipient_options.grid(row=0, column=1, sticky="nse", padx=10)
-        copy_type_options.grid(row=0, column=2, sticky="nse", padx=10)
-
+        selected_recipient = StringVar()
+        selected_copy = StringVar()
+        
         for i in range(items_num):
-            selected_recipient = IntVar(value=0)
-            selected_copy = IntVar(value=0)
+            selected_recipient = StringVar()
+            selected_copy = StringVar()
             game_widget = tb.Frame(frame, bootstyle="bg")
-            game_widget.grid(row=i+2, column=0, sticky="nsew", padx=5, pady=5)
+            game_widget.grid(row=i, column=0, sticky="nsew", padx=5, pady=5)
             self.render_img(game_widget, images[0], 1, 0)
             title_temp = tb.Label(game_widget, text=self.cart[i]["Title"])
             title_temp.config(font=("Helvetica", 12))
             title_temp.grid(row=0, column=0, padx=5, pady=5)
             tb.Label(game_widget, text=self.cart[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.cart[i]["Price"])).grid(row=1, column=1)
-            recipient_status.append(selected_recipient.get())
+            recipient_options = tb.OptionMenu(game_widget, selected_recipient, *recipient, bootstyle="outline", command=lambda  recipient, i=i: self.change_recipient(self.cart[i], recipient))
+            copy_type_options = tb.OptionMenu(game_widget, selected_copy, *type, bootstyle="outline", command=lambda type, i=i: self.change_copy_status(self.cart[i], type))
+            recipient_options.grid(row=2, column=1, sticky="nse", padx=10)
+            copy_type_options.grid(row=2, column=2, sticky="nse", padx=10)
+            #selected_recipient.set("For myself")
+            #selected_copy.set("Digital Copies")
 
-            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [ self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.preview_cart(frame, order_frame, title_frame)]).grid(row=2, column=2, padx=5, pady=5)
+            tb.Button(game_widget, text="Remove", bootstyle="success", command=lambda i=i: [ self.remove_game(self.cart[i]["Title"]), self.destroy_frames(order_frame), self.generate_total(order_frame), self.destroy_frames(frame), self.preview_cart(frame, order_frame, title_frame)]).grid(row=1, column=2, padx=5, pady=5)
             game_widgets.append(game_widget)
-            count += 1
+            row_count += 1
         
         
-        next_btn = tb.Button(frame, text="Continue",  command= lambda: [print(self.cart), self.display_payment_entries(frame, title_frame)], bootstyle="success")
-        next_btn.grid(row=count, column=0, sticky="nsew", padx=5, pady=10)
+        next_btn = tb.Button(frame, text="Continue",  command= lambda: [print(self.cart), self.check_cartinfo(row_count, frame, title_frame)], bootstyle="success")
+        next_btn.grid(row=row_count, column=0, sticky="nsew", padx=5, pady=10)
     
+    def check_cartinfo(self,row_count, frame, title_frame):
+        for i in range(len(self.cart)):
+            game = self.cart[i]
+            title = game["Title"]
+            print(title)
+            if((self.user.check_inlibrary(title) == True) and (game["For_Myself"] == True)):
+                warn_lbl = tb.Label(frame, text="You own a game in the cart")
+                warn_lbl.config(font=("Courier", 10), bootstyle="danger")
+                warn_lbl.grid(row=row_count+1, column=0)
+                print("Game owned")
+                return
+
+        self.display_payment_entries(frame, title_frame)
     
     def display_payment_entries(self, parent, title_frame):
         
