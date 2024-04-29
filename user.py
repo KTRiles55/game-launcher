@@ -16,13 +16,23 @@ class user():
             the row the username belongs to (int)
         """
         name = ""
+        empty_row = None
         row = 0
-        row_count = 16
-        for i in range(1, row_count):
+        row_count = self.wks_account.max_row
+        for i in range(1, row_count + 1):
             name = self.wks_account.cell(i, 1).value
             if name == self.username.get():
                 return i
-        return 1
+            if name is None and empty_row is None:
+                empty_row = i
+
+        if empty_row is None:
+            empty_row = row_count + 1
+
+        self.wks_account.cell(empty_row, 1).value = self.username.get()
+        self.wb_obj.save(self.path)
+
+        return empty_row
 
     def get_username(self):
         """
