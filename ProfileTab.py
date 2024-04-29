@@ -1,86 +1,173 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import filedialog, messagebox
 import ttkbootstrap as tb
-from ttkbootstrap import Style, Label
+from ttkbootstrap import Label, Style
 from ttkbootstrap.constants import *
 from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFilter
+import os
 
 class ProfileTab(tb.Frame):
-    def __init__(self,parent):  
+    def __init__(self, parent):  
         super().__init__(parent)
         self.parent = parent
-        self.profileFrame = tb.Frame(self)
-        self.profileFrame.pack(expand=True, fill="both")
-        
-        # converts image into profile sprite
-        with Image.open("images/cat.jpg").convert("RGBA") as profile:
-             profile = profile.resize((240, 200)) 
-             sprite = self.createSprite(profile)   
-             sprite = sprite.resize((400, 340))
-             icon = ImageTk.PhotoImage(sprite)
-             profileLbl = tb.Label(self.profileFrame, image=icon, borderwidth=20)
-             profileLbl.image = icon
-             profileLbl.grid(row=3, column=3)
-        
-        accountNameLbl = tb.Label(self.profileFrame, text="MewMaster34", font=("Verdana", "25", "bold"), foreground="#ffffff")
-        accountNameLbl.grid(row=4,column=3)
-        friends = { "Fred", "Billy", "Joel", "Ned", "Sally" }
-        self.loadFriendWidget(friends, self.profileFrame)
-        
-        # add bio widget
-        bioFrame = tb.Frame(self.profileFrame, width=60, height=40)
-        bioFrame.grid(row=3, column=4)
-        bioText = tb.Text(bioFrame, width=40, height=10, font=("Verdana", "13"))
-        bioLbl = tb.Label(bioFrame, text="About Me", font=("Verdana", "20", "bold"), anchor='w', foreground='#ffffff')
-        bioText.configure(bg='#000000', fg='#ffffff')
-        bioLbl.pack()
-        bioText.pack()
-       
-             
-    def createSprite(self, image):
-        # Crops image into circular sprite format
 
+        # Create main frame
+        self.main_frame = tb.Frame(self)
+        self.main_frame.pack(expand=True, fill="both")
+
+        # Create profile frame
+        self.profile_frame = tb.Frame(self.main_frame)
+        self.profile_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+        # Load default image
+        self.load_default_image()
+
+        # Add account name label
+        self.accountNameLbl = tb.Label(self.profile_frame, text="MewMaster34", font=("Verdana", "25", "bold"), foreground="#ffffff")
+        self.accountNameLbl.pack(side=tk.TOP, padx=10, pady=10)
+
+        # Add button to upload image
+        upload_button = tb.Button(self.profile_frame, text="Upload Image", command=self.upload_image)
+        upload_button.pack(side=tk.TOP, padx=10, pady=10)
+
+        # Create about me frame
+        self.about_me_frame = tb.Frame(self.main_frame)
+        self.about_me_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        # Add "About Me" label
+        self.bioLbl = tb.Label(self.about_me_frame, text="About Me", font=("Verdana", "20", "bold"), anchor='w', foreground='#ffffff')
+        self.bioLbl.pack(side=tk.TOP, anchor='w', padx=10, pady=(10, 0))
+
+        # Add "About Me" text entry
+        self.bioText = tb.Text(self.about_me_frame, width=40, height=10, font=("Verdana", "13"))
+        self.bioText.configure(bg='#000000', fg='#ffffff')
+        self.bioText.pack(side=tk.TOP, anchor='w', padx=10, pady=(0, 5))
+
+        # Add button to save "About Me" text
+        save_button = tb.Button(self.about_me_frame, text="Save", command=self.save_about_me)
+        save_button.pack(side=tk.TOP, anchor='w', padx=10, pady=(0, 10))
+
+        # Initialize about me label
+        self.about_me_label = None
+
+        # Create friends frame
+        self.friends_frame = tb.Frame(self.main_frame)
+        self.friends_frame.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Add "Friends" label
+        self.friendListLbl = tb.Label(self.friends_frame, text="Friends", font=("Verdana", "20", "bold"), foreground="#ffffff")
+        self.friendListLbl.pack(side=tk.TOP, padx=10, pady=(10, 0))
+
+        # Add friend list
+        self.load_friend_widget()
+
+    def load_default_image(self):
+        # Load default image
+        self.image_path = "images/profile.png"
+        if os.path.exists(self.image_path):
+            profile = Image.open(self.image_path).convert("RGBA")
+        else:
+            profile = Image.open("images/cat.jpg").convert("RGBA")
+        profile = profile.resize((240, 200))
+        sprite = self.create_sprite(profile)
+        sprite = sprite.resize((400, 340))
+        self.icon = ImageTk.PhotoImage(sprite)
+        self.profileLbl = tb.Label(self.profile_frame, image=self.icon, borderwidth=20)
+        self.profileLbl.image = self.icon
+        self.profileLbl.pack(side=tk.TOP, padx=10, pady=10)
+
+    def upload_image(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            with Image.open(file_path).convert("RGBA") as profile:
+                profile = profile.resize((240, 200))
+                sprite = self.create_sprite(profile)
+                sprite = sprite.resize((400, 340))
+                self.icon = ImageTk.PhotoImage(sprite)
+                self.profileLbl.config(image=self.icon)
+                self.profileLbl.image = self.icon
+                self.save_image(profile)
+
+    def save_image(self, profile):
+        profile.save(self.image_path)
+
+    def create_sprite(self, image):
+        # Crops image into circular sprite format
         mask = Image.new("L", image.size, 0)
         draw = ImageDraw.Draw(mask)
         draw.ellipse((20, 0, 220, 200), 255)
         n_sprite = ImageOps.fit(image, mask.size, centering=(0.5, 0.5))
         n_sprite.putalpha(mask)
-        
         return n_sprite
-        
 
-    def loadFriendWidget(self, friends, frame):
-        # generate widget for friend list
-        
-        friendsWidget = tb.Frame(frame, height=200, width=100, borderwidth=10)
-        friendsWidget.grid(row=3, column=5, sticky="nsew")
-        friendsScroll = tb.Scrollbar(friendsWidget, orient="vertical", bootstyle = "secondary")
-        
-        searchStyle = tb.Style()
-        searchStyle.configure('search.TEntry', fieldbackground='#000000', bootstyle='dark')
-        friendSearchEn = tb.Entry(friendsWidget, width=35, foreground='#ffffff', style='search.TEntry')
-        friendSearchEn.pack() 
-        
+    def load_friend_widget(self):
+        # Add friend list
+        self.friendsWidget = tb.Frame(self.friends_frame, height=200, width=100, borderwidth=10)
+        self.friendsWidget.pack(side=tk.TOP, fill=tk.Y)
+
+        # Add friend list scrollbar
+        self.friendsScroll = tb.Scrollbar(self.friendsWidget, orient="vertical", bootstyle="secondary")
+        self.friendsScroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Add friend search entry
+        self.friendSearchEn = tb.Entry(self.friendsWidget, width=35, foreground='#ffffff', style='search.TEntry')
+        self.friendSearchEn.pack()
+
+        # Add search button
         searchIcon = ImageTk.PhotoImage(Image.open("images/search.png").convert("RGBA").resize((20, 20)))
-        searchWidget = tb.Button(friendSearchEn, image=searchIcon, bootstyle='dark')
+        searchWidget = tb.Button(self.friendSearchEn, image=searchIcon, bootstyle='dark')
         searchWidget.image = searchIcon
-        searchWidget.place(relx=0.83, rely=0)        
+        searchWidget.place(relx=0.83, rely=0)
 
-        friendsScroll.pack(side=LEFT, fill=Y) 
-        friends = { "Fred", "Billy", "Joel", "Ned", "Sally" } 
-        self.listFriends(friendsWidget, friendsScroll, friends)
-        
-        friendListLbl = tb.Label(frame, text="Friends", font=("Verdana", "20", "bold"), foreground="#ffffff")
-        friendListLbl.grid(row=2, column=5)
-        
+        # Add friend list box
+        self.friendsList = tk.Listbox(self.friendsWidget, yscrollcommand=self.friendsScroll.set)
+        self.friendsList.configure(background="#000000", foreground="#ffffff", highlightbackground="#ffffff", font=("Verdana", "15", "bold"), width=12, borderwidth=20)
+        self.friendsList.pack(side=tk.LEFT, fill=tk.Y)
+        self.friendsScroll.config(command=self.friendsList.yview)
 
-    def listFriends(self, widget, scroll_bar, friends):
-        # add friends into list
-        friendsList = Listbox(widget, yscrollcommand=scroll_bar.set)
-        friendsList.configure(background="#000000", foreground="#ffffff", highlightbackground="#ffffff", font=("Verdana", "15", "bold"), width=12, borderwidth=20)
-        for f in friends:
-            friendsList.insert(END, f)
-            
-        friendsList.pack(side=LEFT, fill=Y)
-        scroll_bar.config(command=friendsList.yview)
-      
+        # Populate friend list with sample friends
+        friends = ["Fred", "Billy", "Joel", "Ned", "Sally"]
+        for friend in friends:
+            self.friendsList.insert(tk.END, friend)
 
+    def save_about_me(self):
+        about_me_text = self.bioText.get("1.0", tk.END).strip()
+        if about_me_text:
+            with open("about_me.txt", "w") as f:
+                f.write(about_me_text)
+                messagebox.showinfo("Success", "About Me saved successfully!")
+                self.display_about_me(about_me_text)
+                self.bioText.delete("1.0", tk.END)
+        else:
+            messagebox.showerror("Error", "Please enter some text for About Me!")
+
+    def display_about_me(self, about_me_text):
+        # Destroy previous about me label if exists
+        if self.about_me_label:
+            self.about_me_label.destroy()
+
+        # Add about me label
+        self.about_me_label = tb.Label(self.about_me_frame, text=about_me_text, font=("Verdana", "13"), anchor='w', wraplength=300, justify=tk.LEFT)
+        self.about_me_label.pack(side=tk.TOP, padx=10, pady=(0, 5))
+
+def main():
+    # Create the main window
+    root = tk.Tk()
+    root.title("Profile")
+
+    # Apply ttkbootstrap style
+    style = Style(theme="darkly")
+
+    # Create a notebook (tabbed interface)
+    notebook = tb.Notebook(root)
+
+    # Create the profile tab and add it to the notebook
+    profile_tab = ProfileTab(notebook)
+    notebook.add(profile_tab, text="Profile")
+
+    # Pack the notebook and run the Tkinter event loop
+    notebook.pack(expand=True, fill="both")
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
