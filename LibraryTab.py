@@ -7,6 +7,7 @@ from ttkbootstrap.scrolled import ScrolledFrame
 from menu import *
 import openpyxl
 from user import *
+import shelve
 from PIL import ImageTk, Image
 
 
@@ -39,16 +40,24 @@ class LibraryTab(tb.Frame):
         # Instance of store_tab
         self.menu = menu
 
+        # Lists of user's games for each category
         self.favorite_games = []
         self.recent_games = []
 
         self.setup_library()
+        self.load_favorites()
 
-        if isinstance(self.parent, tb.Notebook):  # Check if the parent is a Notebook
-            self.parent.bind("<<NotebookTabChanged>>", self.on_tab_changed, add="+")
+        # Call method when tab is changed
+        self.parent.bind("<<NotebookTabChanged>>", self.on_tab_changed, add="+")
 
     def on_tab_changed(self, event):
-        self.refresh_game_list()
+        tab_index = self.parent.index("current")
+
+        tab_title = self.parent.tab(tab_index, "text")
+        # Check if tab chosen is Library Tab, then refresh
+        if tab_title == "Library":
+            print("Refreshing...")
+            self.refresh_game_list()
 
     def load_game_store(self, game_id):
         try:
@@ -273,29 +282,26 @@ class LibraryTab(tb.Frame):
             del self.button_frame
 
         # Button creation to go back to info page
-        tb.Button(self.button_frame, text="Back",
-                  command=back_command).grid(row=0, column=0, sticky="nw", padx=3)
+        (tb.Button(self.button_frame, text="Back", command=back_command)
+            .grid(row=0, column=0, sticky="nw", padx=3))
 
         # Button that calls load_game_store method
-        tb.Button(self.button_frame, text="Store Page",
-                  command=lambda: self.load_game_store(self.selected_game_id)).grid(row=0,
-                                                                                    column=1,
-                                                                                    sticky="nw",
-                                                                                    padx=3)
+        (tb.Button(self.button_frame, text="Store Page", command=lambda: self.load_game_store(self.selected_game_id))
+           .grid(row=0, column=1, sticky="nw", padx=3))
 
         # Display game name
-        tb.Label(self.info_frame, text=game["Title"],
-                 font=("Helvetica", 30)).grid(row=0, column=0, sticky="w", padx=10, pady=10)
-        tb.Button(self.info_frame, text="Play", command=lambda: self.add_to_recent_games(game["Title"])).grid(row=1,
-                                                                                                              column=1,
-                                                                                                              sticky="nw",
-                                                                                                              padx=3)
+        (tb.Label(self.info_frame, text=game["Title"], font=("Helvetica", 30))
+            .grid(row=0, column=0, sticky="w", padx=10, pady=10))
+
+        (tb.Button(self.info_frame, text="Play", command=lambda: self.add_to_recent_games(game["Title"]))
+            .grid(row=1, column=1, sticky="nw", padx=3))
 
     def populate_games(self):
+        self.load_favorites()
         # Create TreeView categories for games
         favorite_games_title = self.game_list.insert("",
                                                      "end",
-                                                     text=f"Favorite Games [0]",
+                                                     text=f"Favorite Games [{len(self.favorite_games)}]",
                                                      open=True,
                                                      tags=("category",))
         installed_games_title = self.game_list.insert("",
@@ -305,10 +311,14 @@ class LibraryTab(tb.Frame):
                                                       tags=("category",))
 
         # Populate all games into "installed"
-        i = 0
         for game in self.all_games:
-            if "Title" in game:
-                self.game_list.insert(installed_games_title, "end", text=game['Title'])
+            if not any(fav["Title"] == game["Title"] for fav in self.favorite_games):
+                self.game_list.insert(installed_games_title, "end", text=game["Title"])
+
+        # Populate games from Favorite Games
+        for fav_game in self.favorite_games:
+            if "Title" in fav_game:
+                self.game_list.insert(favorite_games_title, "end", text=fav_game["Title"])
 
         self.game_list.tag_configure("category", font=("Unispace", 10, "bold"), background="#45484b")
 
@@ -376,6 +386,15 @@ class LibraryTab(tb.Frame):
             self.game_list.delete(iid)
             self.game_list.insert(self.favorite_games_id, "end", text=game_title)
             self.update_category_counts()
+            self.save_favorites()
+
+    def save_favorites(self):
+        with shelve.open('data/favorite.db') as db:
+            db[self.current_user_string + "_favorites"] = self.favorite_games
+
+    def load_favorites(self):
+        with shelve.open("data/favorite.db") as db:
+            self.favorite_games = db.get(self.current_user_string + "_favorites", [])
 
     def remove_favorite(self, iid):
         """Remove the selected game from favorites.
@@ -386,13 +405,16 @@ class LibraryTab(tb.Frame):
         # Remove a game from favorites
         game_title = self.game_list.item(iid, "text")
 
-        games = next((game for game in self.all_games if game["Title"] == game_title), None)
+        game_to_remove = next((game for game in self.favorite_games if game["Title"] == game_title), None)
 
-        if games:
-            self.favorite_games.remove(games)
+        if game_to_remove:
+            self.favorite_games.remove(game_to_remove)
             self.game_list.delete(iid)
-            self.game_list.insert(self.installed_games_id, "end", text=game_title)
+            # Reinsert into installed games
+            if any(game["Title"] == game_title for game in self.all_games):
+                self.game_list.insert(self.installed_games_id, "end", text=game_title)
             self.update_category_counts()
+            self.save_favorites()
         else:
             # Debugging print message
             print("Game not found in favorites to remove!")
