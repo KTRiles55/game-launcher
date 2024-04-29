@@ -255,10 +255,10 @@ class StoreTab(tb.Frame):
 
         selected_tag = StringVar()
         searching = StringVar()
-        enter_display = tb.Label(parent, text= "searching: " + "\"" + searching.get() + "\"")
         back_btn = tb.Button(parent, text="Back", bootstyle="outline")
         search_label = tb.Label(parent, text="Search:")
         search_entry = tb.Entry(parent, textvariable=searching, bootstyle="secondary")
+        enter_display = tb.Label(parent, text= "searching: " + "\"" + searching.get() + "\"")
         left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(game_frame, parent, scrollable))
         right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(game_frame, parent, scrollable))
         #listbox = Listbox(parent)
@@ -334,7 +334,9 @@ class StoreTab(tb.Frame):
         lower_entry = tb.Entry(parent, textvariable=low_price, width=5)
         upper_entry = tb.Entry(parent, textvariable=high_price, width=5)
         price_enter = tb.Button(parent, text="Enter", command = lambda: [self.set_prices(low_price.get(), high_price.get()), self.filterate( game_frame, scrollable, search_frame) ])
-        
+        gift_lbl = tb.Label(parent, text="Activate a Product")
+        gift_lbl.config(font=("Helvetica", 10))
+        activate_btn = tb.Button(parent, text="Activate", bootstyle="success", command=lambda: self.run_gift_window())
 
         category_lbl.grid(row=1, column=1, padx=5, pady=10, sticky="nsew")
         category_drop.grid(row=1, column=0, padx=5, pady=10, sticky="nsew")
@@ -344,8 +346,42 @@ class StoreTab(tb.Frame):
         lower_entry.grid(row=4, column=0, padx=5, pady=(10,0), sticky="nsew")
         upper_entry.grid(row=4, column=1, padx=5, pady=(10,0), sticky="nsew")
         price_enter.grid(row=5, column=0, columnspan=2, padx=5, pady=(10,0), sticky="nsew")
+        gift_lbl.grid(row=6, column=0, padx=5, pady=5, sticky="sew")
+        activate_btn.grid(row=6, column=1, padx=5, pady=5, sticky="sew")
         
+    def run_gift_window(self):
+        gift_win = tb.Toplevel(self)
+        gift_win.title("")
+        gift_win.geometry('400x400')
+        gift_win.minsize(400, 400)
+        gift_win.maxsize(400,400)
+        input = StringVar()
 
+        lbl = tb.Label(gift_win, text="Enter your code.")
+        lbl.config(font=("Helvetica", 12))
+        en = tb.Entry(gift_win, textvariable=input)
+        warning = tb.Label(gift_win, text="Invalid Code", bootstyle="danger")
+        warning.config(font=("Helvetica", 10))
+        confirm_btn = tb.Button(gift_win, text="Confirm", bootstyle="success", command=lambda: self.check_code(gift_win, warning, input.get()))
+
+        lbl.grid(row=0, padx=5, pady=10,  column=0)
+        en.grid(row=1, padx=5, pady=10, column=0)
+        confirm_btn.grid(row=2, padx=5, pady=10, column=0)
+
+    def check_code(self, parent, warning, input):
+        game = self.store.validate_gift(input)
+        if(game == None):
+            warning.config(text="Invalid Code", bootstyle="danger")
+        else:
+            title = game["Title"]
+            in_lib = self.user.check_inlibrary(title)
+            if(in_lib == False):
+                self.user.update_library(title)
+                warning.config(text=title + " was added to your library", bootstyle="success")
+            else:
+                warning.config(text="Already in library", bootstyle="success")
+            
+        warning.grid(row=3, column=0, padx=5, pady=10)
 
     def set_category(self, selected):
         self.filters["Category"] =selected
