@@ -23,7 +23,7 @@ class Menu(tb.Frame):
         # Tabs
         self.library_tab = LibraryTab(self.notebook, self, self.user)
         self.store_tab = StoreTab(self.notebook, self.user)
-        self.profile_tab = ProfileTab(self.notebook)
+        self.profile_tab = ProfileTab(self.notebook, self.user)
         self.settings_tab = SettingsTab(self.notebook) 
 
         # Adding Tabs

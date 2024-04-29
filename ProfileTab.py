@@ -2,12 +2,13 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import ttkbootstrap as tb
 from ttkbootstrap import Label, Style
+from user import user
 from ttkbootstrap.constants import *
 from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFilter
 import os
 
 class ProfileTab(tb.Frame):
-    def __init__(self, parent):  
+    def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent
 
@@ -22,8 +23,12 @@ class ProfileTab(tb.Frame):
         # Load default image
         self.load_default_image()
 
+        # Get Username
+        self.username = username
+        self.current_user = self.username.get_username()
+
         # Add account name label
-        self.accountNameLbl = tb.Label(self.profile_frame, text="MewMaster34", font=("Verdana", "25", "bold"), foreground="#ffffff")
+        self.accountNameLbl = tb.Label(self.profile_frame, text=self.current_user, font=("Verdana", "25", "bold"), foreground="#ffffff")
         self.accountNameLbl.pack(side=tk.TOP, padx=10, pady=10)
 
         # Add button to upload image
