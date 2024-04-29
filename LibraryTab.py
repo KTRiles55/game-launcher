@@ -66,6 +66,7 @@ class LibraryTab(tb.Frame):
             index = self.menu.notebook.index(store_tab)
             self.menu.notebook.select(index)
             store_tab.preview_game(game_id)
+            raise NotImplementedError("Not currently able to figure out this method.")
         except Exception as e:
             print(f"Error navigating to store page: {e}")
 
