@@ -2,9 +2,8 @@ import tkinter as tk
 import ttkbootstrap as tb
 from account import *
 from ttkbootstrap.constants import *
-from ttkbootstrap.icons import Icon
 from user import *
-import gspread
+import openpyxl
 try:
     from ctypes import windll, byref, sizeof, c_int
 except:
@@ -48,13 +47,13 @@ class login_window(tb.Toplevel):
              
             verifies if account information matches registered data in database
         """
-        existing_acc = account(username, password, None)
+        existing_acc = account(username.get(), password.get(), None)
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
 
         wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
-            self.user = user(username)
+            self.user = user(username.get())
             self.destroy()
             self.parent.run_launcher(self.user)
 
@@ -71,7 +70,7 @@ class login_window(tb.Toplevel):
     def page(self):
         """
             loads up login gui
-        """
+        """  
         username=tb.StringVar()
         password=tb.StringVar()  
 
