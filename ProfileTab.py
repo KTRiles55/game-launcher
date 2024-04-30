@@ -8,9 +8,10 @@ from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFilter
 import os
 
 class ProfileTab(tb.Frame):
-    def __init__(self, parent, username):
+    def __init__(self, parent, user):
         super().__init__(parent)
         self.parent = parent
+        self.user = user
 
         # Create main frame
         self.main_frame = tb.Frame(self)
@@ -24,8 +25,7 @@ class ProfileTab(tb.Frame):
         self.load_default_image()
 
         # Get Username
-        self.username = username
-        self.current_user = self.username.get_username()
+        self.current_user = self.user.get_username()
 
         # Add account name label
         self.accountNameLbl = tb.Label(self.profile_frame, text=self.current_user, font=("Verdana", "25", "bold"), foreground="#ffffff")
@@ -131,9 +131,14 @@ class ProfileTab(tb.Frame):
         self.friendsScroll.config(command=self.friendsList.yview)
 
         # Populate friend list with sample friends
-        friends = ["Fred", "Billy", "Joel", "Ned", "Sally"]
+        friends = self.user.getParsedFriendsList()
         for friend in friends:
             self.friendsList.insert(tk.END, friend)
+
+
+    def displayFriendRequests(self, friendRequests):
+        friendRequestWindow = tb.Toplevel(self, title='Friend Requests', size=(100, 200), minsize=(100, 200), maxsize=(100, 200), iconbitmap = "images/empty.ico", topmost=True)
+
 
     def save_about_me(self):
         about_me_text = self.bioText.get("1.0", tk.END).strip()
