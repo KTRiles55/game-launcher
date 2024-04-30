@@ -1,5 +1,6 @@
 # class for user account
-import gspread 
+import openpyxl
+import pandas as pd
 import re
 
 
@@ -28,7 +29,7 @@ class account():
             checks if username is valid
         """
         name_pattern = re.compile(r'[a-zA-Z_]+[0-9]*') 
-        if (name_pattern.search(username.get()) == None) or (re.search(r'\w{5,20}', username.get()) == None):
+        if (name_pattern.search(username) == None) or (re.search(r'\w{5,20}', username) == None):
             return False 
         return True
 
@@ -43,7 +44,7 @@ class account():
         """
         
         email_pattern = re.compile(r'[a-zA-Z\.-_\+]+@[a-zA-z-]+\.(com|org|net|gov)')
-        if (email_pattern.search(email.get()) == None):
+        if (email_pattern.search(email) == None):
             return False
         return True
 
@@ -58,7 +59,7 @@ class account():
         """        
 
         passw_pattern1 = re.compile(r'^(\S){10,25}$')
-        if ((passw_pattern1.search(password.get()) == None) or ((re.search(r'\W+',password.get()) == None) or (re.search(r'[A-Z]+',password.get()) == None) or (re.search(r'\d+',password.get()) == None))):
+        if ((passw_pattern1.search(password) == None) or ((re.search(r'\W+',password) == None) or (re.search(r'[A-Z]+',password) == None) or (re.search(r'\d+',password) == None))):
             return False 
         return True
 
@@ -87,31 +88,26 @@ class account():
             verifies if account info is already stored in database
         """
         
-        if ((self.username.get() != "") and (self.password.get() != "")):
+        if ((self.username != "") and (self.password != "")):
             userCell = self.findUsername(wks)
             passwCell = self.findPassword(wks)
         
             #if user information is unidentified
-            if ((userCell != None) and (passwCell != None) and (userCell.row == passwCell.row)):
+            if ((userCell != None) and (passwCell != None) and (userCell == passwCell)):
                 return True
         
         return False
                
 
-    def find_sheet(self, wks):
-        """
-            Params:
-             pointer to Google worksheet database
-            Returns:
-             row from worksheet
-             
-            searches for row where username is stored and returns its contents
-        """ 
-        user = user.findUsername(self.username, wks)
-        acc_sheet = wks.row_values(user)
-        return acc_sheet
-    
 
+    def searchRows(self, wks, column, data):
+        for cell in wks[column]:
+            if (cell.value == data):
+                return cell.row 
+            
+        return None
+    
+        
     def findUsername(self, wks):
         """
             Params:
@@ -119,7 +115,8 @@ class account():
             Returns:
              username cell number (int)
         """
-        return wks.find(self.username.get())
+       
+        return self.searchRows(wks, 'A', self.username)
     
 
     def findPassword(self, wks):
@@ -129,7 +126,8 @@ class account():
             Returns:
              password cell number (int)
         """
-        return wks.find(self.password.get())
+     
+        return self.searchRows(wks, 'B', self.password)
 
 
     def findEmail(self, wks):
@@ -139,17 +137,22 @@ class account():
             Returns:
              email cell number (int)
         """
-        return wks.find(self.email.get())
+        return self.searchRows(wks, 'C', self.email)
             
 
-    def create_newuser(self, wks):
+    def create_newuser(self):
         """
             Params:
              pointer to Google worksheet database
             
             adds new instance of user onto next empty row in database
         """
-        wks.append_row([self.username.get(), self.password.get(), self.email.get()])
+        path="database_offline.xlsx"
+        new_account = pd.DataFrame({'Username': [self.username], 'Password': [self.password], 'Email': [self.email]})
+        excelWrite = pd.ExcelWriter(path, engine='openpyxl', mode='a', if_sheet_exists='overlay')
+        excelRead = pd.read_excel(path)
+        new_account.to_excel(excelWrite, sheet_name='accountInfo', header=False, startrow=len(excelRead)+1, index=False)
+        excelWrite._save()
 
     
     def update_user(self, new_username, new_password, new_email, wks):
