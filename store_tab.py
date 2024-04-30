@@ -159,7 +159,7 @@ class StoreTab(tb.Frame):
         self.setup_game_frames(game_frame, search_frame, scrollable)
         self.update_page_num(search_frame)
 
-    
+
     def render_img(self, frame, path, r, c):
         """
             Displays an image to a frame
@@ -168,7 +168,7 @@ class StoreTab(tb.Frame):
             frame (tb.Frame), path(String), r (int), c(int)
         """
         #Must prevent garbarge collection
-        img_obj =  ImageTk.PhotoImage(Image.open("images/games/" + path))
+        img_obj = ImageTk.PhotoImage(Image.open("images/games/" + path))
         img_lbl = tb.Label(frame, image=img_obj)
         img_lbl.image = img_obj
         img_lbl.grid(row=r, column=c, padx=20)
@@ -400,6 +400,11 @@ class StoreTab(tb.Frame):
             parent (tb.Frames), frames (tb.Frames), search_frame (tb.Frames), scrollable (tb.ScrollableFrames)
         
         """
+        # Store Instances of window elements in this method to use outside scope
+        self.search = search_frame
+        self.parent = parent
+        self.frames = frames
+        self.scroll = scrollable
 
         game_widgets = []
         images = ["green.png"]
@@ -499,7 +504,16 @@ class StoreTab(tb.Frame):
         cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.games[game_date_or_id]), self.setup_layout()])
         cart_btn.grid(row=2, column=1, padx=5,  pady=(0, 10), columnspan = 2, sticky="ns")
 
+    def load_window_elem(self, game_id):
+        game_id_elem = game_id
+        search_elem = self.search
+        parent_elem = self.parent
+        scroll_elem = self.scroll
 
+        try:
+            self.preview_game(game_id_elem, search_elem, parent_elem, scroll_elem)
+        except Exception as e:
+            print(f"Error Loading Game Page: {e}")
 
     def setup_landing_page(self, search_frame, game_frame, scrollable_frame):
         img_path = "green.png"

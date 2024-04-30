@@ -62,11 +62,12 @@ class LibraryTab(tb.Frame):
     def load_game_store(self, game_id):
         try:
             # Access the store tab using the menu instance
-            store_tab = self.menu.store_tab
-            index = self.menu.notebook.index(store_tab)
+            lib_store = self.menu.store_tab
+            index = self.menu.notebook.index(lib_store)
             self.menu.notebook.select(index)
-            store_tab.preview_game(game_id)
-            raise NotImplementedError("Not currently able to figure out this method.")
+
+            # Load store page from game selection
+            lib_store.load_window_elem(game_id)
         except Exception as e:
             print(f"Error navigating to store page: {e}")
 
