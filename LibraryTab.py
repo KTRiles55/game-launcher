@@ -32,7 +32,7 @@ class LibraryTab(tb.Frame):
         print("Welcome " + self.current_user_string + "!")
 
         # Retrieve user-specific library and create dictionary
-        self.owned_games = user(username=self.current_user_var)
+        self.owned_games = user(username=self.current_user_var.get())
         self.wks_account = self.owned_games.wks_account
         game_titles = self.owned_games.get_parsed_library()
         self.all_games = [{"Title": title} for title in game_titles]
