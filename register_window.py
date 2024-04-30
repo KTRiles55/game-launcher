@@ -2,7 +2,7 @@ import tkinter as tk
 import ttkbootstrap as tb
 from email_sender import send_confirmation_email
 from ttkbootstrap.constants import *
-import gspread
+import openpyxl
 import re 
 from account import *
 import smtplib
@@ -52,29 +52,28 @@ class register_window(tb.Toplevel):
             
             verifies existing account info 
         """
-        new_acc = account(name, password, email)
+        new_acc = account(name.get(), password.get(), email.get())
         wks = self.parent.accessAccountData()
 
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
 
         # Determines valid account information
-        if (new_acc.is_valid(name, email, password) == False):
+        if (new_acc.is_valid(name.get(), email.get(), password.get()) == False):
 
             self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
             self.warningLbl.pack()
 
-        elif (new_acc.is_valid(name, email, password) == True):
+        elif (new_acc.is_valid(name.get(), email.get(), password.get()) == True):
             # Create new account if it does not exist
             if ((new_acc.findUsername(wks) == None) and (new_acc.findPassword(wks) == None) and (new_acc.findEmail(wks) == None)):
-                new_acc.create_newuser(wks)
+                new_acc.create_newuser()
                 confirmLbl = tk.Label(self, text="You have successfully created a new account!\nPlease immediately check your email inbox to verify this account.")
                 confirmLbl.pack()
                 returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
                 returntoLogBtn.pack()
                 send_confirmation_email(email.get())  # Send confirmation email
-                self.parent.run_login()
-
+  
             elif (new_acc.findUsername(wks) != None):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This username is already used! *")
                 self.warningLbl.pack()
