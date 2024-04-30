@@ -19,6 +19,7 @@ class store():
         col_count = 31
         for i in range(1, col_count-1):
             games.append({})
+            games[i-1]["ID"] = self.wks.cell(i, 1).value
             games[i-1]["Title"] =   self.wks.cell(i+1, 2).value
             games[i-1]["Developer"] =  self.wks.cell(i+1, 3).value
             games[i-1]["Price"] =  self.wks.cell(i+1, 4).value

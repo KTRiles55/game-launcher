@@ -441,7 +441,7 @@ class StoreTab(tb.Frame):
 
 
     
-    def preview_game(self, game_date_or_id, search_frame, game_frame, scrollable):
+    def preview_game(self, game_id, search_frame, game_frame, scrollable):
         """
             Displays the frames to display game details
 
@@ -449,10 +449,13 @@ class StoreTab(tb.Frame):
             game_date_or_id (String), search_frame (tb.Frame), game_frame (tb.Frame), scrollable (tb.ScrollableFrame)
         """
 
-        if isinstance(game_date_or_id, int):
-            game_date = self.games[game_date_or_id]
+        if isinstance(game_id, int):
+            game_date = self.games[game_id]
         else:
-            game_date = game_date_or_id
+            game_date = game_id
+
+        self.game_date_or_id = game_id
+
         #render_img(self, frame, path, r, c)
         fill = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cursus in hac habitasse platea dictumst quisque sagittis purus sit. Viverra justo nec ultrices dui. Fermentum odio eu feugiat pretium nibh ipsum. Scelerisque mauris pellentesque pulvinar pellentesque habitant. Commodo sed egestas egestas fringilla phasellus. Quis eleifend quam adipiscing vitae proin. Augue mauris augue neque gravida in fermentum et sollicitudin. Varius vel pharetra vel turpis nunc. Orci phasellus egestas tellus rutrum tellus pellentesque eu. Sollicitudin tempor game_date_or_id eu nisl nunc mi ipsum faucibus. Nulla aliquet enim tortor at auctor urna nunc. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Sodales ut eu sem integer vitae justo. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Sit amet est placerat in egestas erat imperdiet sed. Sed arcu non odio euismod. Lorem ipsum dolor sit amet consectetur adipiscing elit. Donec ac odio tempor orci dapibus. Vulputate eu scelerisque felis imperdiet proin fermentum."
         game_frame.destroy()
@@ -479,7 +482,7 @@ class StoreTab(tb.Frame):
         describe_frame.insert(END, fill)
         support_frame.grid(row=0, column=1,sticky="nsew")
 
-        title = tb.Label(game_title, text = self.games[game_date_or_id]["Title"])
+        title = tb.Label(game_title, text = self.games[game_id]["Title"])
         title.config(font=("Helvetica", 20))
         title.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
 
@@ -488,7 +491,7 @@ class StoreTab(tb.Frame):
         tag_lbl.config(font=("Helvetica", 10))
         tag_lbl.grid(row=0, column=0, padx=5, pady=(0, 10))
         i = 1
-        for tag in (self.games[game_date_or_id]["Tags"]):
+        for tag in (self.games[game_id]["Tags"]):
             temp_tag = tb.Label(support_frame, text=tag, bootstyle="light")
             temp_tag.config(font=("Courier", 10))
             temp_tag.grid(row=0, column=0+i, padx=5, pady=(0, 10))
@@ -497,11 +500,11 @@ class StoreTab(tb.Frame):
         release_lbl = tb.Label(support_frame, text="Release Date: " )
         release_lbl.config(font=("Helvetica", 10))
         release_lbl.grid(row=1, column=0, padx=5,  pady=(0, 10))
-        date_lbl = tb.Label(support_frame, text=str(self.games[game_date_or_id]["Release_Date"]))
+        date_lbl = tb.Label(support_frame, text=str(self.games[game_id]["Release_Date"]))
         date_lbl.config(font=("Courier", 10))
         date_lbl.grid(row=1, column=1, padx=5,  pady=(0, 10))
 
-        cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.games[game_date_or_id]), self.setup_layout()])
+        cart_btn = tb.Button(support_frame, text="Add to Cart", bootstyle="success", command=lambda: [self.add_to_cart(self.games[game_id]), self.setup_layout()])
         cart_btn.grid(row=2, column=1, padx=5,  pady=(0, 10), columnspan = 2, sticky="ns")
 
     def load_window_elem(self, game_id):
@@ -510,10 +513,17 @@ class StoreTab(tb.Frame):
         parent_elem = self.parent
         scroll_elem = self.scroll
 
-        try:
-            self.preview_game(game_id_elem, search_elem, parent_elem, scroll_elem)
-        except Exception as e:
-            print(f"Error Loading Game Page: {e}")
+        # Check for game title and return the ID
+        for game in self.games:
+            if game["Title"] == game_id_elem:
+                game_index = game["ID"]
+                try:
+                    print(f"Loading store page for: {game_id_elem}")
+                    self.preview_game(game_index, search_elem, parent_elem, scroll_elem)
+                except Exception as e:
+                    print(f"Game with title '{game_id_elem}' not found.")
+                    print(f"Unable to load game page: {e}")
+                    return None
 
     def setup_landing_page(self, search_frame, game_frame, scrollable_frame):
         img_path = "green.png"
