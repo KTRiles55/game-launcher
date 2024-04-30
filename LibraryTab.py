@@ -370,6 +370,7 @@ class LibraryTab(tb.Frame):
         self.context_menu = tb.Menu(self, tearoff=0)
         self.context_menu.add_command(label="Favorite", command=lambda: self.add_to_favorites(iid))
         self.context_menu.add_command(label="Remove from favorites", command=lambda: self.remove_favorite(iid))
+        self.context_menu.add_command(label="Delete", command=lambda: self.game_list.delete(iid))
 
     def add_to_favorites(self, iid):
         """Add the selected game to favorites.
@@ -439,12 +440,20 @@ class LibraryTab(tb.Frame):
         Args:
             search_query (str): Search query string entered into search entry field.
         """
-        # Clear and re-create categories while searching
-        for title_id, games_list in [(self.installed_games_id, self.all_games),
-                                     (self.favorite_games_id, self.favorite_games)]:
+        for title_id in [self.installed_games_id, self.favorite_games_id]:
             for game_id in self.game_list.get_children(title_id):
                 self.game_list.delete(game_id)
-            filtered_games = [game for game in games_list if search_query.lower() in game["Title"].lower()]
-            for game in filtered_games:
-                self.game_list.insert(title_id, "end", text=game["Title"])
+
+        favorite_titles = set(game['Title'] for game in self.favorite_games)
+
+        # Clear and re-create categories while searching
+        for game in self.all_games:
+            if search_query.lower() in game['Title'].lower():  # Check if game matches search query
+                if game['Title'] in favorite_titles:
+                    # Insert into favorites if it's a favorite game and matches the search
+                    self.game_list.insert(self.favorite_games_id, "end", text=game['Title'])
+                else:
+                    # Otherwise, insert into installed games
+                    self.game_list.insert(self.installed_games_id, "end", text=game['Title'])
+
         self.update_category_counts()
