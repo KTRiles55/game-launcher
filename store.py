@@ -103,12 +103,13 @@ class store():
             a dictionary of game and related details
         """
         game = {}
-        game[count]["Title"] =  self.wks.cell(row+1, 2).value
-        game[count]["Developer"] =  self.wks.cell(row+1, 3).value
-        game[count]["Price"] =  self.wks.cell(row+1, 4).value
+        game["Title"] =  self.wks.cell(row+1, 2).value
+        game["Developer"] =  self.wks.cell(row+1, 3).value
+        game["Price"] =  self.wks.cell(row+1, 4).value
+        tags = self.wks.cell(row+1, 5).value
         parsed_tags = tags.split(",")
-        game[count]["Tags"] =  parsed_tags
-        game[count]["Release_Date"] = self.wks.cell(row+1, 6).value
+        game["Tags"] =  parsed_tags
+        game["Release_Date"] = self.wks.cell(row+1, 6).value
         return game
 
     def append_codes(self, title, code):
@@ -139,7 +140,7 @@ class store():
             args:
             gift code as string
             returns:
-            a game if valid
+            a game's title/id
         """
         count = 0
         col_count = 31
@@ -149,16 +150,26 @@ class store():
             codes = self.wks.cell(i+1, 7).value
             if(codes != None):
                 parsed_codes = codes.split("/")
+                print("lst=" + str(parsed_codes))
                 for j in range(len(parsed_codes)):
-                    if(parsed_codes[i] == input):
-                        gift = self.get_game_inrow(self, i)
+                    if(parsed_codes[j] == input):
+                        gift = self.get_game_inrow(i)
+                        print("row=" + str(i))
                         parsed_codes.pop(j)
                         row_found = 1
+                        valid = True
                         break
+                if(valid == True):
+                    break
+        #removes code from being valid
         if(valid == True):
             self.wks.cell(i+1, 7).value = None
+            new_val = ""
             for i in range(len(parsed_codes)):
-                self.wks.cell(i+1, 7).value = parsed_codes[i]
+                new_val += "/" + parsed_codes[i]
+            self.wks.cell(i+1, 7).value = new_val
+            print(self.wks.cell(i+1, 7).value)
+            self.wb_obj.save("database_offline.xlsx")
             return gift
         return None
 
