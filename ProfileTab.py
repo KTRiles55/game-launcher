@@ -65,6 +65,17 @@ class ProfileTab(tb.Frame):
 
         # Add friend list
         self.load_friend_widget()
+        
+        # Manage friend requests
+
+        #self.user.sendFriendRequest("Tom")      // for testing
+        friendRequests = self.user.listFriendRequests()
+        friendIcon = ImageTk.PhotoImage(Image.open("images/friendIcon.png").convert('RGBA').resize((48, 40)))        
+     
+        fRequestBtn = tb.Button(self.friends_frame, image=friendIcon, bootstyle='dark', command = lambda: self.displayFriendRequests(friendRequests))
+        fRequestBtn.image = friendIcon
+        fRequestBtn.pack(side=tk.TOP, anchor='e', padx=10, pady=(0, 5))
+        #self.displayFriendRequests(friendRequests)     // work in progress
 
     def load_default_image(self):
         # Load default image
@@ -162,7 +173,7 @@ class ProfileTab(tb.Frame):
 
 def main():
     # Create the main window
-    root = tk.Tk()
+    root = tk.Tk()  
     root.title("Profile")
 
     # Apply ttkbootstrap style
