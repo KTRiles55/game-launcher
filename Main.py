@@ -1,5 +1,6 @@
 import ttkbootstrap as tb
-import gspread
+from ttkbootstrap.icons import Icon
+import openpyxl
 from login_window import *
 from register_window import *
 from launcher import *
@@ -21,14 +22,16 @@ class Main(tb.Window):
 
     def run_launcher(self, username):
         self.username = username
-        self.launcher = Launcher(self, self.username)
+        self.launcher = Launcher(self, self.username)  
         
      # opens google sheets database
     def accessAccountData(self): 
-        sa = gspread.service_account(filename="database_key.json")
-        account_sheet = sa.open("accountTest")
-        account_wks = account_sheet.worksheet("accountInfo")
-        return account_wks
+        
+        path = "database_offline.xlsx"
+        wb_obj = openpyxl.load_workbook(path) 
+        wks = wb_obj["accountInfo"] 
+        
+        return wks 
 
      # shows error symbol for every misinput entry
     def displayErrorMessage(self, page, warningMessage, statement):
