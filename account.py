@@ -28,7 +28,7 @@ class account():
              
             checks if username is valid
         """
-        name_pattern = re.compile(r'[a-zA-Z_]+[0-9]*') 
+        name_pattern = re.compile(r'_*[a-zA-Z]+_*[0-9]*') 
         if (name_pattern.search(username) == None) or (re.search(r'\w{5,20}', username) == None):
             return False 
         return True
