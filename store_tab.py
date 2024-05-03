@@ -516,7 +516,7 @@ class StoreTab(tb.Frame):
         # Check for game title and return the ID
         for game in self.games:
             if game["Title"] == game_id_elem:
-                game_index = game["ID"]
+                game_index = game["ID"] - 1
                 try:
                     print(f"Loading store page for: {game_id_elem}")
                     self.preview_game(game_index, search_elem, parent_elem, scroll_elem)

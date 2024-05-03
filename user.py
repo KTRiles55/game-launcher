@@ -5,8 +5,8 @@ import ttkbootstrap as tb
 
 class user():
     def __init__(self, username):
-        path = "database_offline.xlsx"
-        self.wb_obj = openpyxl.load_workbook(path)
+        self.path = "database_offline.xlsx"
+        self.wb_obj = openpyxl.load_workbook(self.path)
         self.wks_account = self.wb_obj["accountInfo"]
         self.wks_store = self.wb_obj["store"]
 
@@ -67,10 +67,16 @@ class user():
             returns:
             titles of games belonging to the user
         """
-        library = self.wks_account.cell(self.find_row(),4).value
-        if(library != None):
-            parsed_library = library.split("/")
-            return parsed_library
+        # Reload the workbook each time to ensure it's up to date
+        wb_obj = openpyxl.load_workbook(self.path, data_only=True)
+        wks_account = wb_obj["accountInfo"]
+        # Use find_row to get the user's row
+        user_row = self.find_row()
+        if user_row is not None:
+            library_cell = wks_account.cell(user_row, 4).value
+            if library_cell is not None:
+                parsed_library = library_cell.split("/")
+                return parsed_library
         return []
 
     def update_library(self, new):

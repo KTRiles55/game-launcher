@@ -77,7 +77,7 @@ class LibraryTab(tb.Frame):
     def setup_game_list_layout(self):
 
         # Set the grid configuration for the main container
-        self.columnconfigure(0, weight=0, minsize=360)
+        self.columnconfigure(0, weight=0, minsize=200)
         self.columnconfigure(1, weight=0)
         self.columnconfigure(2, weight=0)
         self.columnconfigure(3, weight=1)
@@ -114,7 +114,7 @@ class LibraryTab(tb.Frame):
 
         # Frame for game info (right side)
         info_frame = tb.Frame(self)
-        info_frame.columnconfigure(0, weight=1, minsize=400)
+        info_frame.columnconfigure(0, weight=1, minsize=500)
         info_frame.rowconfigure(1, weight=0)
         info_frame.grid(row=1, column=2, stick="nsew", padx=3, pady=0)
 
@@ -202,13 +202,13 @@ class LibraryTab(tb.Frame):
             print(f"Failed to load image: {e}")
 
         # Game title
-        title_label = tb.Label(game_frame, text=title, font=('Helvetica', 16))
+        title_label = tb.Label(game_frame, text=title, font=('Helvetica', 16, "bold"))
         title_label.grid(row=0, column=1, sticky="ew", padx=10)
         game_frame.grid_columnconfigure(1, weight=1)
 
         # Play button
         play_button = tb.Button(game_frame, text="Play", command=lambda: self.play_game(title, container))
-        play_button.grid(row=0, column=2, sticky="e", padx=10)
+        play_button.grid(row=0, column=2, sticky="e", padx=2)
 
     def play_game(self, game_title, container):
         games_scrollable_frame = container
