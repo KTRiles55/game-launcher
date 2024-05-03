@@ -329,7 +329,7 @@ class LibraryTab(tb.Frame):
             self.save_favorites()
         else:
             # Debugging print message
-            print(f"Cannot add: {game_title} already in favorites!")
+            print(f"Cannot favorite: '{game_title}' is already in favorites!")
 
     def remove_favorite(self, iid):
         """Remove the selected game from favorites.
@@ -352,7 +352,7 @@ class LibraryTab(tb.Frame):
             self.save_favorites()
         else:
             # Debugging print message
-            print(f"Cannot remove: {game_title} not in favorites!")
+            print(f"Cannot remove: '{game_title}' is not in favorites!")
 
     def save_favorites(self):
         with shelve.open('data/favorite.db') as db:
