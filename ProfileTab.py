@@ -1,9 +1,7 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, simpledialog
 import ttkbootstrap as tb
 from ttkbootstrap import Label, Style
-from user import user
-from ttkbootstrap.constants import *
 from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFilter
 import os
 
@@ -12,6 +10,8 @@ class ProfileTab(tb.Frame):
         super().__init__(parent)
         self.parent = parent
         self.user = user
+        self.about_me_file = f"about_me_{self.user.get_username()}.txt"  # Unique file for each user
+        self.friends_list_file = "friends_list.txt"
 
         # Create main frame
         self.main_frame = tb.Frame(self)
@@ -55,6 +55,9 @@ class ProfileTab(tb.Frame):
         # Initialize about me label
         self.about_me_label = None
 
+        # Load the "About Me" text when the application starts
+        self.load_about_me()
+
         # Create friends frame
         self.friends_frame = tb.Frame(self.main_frame)
         self.friends_frame.pack(side=tk.RIGHT, fill=tk.Y)
@@ -65,17 +68,12 @@ class ProfileTab(tb.Frame):
 
         # Add friend list
         self.load_friend_widget()
-        
-        # Manage friend requests
 
-        #self.user.sendFriendRequest("Tom")      // for testing
-        friendRequests = self.user.listFriendRequests()
-        friendIcon = ImageTk.PhotoImage(Image.open("images/friendIcon.png").convert('RGBA').resize((48, 40)))        
-     
-        fRequestBtn = tb.Button(self.friends_frame, image=friendIcon, bootstyle='dark', command = lambda: self.displayFriendRequests(friendRequests))
-        fRequestBtn.image = friendIcon
-        fRequestBtn.pack(side=tk.TOP, anchor='e', padx=10, pady=(0, 5))
-        #self.displayFriendRequests(friendRequests)     // work in progress
+        # Add invite friend button
+        self.add_invite_button()
+
+        # Add add friend button
+        self.add_friend_button()
 
     def load_default_image(self):
         # Load default image
@@ -116,6 +114,34 @@ class ProfileTab(tb.Frame):
         n_sprite.putalpha(mask)
         return n_sprite
 
+    def save_about_me(self):
+        about_me_text = self.bioText.get("1.0", tk.END).strip()
+        if about_me_text:
+            with open(self.about_me_file, "w") as f:
+                f.write(about_me_text)
+            messagebox.showinfo("Success", "About Me saved successfully!")
+            self.display_about_me(about_me_text)
+            self.bioText.delete("1.0", tk.END)
+        else:
+            messagebox.showerror("Error", "Please enter some text for About Me!")
+
+    def load_about_me(self):
+        try:
+            with open(self.about_me_file, "r") as f:
+                about_me_text = f.read()
+                self.display_about_me(about_me_text)
+        except FileNotFoundError:
+            pass  # No previous "About Me" text saved
+
+    def display_about_me(self, about_me_text):
+        # Destroy previous about me label if exists
+        if self.about_me_label:
+            self.about_me_label.destroy()
+
+        # Add about me label
+        self.about_me_label = tb.Label(self.about_me_frame, text=about_me_text, font=("Verdana", "13"), anchor='w', wraplength=300, justify=tk.LEFT)
+        self.about_me_label.pack(side=tk.TOP, padx=10, pady=(0, 5))
+
     def load_friend_widget(self):
         # Add friend list
         self.friendsWidget = tb.Frame(self.friends_frame, height=200, width=100, borderwidth=10)
@@ -141,35 +167,46 @@ class ProfileTab(tb.Frame):
         self.friendsList.pack(side=tk.LEFT, fill=tk.Y)
         self.friendsScroll.config(command=self.friendsList.yview)
 
-        # Populate friend list with sample friends
-        friends = self.user.getParsedFriendsList()
-        for friend in friends:
-            self.friendsList.insert(tk.END, friend)
+        # Load friend list from file
+        self.load_friends_list()
 
+    def load_friends_list(self):
+        try:
+            with open(self.friends_list_file, "r") as f:
+                for line in f:
+                    self.friendsList.insert(tk.END, line.strip())
+        except FileNotFoundError:
+            pass  # No previous friends list saved
 
-    def displayFriendRequests(self, friendRequests):
-        friendRequestWindow = tb.Toplevel(self, title='Friend Requests', size=(100, 200), minsize=(100, 200), maxsize=(100, 200), iconbitmap = "images/empty.ico", topmost=True)
+    def add_invite_button(self):
+        # Add invite friend button
+        invite_button = tb.Button(self.friendsWidget, text="Invite Friend", command=self.send_friend_invite)
+        invite_button.pack(side=tk.TOP, padx=10, pady=(0, 10))
 
+    def send_friend_invite(self):
+        messagebox.showinfo("Friend Invite Sent", "Friend Invite Sent")
 
-    def save_about_me(self):
-        about_me_text = self.bioText.get("1.0", tk.END).strip()
-        if about_me_text:
-            with open("about_me.txt", "w") as f:
-                f.write(about_me_text)
-                messagebox.showinfo("Success", "About Me saved successfully!")
-                self.display_about_me(about_me_text)
-                self.bioText.delete("1.0", tk.END)
-        else:
-            messagebox.showerror("Error", "Please enter some text for About Me!")
+    def add_friend_button(self):
+        # Add add friend button
+        add_friend_button = tb.Button(self.friendsWidget, text="Add Friend", command=self.add_friend)
+        add_friend_button.pack(side=tk.TOP, padx=10, pady=(0, 10))
 
-    def display_about_me(self, about_me_text):
-        # Destroy previous about me label if exists
-        if self.about_me_label:
-            self.about_me_label.destroy()
+    def add_friend(self):
+        friend_name = simpledialog.askstring("Add Friend", "Enter the name of the friend:")
+        if friend_name:
+            confirm = messagebox.askyesno("Confirmation", f"Add {friend_name} as a friend?")
+            if confirm:
+                self.friendsList.insert(tk.END, friend_name)
+                messagebox.showinfo("Success", f"{friend_name} added as a friend.")
+                self.save_friends_list()  # Save the updated friend list
+            else:
+                messagebox.showinfo("Cancelled", "Friend addition cancelled.")
 
-        # Add about me label
-        self.about_me_label = tb.Label(self.about_me_frame, text=about_me_text, font=("Verdana", "13"), anchor='w', wraplength=300, justify=tk.LEFT)
-        self.about_me_label.pack(side=tk.TOP, padx=10, pady=(0, 5))
+    def save_friends_list(self):
+        friends = self.friendsList.get(0, tk.END)
+        with open(self.friends_list_file, "w") as f:
+            for friend in friends:
+                f.write(friend + "\n")
 
 def main():
     # Create the main window
@@ -183,7 +220,7 @@ def main():
     notebook = tb.Notebook(root)
 
     # Create the profile tab and add it to the notebook
-    profile_tab = ProfileTab(notebook)
+    profile_tab = ProfileTab(notebook, user=None)  # No need to pass user argument here
     notebook.add(profile_tab, text="Profile")
 
     # Pack the notebook and run the Tkinter event loop
