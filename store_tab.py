@@ -279,9 +279,9 @@ class StoreTab(tb.Frame):
 
         self.update_page_num(search_frame)
         # Create a binding on the entry box
-        search_entry.bind("<Return>", lambda event: self.search(searching.get(), parent, game_frame, scrollable,))
+        search_entry.bind("<Return>", lambda event: self.search_games(searching.get(), parent, game_frame, scrollable,))
 
-    def search(self, entry, search_frame, parent, scrollable):
+    def search_games(self, entry, search_frame, parent, scrollable):
         self.games=self.store.get_related_search(entry)
         #Updates pointers but max related games in a page is set to 10
         self.pointer_start = 0
