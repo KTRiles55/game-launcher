@@ -19,11 +19,13 @@ class checkout_page(tb.Frame):
         self.parent = parent
         self.cart = cart
         self.user = user
+        self.purchase_status = False
         self.store = store()
+        self.init_purchase_types()
 
         self.grid()
         self.setup_layout(scrollable_frame)
-        self.init_purchase_types()
+        
         #print(self.cart)
 
     def change_copy_status(self, game, status):
@@ -47,15 +49,11 @@ class checkout_page(tb.Frame):
             game["For_Myself"] = False
         
         
-        
-
     def init_purchase_types(self):
         #default initializes purchase type to digital and for myself
         for i in range(len(self.cart)):
-            if (self.cart[i].get("Digital_Copy") == None):
-                self.cart[i]["Digital_Copy"] = True
-            if (self.cart[i].get("For_Myself") == None):
-                self.cart[i]["For_Myself"] = True
+            self.cart[i]["Digital_Copy"] = True
+            self.cart[i]["For_Myself"] = True
 
     def render_img(self, frame, path, r, c):
         #Must prevent garbarge collection
@@ -82,6 +80,8 @@ class checkout_page(tb.Frame):
 
     def run_store(self):
         self.destroy()
+        if(self.purchase_status == True):
+            self.parent.reset_cart()
         self.parent.setup_layout()
 
     def setup_layout(self, scrollable):
@@ -176,6 +176,8 @@ class checkout_page(tb.Frame):
         for i in range(items_num):
             selected_recipient = StringVar()
             selected_copy = StringVar()
+            if(self.cart[i]["For_Myself"] == False):
+                selected_copy.set("As gifts")
             game_widget = tb.Frame(frame, bootstyle="bg")
             game_widget.grid(row=i, column=0, sticky="nsew", padx=5, pady=5)
             self.render_img(game_widget, images[0], 1, 0)
@@ -205,7 +207,7 @@ class checkout_page(tb.Frame):
             title = game["Title"]
             print(title)
             if((self.user.check_inlibrary(title) == True) and (game["For_Myself"] == True)):
-                warn_lbl = tb.Label(frame, text="You own a game in the cart")
+                warn_lbl = tb.Label(frame, text="You own a game in the cart. Gift it to continue.")
                 warn_lbl.config(font=("Courier", 10), bootstyle="danger")
                 warn_lbl.grid(row=row_count+1, column=0)
                 print("Game owned")
@@ -372,18 +374,17 @@ class checkout_page(tb.Frame):
                 code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
 
         #Empties cart
-        #Checks only the recipient from first order because order is bundled
-        if(self.cart[i]["For_Myself"]):
-            for i in range(len(self.cart)):
-                item = self.cart.pop()
+        for i in range(len(self.cart)):
+            item = self.cart[i]
+            print("(-) " + item["Title"])
+            if(item["For_Myself"] == True):
                 title = item["Title"]
+                print(title + "added to library")
                 self.user.update_library(title)
-
-
-        else:
-        #For gift option
-            for i in range(len(self.cart)):
-                item = self.cart.pop()
+            else:
                 code = item["Code"]    
                 title = item["Title"]
                 self.store.append_codes(title, code)
+
+        self.cart = []
+        self.purchase_status = True
