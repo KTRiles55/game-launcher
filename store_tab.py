@@ -39,6 +39,8 @@ class StoreTab(tb.Frame):
         #print(self.games)
         self.setup_layout()
 
+    def reset_cart(self):
+        self.cart = []
 
     def update_cart_button(self, parent, game_frame, scrollable):
         """
@@ -51,6 +53,7 @@ class StoreTab(tb.Frame):
         if(len(self.cart) > 0):
             cart_btn = tb.Button(parent, text= "(" + str(total_items) + ")" + " Cart", bootstyle="success", command = lambda: self.run_checkout(parent, game_frame, scrollable))
             cart_btn.grid(row=0, column=1, padx=10, sticky="nse")
+
         
 
     def add_to_cart(self, game):
@@ -221,6 +224,7 @@ class StoreTab(tb.Frame):
         #print(frame)
 
     def setup_layout(self):
+        
         # Search Frame at the top
         search_frame = tb.Frame(self)
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
@@ -239,16 +243,17 @@ class StoreTab(tb.Frame):
         self.columnconfigure(0, weight=1)  # Make the search frame expand with the window
         self.rowconfigure(1, weight=1)  # Make the game frame expand with the window
         
-        #check if cart is empty when returning from checkout
-        self.update_cart_button(search_frame, game_frame, scrollable_frame)
 
         self.setup_game_frames(game_frame, search_frame, scrollable_frame)
-        self.setup_search_frame(search_frame, game_frame, search_frame, scrollable_frame)
+        self.setup_search_frame(search_frame, game_frame,scrollable_frame)
+
+        #check if cart is empty when returning from checkout
+        self.update_cart_button(search_frame, game_frame, scrollable_frame)
         #self.setup_landing_page(search_frame, game_frame, scrollable_frame)
         
 
 
-    def setup_search_frame(self, parent, game_frame, search_frame, scrollable):
+    def setup_search_frame(self, parent, game_frame, scrollable):
         # Here you can add widgets to the search_frame
         page_num = str(math.ceil(self.pointer_end/self.max_widgets))
         total_items = str(len(self.cart))
@@ -277,7 +282,7 @@ class StoreTab(tb.Frame):
 
         parent.columnconfigure(1, weight=1)
 
-        self.update_page_num(search_frame)
+        self.update_page_num(parent)
         # Create a binding on the entry box
         search_entry.bind("<Return>", lambda event: self.search_games(searching.get(), parent, game_frame, scrollable,))
 
