@@ -4,8 +4,8 @@ import random
 
 class store():
     def __init__(self):
-        path = "database_offline.xlsx"
-        self.wb_obj = openpyxl.load_workbook(path)
+        self.path = "database_offline.xlsx"
+        self.wb_obj = openpyxl.load_workbook(self.path)
         self.wks = self.wb_obj["store"]
         
 
@@ -143,12 +143,16 @@ class store():
             returns:
             a game's title/id
         """
+        #Refresh spreadsheet
+        wb_obj = openpyxl.load_workbook(self.path, data_only=True)
+        wks_store = wb_obj["store"]
+
         count = 0
         col_count = 31
         row_found = 0
         valid = False
         for i in range(1, col_count-1):
-            codes = self.wks.cell(i+1, 7).value
+            codes = wks_store.cell(i+1, 7).value
             if(codes != None):
                 parsed_codes = codes.split("/")
                 print("lst=" + str(parsed_codes))
@@ -164,13 +168,13 @@ class store():
                     break
         #removes code from being valid
         if(valid == True):
-            self.wks.cell(i+1, 7).value = None
+            wks_store.cell(i+1, 7).value = None
             new_val = ""
             for i in range(len(parsed_codes)):
                 new_val += "/" + parsed_codes[i]
-            self.wks.cell(i+1, 7).value = new_val
-            print(self.wks.cell(i+1, 7).value)
-            self.wb_obj.save("database_offline.xlsx")
+            wks_store.cell(i+1, 7).value = new_val
+            print(wks_store.cell(i+1, 7).value)
+            wb_obj.save("database_offline.xlsx")
             return gift
         return None
 
