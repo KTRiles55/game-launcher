@@ -10,8 +10,11 @@ class ProfileTab(tb.Frame):
         super().__init__(parent)
         self.parent = parent
         self.user = user
-        self.about_me_file = f"about_me_{self.user.get_username()}.txt"  # Unique file for each user
-        self.friends_list_file = "friends_list.txt"
+        self.user_folder = f"userdata/{self.user.get_username()}"
+        os.makedirs(self.user_folder, exist_ok=True)
+        self.about_me_file = f"{self.user_folder}/about_me.txt"  # Unique file for each user
+        self.image_path = f"{self.user_folder}/profile.png"  # Unique profile photo for each user
+        self.friends_list_file = f"{self.user_folder}/friends_list.txt"
 
         # Create main frame
         self.main_frame = tb.Frame(self)
@@ -77,7 +80,6 @@ class ProfileTab(tb.Frame):
 
     def load_default_image(self):
         # Load default image
-        self.image_path = "images/profile.png"
         if os.path.exists(self.image_path):
             profile = Image.open(self.image_path).convert("RGBA")
         else:
