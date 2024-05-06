@@ -159,13 +159,12 @@ class store():
                 for j in range(len(parsed_codes)):
                     if(parsed_codes[j] == input):
                         gift = self.get_game_inrow(i)
-                        print("row=" + str(i))
                         parsed_codes.pop(j)
                         row_found = 1
                         valid = True
                         break
-                if(valid == True):
-                    break
+            if(valid == True):
+                break
         #removes code from being valid
         if(valid == True):
             wks_store.cell(i+1, 7).value = None
@@ -173,7 +172,6 @@ class store():
             for i in range(len(parsed_codes)):
                 new_val += "/" + parsed_codes[i]
             wks_store.cell(i+1, 7).value = new_val
-            print(wks_store.cell(i+1, 7).value)
             wb_obj.save("database_offline.xlsx")
             return gift
         return None
