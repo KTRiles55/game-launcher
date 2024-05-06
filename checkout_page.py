@@ -187,9 +187,9 @@ class checkout_page(tb.Frame):
             tb.Label(game_widget, text=self.cart[i]["Developer"]).grid(row=0, column=5, padx=5, pady=5)
             tb.Label(game_widget, text="$" + str(self.cart[i]["Price"])).grid(row=1, column=1)
             recipient_options = tb.OptionMenu(game_widget, selected_recipient, *recipient, bootstyle="outline", command=lambda  recipient, i=i: self.change_recipient(self.cart[i], recipient))
-            copy_type_options = tb.OptionMenu(game_widget, selected_copy, *type, bootstyle="outline", command=lambda type, i=i: self.change_copy_status(self.cart[i], type))
+            #copy_type_options = tb.OptionMenu(game_widget, selected_copy, *type, bootstyle="outline", command=lambda type, i=i: self.change_copy_status(self.cart[i], type))
             recipient_options.grid(row=2, column=1, sticky="nse", padx=10)
-            copy_type_options.grid(row=2, column=2, sticky="nse", padx=10)
+            #copy_type_options.grid(row=2, column=2, sticky="nse", padx=10)
             #selected_recipient.set("For myself")
             #selected_copy.set("Digital Copies")
 
@@ -345,7 +345,10 @@ class checkout_page(tb.Frame):
             #Length of code
             N = 7
             code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
-            self.cart[i]["Code"] = code
+            if(self.cart[i]["For_Myself"] == False):
+                self.cart[i]["Code"] = code
+            else:
+                self.cart[i]["Code"] = None
 
     def display_receipt(self, parent, title_frame):
         game_widgets = []
@@ -373,6 +376,7 @@ class checkout_page(tb.Frame):
                 code_temp.config(font=("Helvetica", 12))
                 code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
 
+        print(self.cart)
         #Empties cart
         for i in range(len(self.cart)):
             item = self.cart[i]
