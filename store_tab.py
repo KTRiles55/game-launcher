@@ -187,13 +187,14 @@ class StoreTab(tb.Frame):
         unfiltered = self.store.get_games_sharing_tag(self.filters["Category"])
         low_price = self.filters["lowest_price"]
         high_price = self.filters["highest_price"]
+        
         #sorts by price
         i = 0
-        #print("low=" + str(low_price) + " high=" + str(high_price) + " selected=" + str(((selected.get()))))
         for i in range(len(unfiltered)):
             game_price = unfiltered[i]["Price"]
             if(game_price <= high_price) and (game_price >= low_price):
                 self.games.append(unfiltered[i])
+        print(self.filters)
 
 
         #Reset list pointers
@@ -223,8 +224,7 @@ class StoreTab(tb.Frame):
             widget.destroy()
         #print(frame)
 
-    def setup_layout(self):
-        
+    def setup_layout(self):      
         # Search Frame at the top
         search_frame = tb.Frame(self)
         search_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
@@ -249,7 +249,6 @@ class StoreTab(tb.Frame):
 
         #check if cart is empty when returning from checkout
         self.update_cart_button(search_frame, game_frame, scrollable_frame)
-        #self.setup_landing_page(search_frame, game_frame, scrollable_frame)
         
 
 
@@ -260,10 +259,8 @@ class StoreTab(tb.Frame):
 
         selected_tag = StringVar()
         searching = StringVar()
-        back_btn = tb.Button(parent, text="Back", bootstyle="outline")
         search_label = tb.Label(parent, text="Search:")
         search_entry = tb.Entry(parent, textvariable=searching, bootstyle="secondary")
-        enter_display = tb.Label(parent, text= "searching: " + "\"" + searching.get() + "\"")
         left_arrow = tb.Button(parent, text="<", command = lambda: self.decrement_page(game_frame, parent, scrollable))
         right_arrow = tb.Button(parent, text=">", command = lambda: self.increment_page(game_frame, parent, scrollable))
         #listbox = Listbox(parent)
@@ -273,8 +270,6 @@ class StoreTab(tb.Frame):
         search_entry.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
 
-        back_btn.grid(row=0, column=0, sticky="nw")
-        enter_display.grid(row=0, column=1, stick="nw")
         search_label.grid(row=0, column=2, sticky="w")
         search_entry.grid(row=0, column=3, sticky="nw")
         left_arrow.grid(row=0, column=6)
@@ -432,7 +427,7 @@ class StoreTab(tb.Frame):
             for tag in (self.games[i]["Tags"]):
                 tb.Label(game_widget, bootstyle="light", text=tag).grid(row=2, column=2+k, padx=5, pady=(0, 10))
                 k += 1
-            tb.Button(game_widget, text="View", bootstyle="primary", command= lambda i=i: [print(self.games[i]["Title"]), self.preview_game(i, search_frame, parent, scrollable)]).grid(row=1, column=4, padx=5)
+            tb.Button(game_widget, text="View", bootstyle="primary", command= lambda i=i: [print(self.games[i]), self.preview_game(i, search_frame, parent, scrollable)]).grid(row=1, column=4, padx=5)
             tb.Button(game_widget, text="Add to Cart", bootstyle="primary", command= lambda i=i: [self.add_to_cart(self.games[i]), self.update_cart_button(search_frame, parent, scrollable)]).grid(row=1, column=3, padx=5)
             game_widgets.append(game_widget)
             j += 1
@@ -529,31 +524,3 @@ class StoreTab(tb.Frame):
                     print(f"Game with title '{game_id_elem}' not found.")
                     print(f"Unable to load game page: {e}")
                     return None
-
-    def setup_landing_page(self, search_frame, game_frame, scrollable_frame):
-        img_path = "green.png"
-        #Splits game_frame into featured_frame and recent_frame
-        game_frame.columnconfigure(0, weight=1)
-        game_frame.rowconfigure(1, weight=1)
-        featured_frame = tb.Frame(game_frame, bootstyle="bg")
-        recent_frame = tb.LabelFrame(game_frame, bootstyle="bg")
-
-
-        featured_frame.grid(row=0, column=0, sticky="ns")
-        recent_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ns")
-
-        self.render_img(featured_frame, "pong/banner.png", 0, 0)
-
-        recent_lbl = tb.Label(recent_frame, text="Jump back into", bootstyle="bg")
-        recent_lbl.config(font=("Helvetica", 16))
-        launch_btn = tb.Button(recent_frame, text="Launch", bootstyle="success")
-
-        recent_lbl.grid(row=0, column=0, pady=(10,0))
-        self.render_img(recent_frame, img_path, 1, 0)
-        launch_btn.grid(row=1, column=1, columnspan = 2, padx=10, pady=10)
-        
-
-
-
-
-
