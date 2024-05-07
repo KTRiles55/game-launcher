@@ -426,9 +426,10 @@ class LibraryTab(tb.Frame):
 
         # Clear and re-create categories while searching
         for game in self.all_games:
-            if search_query.lower() in game['Title'].lower():  # Check if game matches search query
+            # Check if game matches search query
+            if search_query.lower() in game['Title'].lower():
                 if game['Title'] in favorite_titles:
-                    # Insert into favorites if it's a favorite game and matches the search
+                    # Insert into favorites if it's a favorite game and also matches the search
                     self.game_list.insert(self.favorite_games_id, "end", text=game['Title'])
                 else:
                     # Otherwise, insert into installed games
