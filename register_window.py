@@ -45,7 +45,7 @@ class register_window(tb.Toplevel):
         except:
             pass
 
-    def check(self, name, password, email, nameEn, passEn, emailEn): 
+    def check(self, name, password, email, nameEn, passEn, emailEn, frame): 
         """
             Params:
              input strings for name, password and email address
@@ -67,7 +67,9 @@ class register_window(tb.Toplevel):
         elif (new_acc.is_valid(name.get(), email.get(), password.get()) == True):
             # Create new account if it does not exist
             if ((new_acc.findUsername(wks) == None) and (new_acc.findPassword(wks) == None) and (new_acc.findEmail(wks) == None)):
-                new_acc.create_newuser()
+                new_acc.create_newuser()  
+                frame.destroy()
+                
                 confirmLbl = tk.Label(self, text="You have successfully created a new account!\nPlease immediately check your email inbox to verify this account.")
                 confirmLbl.pack()
                 returntoLogBtn = tk.Button(self, text="Return to Login", bg="#888a86", activebackground="#a8aba6", command = lambda: [self.parent.run_login(), self.destroy()])
@@ -105,7 +107,7 @@ class register_window(tb.Toplevel):
 
         username=tb.StringVar()
         password=tb.StringVar()
-        email=tb.StringVar()
+        email=tb.StringVar()  
         
         nameLbl = tb.Label(entryFrame, text="Username", font=("Courier", 12)) 
         nameLbl.grid(row=1, column=0, padx=5, pady=10)
@@ -133,5 +135,5 @@ class register_window(tb.Toplevel):
         backBtn = tb.Button(entryFrame, text="Back", command = lambda: [self.parent.run_login(), self.withdraw()])
         backBtn.grid(row=10, column=0, pady=10)
 
-        submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(username, password, email, nameEn, passwordEn, email_entry))
+        submitBtn = tb.Button(entryFrame, text="Create an Account", command = lambda: self.check(username, password, email, nameEn, passwordEn, email_entry, entryFrame))
         submitBtn.grid(row=4, column=1, padx=5, pady=10)
