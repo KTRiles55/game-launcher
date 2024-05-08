@@ -43,7 +43,7 @@ class account():
             checks if email is valid
         """
         
-        email_pattern = re.compile(r'[a-zA-Z\.-_\+]+@[a-zA-z-]+\.(com|org|net|gov)')
+        email_pattern = re.compile(r'[a-zA-Z]+[\.-_\+]*@[a-zA-z-]+\.(com|org|net|gov|edu)')
         if (email_pattern.search(email) == None):
             return False
         return True
@@ -140,7 +140,7 @@ class account():
         return self.searchRows(wks, 'C', self.email)
             
 
-    def create_newuser(self):
+    def create_newuser(self): 
         """
             Params:
              pointer to Google worksheet database
