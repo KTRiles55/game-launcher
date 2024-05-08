@@ -83,7 +83,7 @@ class ProfileTab(tb.Frame):
         if os.path.exists(self.image_path):
             profile = Image.open(self.image_path).convert("RGBA")
         else:
-            profile = Image.open("images/cat.jpg").convert("RGBA")
+            profile = Image.open("images/default_profile.png").convert("RGBA")
         profile = profile.resize((240, 200))
         sprite = self.create_sprite(profile)
         sprite = sprite.resize((400, 340))
