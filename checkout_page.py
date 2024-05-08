@@ -57,7 +57,7 @@ class checkout_page(tb.Frame):
 
     def render_img(self, frame, path, r, c):
         #Must prevent garbarge collection
-        img_obj =  ImageTk.PhotoImage(Image.open("images/" + path))
+        img_obj =  ImageTk.PhotoImage(Image.open("images/games/" + path))
         img_lbl = tb.Label(frame, image=img_obj)
         img_lbl.image = img_obj
         img_lbl.grid(row=r, column=c, padx=20)
@@ -254,8 +254,8 @@ class checkout_page(tb.Frame):
         expire_lbl.configure(font=("Helvetica", 10))
         expire_month_en = tb.OptionMenu(pay_frame, expire_month, *months, bootstyle="outline")
         expire_year_en = tb.OptionMenu(pay_frame, expire_year, *years, bootstyle="outline")
-        secure_num_lbl = tb.Label(pay_frame, textvariable=secure_num, text="Security Number")
-        secure_num_en = tb.Entry(pay_frame)
+        secure_num_lbl = tb.Label(pay_frame, text="Security Number")
+        secure_num_en = tb.Entry(pay_frame, textvariable=secure_num)
 
 
         #Customize billing frame
@@ -291,7 +291,7 @@ class checkout_page(tb.Frame):
         expire_lbl.grid(row=0, column=1, padx=10, sticky="nsew")
         expire_month_en.grid(row=1, column=1, padx=10,  sticky="nsew")
         expire_year_en.grid(row=1, column=2, padx=10, sticky="nsw")
-        secure_num_lbl.grid(row=0, column=2, padx=10, sticky="nsw")
+        secure_num_lbl.grid(row=0, column=3, padx=10, sticky="nsw")
         secure_num_en.grid(row=1, column=3, padx=10, sticky="nse")
 
         #Layout billing frame
@@ -376,7 +376,7 @@ class checkout_page(tb.Frame):
                 code_temp.config(font=("Helvetica", 12))
                 code_temp.grid(row=i+3, column=0, sticky="nsew", padx=5, pady=5)
 
-        print(self.cart)
+        #print(self.cart)
         #Empties cart
         for i in range(len(self.cart)):
             item = self.cart[i]
@@ -386,6 +386,7 @@ class checkout_page(tb.Frame):
                 print(title + "added to library")
                 self.user.update_library(title)
             else:
+                print("code given for " + item["Title"])
                 code = item["Code"]    
                 title = item["Title"]
                 self.store.append_codes(title, code)

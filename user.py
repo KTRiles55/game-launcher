@@ -68,12 +68,12 @@ class user():
             titles of games belonging to the user
         """
         # Reload the workbook each time to ensure it's up to date
-        wb_obj = openpyxl.load_workbook(self.path, data_only=True)
-        wks_account = wb_obj["accountInfo"]
+        self.wb_obj = openpyxl.load_workbook(self.path, data_only=True)
+        self.wks_account = self.wb_obj["accountInfo"]
         # Use find_row to get the user's row
         user_row = self.find_row()
         if user_row is not None:
-            library_cell = wks_account.cell(user_row, 4).value
+            library_cell = self.wks_account.cell(user_row, 4).value
             if library_cell is not None:
                 parsed_library = library_cell.split("/")
                 return parsed_library
@@ -94,8 +94,8 @@ class user():
         self.wb_obj.save("database_offline.xlsx")
 
         #Refresh spreadsheet
-        wb_obj = openpyxl.load_workbook(self.path, data_only=True)
-        wks_store = wb_obj["user"]
+        self.wks_obj = openpyxl.load_workbook(self.path, data_only=True)
+        self.wks_account = self.wb_obj["accountInfo"]
 
     
     def check_inlibrary(self, game):
