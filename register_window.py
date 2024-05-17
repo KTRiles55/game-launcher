@@ -57,12 +57,38 @@ class register_window(tb.Toplevel):
 
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
+            nameEn.config(bootstyle='default') 
+            passEn.config(bootstyle='default')
+            emailEn.config(bootstyle='default')
 
         # Determines valid account information
         if (new_acc.is_valid(name.get(), email.get(), password.get()) == False):
 
-            self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* New account credentials are invalid. *\n* Please re-enter user information/fill in empty fields. *")
-            self.warningLbl.pack()
+            if ((len(nameEn.get()) == 0) or (len(emailEn.get()) == 0) or (len(passEn.get()) == 0)):
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Please fill in empty fields. *")
+                
+                if (len(nameEn.get()) == 0):
+                    nameEn.config(bootstyle='danger')
+                    
+                if (len(emailEn.get()) == 0):
+                    emailEn.config(bootstyle='danger')
+                    
+                if (len(passEn.get()) == 0):
+                    passEn.config(bootstyle='danger')
+            
+            elif (new_acc.is_valid_username(name.get()) == False):
+                nameEn.config(bootstyle='danger')
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Username is invalid. Please re-enter. *")
+                
+            elif (new_acc.is_valid_email(email.get()) == False):
+                emailEn.config(bootstyle='danger')
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Email is invalid. Please re-enter. *")
+                
+            elif (new_acc.is_valid_password(password.get()) == False):
+                passEn.config(bootstyle='danger')
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Password is invalid. Please re-enter. *")
+            
+            self.warningLbl.pack() 
 
         elif (new_acc.is_valid(name.get(), email.get(), password.get()) == True):
             # Create new account if it does not exist
@@ -79,19 +105,18 @@ class register_window(tb.Toplevel):
             elif (new_acc.findUsername(wks) != None):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This username is already used! *")
                 self.warningLbl.pack()
+                nameEn.config(bootstyle='danger') 
 
             elif (new_acc.findPassword(wks) != None):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This password is already used! *")
                 self.warningLbl.pack()
+                passEn.config(bootstyle='danger')
 
             elif (new_acc.findEmail(wks) != None):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* This email is already used! *")
                 self.warningLbl.pack()
+                emailEn.config(bootstyle='danger')
                 
-        #empties entries
-        nameEn.delete(0, 'end')
-        passEn.delete(0, 'end')
-        emailEn.delete(0, 'end')
 
     def page(self):
         """
