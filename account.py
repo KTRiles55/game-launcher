@@ -29,7 +29,7 @@ class account():
             checks if username is valid
         """
         name_pattern = re.compile(r'_*[a-zA-Z]+_*[0-9]*') 
-        if (name_pattern.search(username) == None) or (re.search(r'\w{5,20}', username) == None):
+        if (name_pattern.search(username) == None) or (re.search(r'^\S{5,20}$', username) == None):
             return False 
         return True
 
@@ -58,7 +58,7 @@ class account():
             checks if password is valid
         """        
 
-        passw_pattern1 = re.compile(r'^(\S){10,25}$')
+        passw_pattern1 = re.compile(r'^\S{10,25}$')
         if ((passw_pattern1.search(password) == None) or ((re.search(r'\W+',password) == None) or (re.search(r'[A-Z]+',password) == None) or (re.search(r'\d+',password) == None))):
             return False 
         return True
