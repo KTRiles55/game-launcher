@@ -7,6 +7,7 @@ from ProfileTab import *
 class Menu(tb.Frame):
     """
     Author: Narek Asaturyan
+    Contributor(s): Kenneth Riles
     Version: 1.3
     """
     def __init__(self, parent, page, username):
