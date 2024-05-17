@@ -27,7 +27,6 @@ class login_window(tb.Toplevel):
         self.warningLbl = ""
 
         self.geometry("500x400+700+300")
-        #self.config(bg="#493d5e")
         self.minsize(500, 400)
         self.maxsize(500, 400)
         self.iconbitmap("images/empty.ico")
@@ -52,6 +51,8 @@ class login_window(tb.Toplevel):
         existing_acc = account(username.get(), password.get(), None)
         if (self.warningLbl != ""):
             self.warningLbl.destroy()
+            nameEn.config(bootstyle='default')
+            passwordEn.config(bootstyle='default')
 
         wks = self.parent.accessAccountData()
         if (existing_acc.is_authentic(wks) == True):
@@ -60,13 +61,28 @@ class login_window(tb.Toplevel):
             self.parent.run_launcher(self.user)
 
         else:
-            #display error message for misinput
-            self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect username/password entered.\nPlease re-enter login credentials.")
-            self.warningLbl.pack()
+            
+            if ((len(nameEn.get()) == 0) or (len(passwordEn.get()) == 0)):
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Please fill in empty fields. *")
+                
+                if (len(nameEn.get()) == 0):
+                    nameEn.config(bootstyle='danger')
+                    
+                if (len(passwordEn.get()) == 0):
+                    passwordEn.config(bootstyle='danger')
+                    
+                self.warningLbl.pack()
 
-            #empties entries
-            nameEn.delete(0, 'end')
-            passwordEn.delete(0, 'end')
+            elif (existing_acc.findUsername(wks) == None): 
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect username entered. Please re-enter.")
+                nameEn.config(bootstyle='danger')
+                self.warningLbl.pack()
+                
+            elif (existing_acc.findPassword(wks) == None):
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect password entered. Please re-enter.")
+                passwordEn.config(bootstyle='danger')
+                self.warningLbl.pack()
+                
             
 
     def page(self):
