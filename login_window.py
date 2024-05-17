@@ -64,24 +64,27 @@ class login_window(tb.Toplevel):
             
             if ((len(nameEn.get()) == 0) or (len(passwordEn.get()) == 0)):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "* Please fill in empty fields. *")
-                
+    
                 if (len(nameEn.get()) == 0):
                     nameEn.config(bootstyle='danger')
-                    
+        
                 if (len(passwordEn.get()) == 0):
                     passwordEn.config(bootstyle='danger')
-                    
-                self.warningLbl.pack()
 
             elif (existing_acc.findUsername(wks) == None): 
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect username entered. Please re-enter.")
                 nameEn.config(bootstyle='danger')
-                self.warningLbl.pack()
-                
+    
             elif (existing_acc.findPassword(wks) == None):
                 self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Incorrect password entered. Please re-enter.")
                 passwordEn.config(bootstyle='danger')
-                self.warningLbl.pack()
+    
+            else:
+                self.warningLbl = self.parent.displayErrorMessage(self, self.warningLbl, "Username and password are incompatible.\nPlease re-enter correct username/password.")
+                nameEn.config(bootstyle='danger')
+                passwordEn.config(bootstyle='danger')
+    
+            self.warningLbl.pack()
                 
             
 
