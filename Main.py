@@ -8,7 +8,9 @@ import pydoc
 
 
 class Main(tb.Window):
-
+    """
+    Authors: Sofia Castro, Kenneth Riles, Narek Asaturyan, Peter Abdelsayed
+    """
     def set_theme(self):
         Style.load_user_themes(Style(), "themes.json")
 

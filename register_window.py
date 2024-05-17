@@ -20,6 +20,9 @@ class register_window(tb.Toplevel):
     New users can enter new account credentials, while following a specific set of rules listed for each entry.
     This class will alert the user if account information already exists in the database or is invalid.
 
+    Authors: Kenneth Riles
+    Contributor(s): Peter Abdelsayed
+
     Attributes:
         parent (tkinter widget): Parent widget for this frame.
     """

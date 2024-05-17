@@ -3,6 +3,9 @@ import string
 import random
 
 class store_off():
+    """
+    Authors: Sofia Castro
+    """
     def __init__(self):
         path = "database_offline.xlsx"
         self.wb_obj = openpyxl.load_workbook(path)

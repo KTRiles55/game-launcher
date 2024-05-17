@@ -7,6 +7,10 @@ except:
 
 
 class Launcher(tb.Toplevel):
+    """
+    Author: Narek Asaturyan
+    Version: 1.3
+    """
     def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent

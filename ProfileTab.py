@@ -6,6 +6,9 @@ from PIL import ImageTk, Image, ImageOps, ImageDraw, ImageFilter
 import os
 
 class ProfileTab(tb.Frame):
+    """
+    Authors: Kenneth Riles, Peter Abdelsayed
+    """
     def __init__(self, parent, user):
         super().__init__(parent)
         self.parent = parent

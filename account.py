@@ -4,11 +4,14 @@ import pandas as pd
 import re
 
 
+# class for user account
 class account():
     """
     A class representing the user's account. This class directly interacts with the spreadsheets database to fetch
     account information from a single row on the spreadsheet when given either username, password or email input. 
     It also returns results based on whether the given input is valid or not.
+
+    Author: Kenneth Riles
 
     Attributes:
         parent (tkinter widget): Parent widget for this frame.

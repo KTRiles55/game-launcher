@@ -1,19 +1,11 @@
-from tkinter import *
-from ttkbootstrap import Label
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from ttkbootstrap.scrolled import ScrolledFrame
-from PIL import ImageTk, Image 
-from store import *
 from LibraryTab import *
 from store_tab import *
-import user
-import string
-import random
-import math
-from ttkbootstrap import Style
+
 
 class checkout_page(tb.Frame):
+    """
+    Author: Sofia Castro
+    """
     def __init__(self, parent, scrollable_frame, cart, user):
         super().__init__(parent)
         self.parent = parent

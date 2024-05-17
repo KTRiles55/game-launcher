@@ -3,6 +3,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 def send_confirmation_email(recipient_email):
+    """
+    Author: Peter Abdelsayed
+    """
     # Email configuration
     sender_email = "TechWizardsCSUN@outlook.com"
     sender_password = "Comp380CSUN"

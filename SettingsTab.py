@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
 class SettingsTab(tk.Frame):
+    """
+    Author: Peter Abdelsayed
+    """
     def __init__(self, parent, page, launcher):
         super().__init__(parent)
         self.parent = parent

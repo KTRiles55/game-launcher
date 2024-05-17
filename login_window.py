@@ -16,6 +16,8 @@ class login_window(tb.Toplevel):
     Each user must enter their own exisiting account credentials, which are stored in the database. 
     New users can choose to register a new account by clicking a widget on the page.
 
+    Authors: Sofia Castro, Kenneth Riles
+
     Attributes:
         parent (tkinter widget): Parent widget for this frame.
     """

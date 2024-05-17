@@ -5,6 +5,10 @@ from ProfileTab import *
 
 
 class Menu(tb.Frame):
+    """
+    Author: Narek Asaturyan
+    Version: 1.3
+    """
     def __init__(self, parent, page, username):
         super().__init__(parent)
         self.parent = parent

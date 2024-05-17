@@ -13,6 +13,8 @@ from PIL import ImageTk, Image
 
 class LibraryTab(tb.Frame):
     """A class representing the library tab in TechWiz store application with ttkbootstrap.
+    Author: Narek Asaturyan
+    Version: 1.2
 
     Attributes:
         parent (widget): The parent widget.

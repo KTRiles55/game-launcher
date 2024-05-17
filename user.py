@@ -4,6 +4,10 @@ import ttkbootstrap as tb
 
 
 class user():
+    """
+    Author: Sofia Castro
+    Contributor(s): Narek Asaturyan
+    """
     def __init__(self, username):
         self.path = "database_offline.xlsx"
         self.wb_obj = openpyxl.load_workbook(self.path)

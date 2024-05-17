@@ -11,6 +11,10 @@ import pydoc
 from ttkbootstrap import Style
 
 class StoreTab(tb.Frame):
+    """
+    Authors: Sofia Castro
+    Contributor(s): Narek Asaturyan
+    """
     def __init__(self,parent, user, default_game_title=None):
         super().__init__(parent)
         self.parent = parent
