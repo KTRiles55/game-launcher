@@ -7,21 +7,13 @@ except:
 
 
 class Launcher(tb.Toplevel):
-    """
-    A class that creates the main window for the program.
-    using a top level window with custom theme and layout.
-
-    Attributes:
-        parent (tkinter.tk): The parent widget, factory controller for program.
-        user (str): The username of the current logged-in user.
-    """
     def __init__(self, parent, username):
         super().__init__(parent)
         self.parent = parent
         self.user = username
         
         self.title("")
-        self.geometry('1590x844')
+        self.geometry('1400x844+200+100')
         self.minsize(1400, 844)
         self.iconbitmap("images/empty.ico")
 
@@ -35,7 +27,11 @@ class Launcher(tb.Toplevel):
             pass
 
         # Widgets
-        self.menu = Menu(self, self.user)
+        self.menu = Menu(self, self.parent, self.user)
 
         # Run program
         self.mainloop()
+        
+    def logOut(self):
+        self.parent.run_login()
+        self.destroy()
