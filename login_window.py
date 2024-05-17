@@ -24,7 +24,7 @@ class login_window(tb.Toplevel):
         self.parent = parent
         self.warningLbl = ""
 
-        self.geometry("500x400")
+        self.geometry("500x400+700+300")
         #self.config(bg="#493d5e")
         self.minsize(500, 400)
         self.maxsize(500, 400)
@@ -71,7 +71,7 @@ class login_window(tb.Toplevel):
         """
             loads up login gui
         """  
-        username=tb.StringVar()
+        username=tb.StringVar() 
         password=tb.StringVar()  
 
         loginTitle = tb.Label(self, text="Login")
