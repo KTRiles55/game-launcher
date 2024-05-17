@@ -6,7 +6,7 @@ import ttkbootstrap as tb
 class user():
     """
     Author: Sofia Castro
-    Contributor(s): Narek Asaturyan
+    Contributor(s): Narek Asaturyan, Kenneth Riles
     """
     def __init__(self, username):
         self.path = "database_offline.xlsx"
