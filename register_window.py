@@ -30,7 +30,7 @@ class register_window(tb.Toplevel):
         self.warningLbl = ""
 
         # Window size and title
-        self.geometry("500x600")
+        self.geometry("500x600+700+300")
         self.minsize(500, 600)
         self.maxsize(500, 600)
         self.iconbitmap("images/empty.ico")
