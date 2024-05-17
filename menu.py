@@ -5,14 +5,15 @@ from ProfileTab import *
 
 
 class Menu(tb.Frame):
-    def __init__(self, parent, username):
+    def __init__(self, parent, page, username):
         super().__init__(parent)
         self.parent = parent
         self.user = username
+        self.page = page
 
         self.place(x=0, y=0, relwidth=1, relheight=1)
         self.create_widget()
-
+        
     def create_widget(self):
         notebook_style = tb.Style()
         tab_style = tb.Style()
@@ -23,8 +24,8 @@ class Menu(tb.Frame):
         # Tabs
         self.library_tab = LibraryTab(self.notebook, self, self.user)
         self.store_tab = StoreTab(self.notebook, self.user)
-        self.profile_tab = ProfileTab(self.notebook, self.user)
-        self.settings_tab = SettingsTab(self.notebook) 
+        self.profile_tab = ProfileTab(self.notebook, self.user)  
+        self.settings_tab = SettingsTab(self.notebook, self.page, self.parent) 
 
         # Adding Tabs
         self.notebook.add(self.library_tab, text="Library")
