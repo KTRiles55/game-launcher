@@ -38,7 +38,7 @@ PIL - Manages image formatting and manipulation
 
 ## Examples of use
 
-### Filter games displayed on the store page
+### 1. Filter games displayed on the store page
 Store page has the ability to sort games shown by user preference. Currently we can change the items displayed based on the category and price range. We also have a search bar that shows games based on key characters entered into the search bar.
 
 ![Screenshot (95)](https://github.com/user-attachments/assets/3b7262b9-e339-4681-b1bc-b743cc12c038)
@@ -53,7 +53,7 @@ Figure 1.2: Category: “Simulation”, Price Range $0-$10
 
 Figure 1.3: The keyword “er” is inputted in the search bar and the user’s keyboard button is entered.
 
-### Choose to purchase for myself or as a gift.
+### 2. Choose to purchase for myself or as a gift.
 The user can determine if they want to purchase the game for themself or as a gift. If they purchase the game for themself it is immediately added to the user’s library. However, if the item is purchased as a gift the user obtains a code that can be activated by any user with an account, to be added to their library. 
 
 ![Screenshot (98)](https://github.com/user-attachments/assets/c04c133e-ea04-43ba-b4b8-d7ef0fdf3836)
@@ -75,7 +75,7 @@ Figure 2.4: The game is added to the library.
 ![Screenshot (102)](https://github.com/user-attachments/assets/72f7c171-9ed6-4dec-99f5-7b55a125e73a)
 
 Figure 2.5: When the “Activate” button, from the store page, is pressed a window opens with an entry ready to receive a gift code. If a proper gift code is entered then the game is added to the library.
-### Update profile page
+### 3. Update profile page
 The user can change their personal description and update their profile picture. 
 
 ![Screenshot (103)](https://github.com/user-attachments/assets/b1964a38-7d4d-41d1-9f9a-dd2aa762acff)
@@ -87,7 +87,7 @@ Figure 3.1: When the “Upload Image” button is pressed an option to find the 
 Figure 3.2: About Me description is changed according to the last saved entry.
 
 
-### Filter games in library
+### 4. Filter games in library
 The user’s library has a dynamic search bar that changes as keywords are entered. Games can also be sorted to favorite by right clicking on the selected game.
 
 ![Screenshot (105)](https://github.com/user-attachments/assets/d4c7eb36-55fe-4991-bd31-3a338f73197d)
